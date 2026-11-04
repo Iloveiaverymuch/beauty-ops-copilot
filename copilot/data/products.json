@@ -1,0 +1,10 @@
+[
+ {"sku":"GAR-SER-001","name":"Vitamin C Brightening Serum 30ml","brand":"Garnier","category":"serum","price_eur":12.9,"ingredients":["vitamin c","niacinamide","hyaluronic acid"]},
+ {"sku":"GAR-SER-002","name":"Niacinamide 10% Pore Serum 30ml","brand":"Garnier","category":"serum","price_eur":11.5,"ingredients":["niacinamide","zinc"]},
+ {"sku":"GAR-MIC-001","name":"Micellar Cleansing Water 400ml","brand":"Garnier","category":"cleanser","price_eur":6.9,"ingredients":["micelles","glycerin"]},
+ {"sku":"LRP-CRM-001","name":"Barrier Repair Cream 40ml","brand":"La Roche-Posay","category":"moisturizer","price_eur":19.9,"ingredients":["ceramides","niacinamide","shea butter"]},
+ {"sku":"LRP-SPF-001","name":"Fluid SPF50+ 50ml","brand":"La Roche-Posay","category":"sunscreen","price_eur":21.0,"ingredients":["filters uva/uvb","glycerin"]},
+ {"sku":"CRV-CLN-001","name":"Hydrating Cleanser 236ml","brand":"CeraVe","category":"cleanser","price_eur":13.5,"ingredients":["ceramides","hyaluronic acid"]},
+ {"sku":"CRV-SER-001","name":"Retinol Resurfacing Serum 30ml","brand":"CeraVe","category":"serum","price_eur":24.9,"ingredients":["retinol","ceramides","niacinamide"]},
+ {"sku":"LOP-SER-001","name":"Revitalift 1.5% Hyaluronic Serum 30ml","brand":"L'Oréal Paris","category":"serum","price_eur":17.9,"ingredients":["hyaluronic acid"]}
+]
