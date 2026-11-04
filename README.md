@@ -8,7 +8,12 @@ Lab plan: AI Formation project doc `claude/pipeline/loreal-adk-agent-poc-lab.md`
     uv run adk web                         # http://localhost:8000 -> pick "copilot"
     uv run adk run copilot                 # CLI chat
 
+    # M365 mock MCP server (terminal 2)
+    uv run python -m m365_mcp.server       # http://127.0.0.1:8080/mcp, bearer auth
+    uv run python scripts/mcp_smoke.py                     # full-scope token
+    uv run python scripts/mcp_smoke.py dev-readonly-token  # create_draft -> insufficient_scope
+
 ## Progress
-- [x] D1.1 catalog agent + tools + tests
-- [ ] D1.2 m365 MCP server   - [ ] D1.3 m365 agent   - [ ] D1.4 router   - [ ] D1.5 governance
+- [x] D1.1 catalog agent + tools + tests (6 -> 3 tool calls on core prompts; near-miss hint)
+- [x] D1.2 m365 MCP server (mcp 2.3 MCPServer, bearer+audience+scopes, annotations)   - [ ] D1.3 m365 agent   - [ ] D1.4 router   - [ ] D1.5 governance
 - [ ] D2.1 eval   - [ ] D2.2 observability   - [ ] D2.3 deploy   - [ ] D2.4 package

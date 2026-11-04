@@ -24,3 +24,21 @@ def test_campaign_filters():
 def test_agent_builds():
     from copilot.agent import root_agent
     assert root_agent.name == "catalog_agent" and len(root_agent.tools) == 2
+
+
+def test_price_and_category_filters_in_tool_not_model():
+    assert search_products("retinol", max_price_eur=10)["count"] == 0
+    r = search_products("niacinamide", brand="Garnier", category="serum")
+    assert {i["sku"] for i in r["items"]} == {"GAR-SER-001", "GAR-SER-002"}
+
+
+def test_alias_and_truncation_flag():
+    assert search_products("retinoid")["items"][0]["sku"] == "CRV-SER-001"
+    r = search_products("niacinamide", limit=1)
+    assert r["truncated"] is True and r["total_matches"] >= 4
+
+
+def test_near_miss_when_filters_exclude_everything():
+    r = search_products("retinol", max_price_eur=10)
+    assert r["count"] == 0 and r["near_miss"]["cheapest"]["sku"] == "CRV-SER-001"
+    assert "near_miss" not in search_products("unicorn")

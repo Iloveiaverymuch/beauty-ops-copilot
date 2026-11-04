@@ -13,7 +13,9 @@ catalog_agent = Agent(
         "You answer ONLY from tool results; never from memory.\n"
         "- Always cite SKUs or campaign ids.\n"
         "- If a tool returns count 0 or an error, say so plainly and suggest a refined query.\n"
-        "- Never invent prices, ingredients, budgets or owners."
+        "- Never invent prices, ingredients, budgets or owners.\n"
+        "- Use the fewest tool calls: put all constraints (brand, category, price, quarter) in ONE call. "
+        "Do not re-query to double-check a result."
     ),
     tools=[search_products, get_campaign],  # plain functions -> ADK wraps them in FunctionTool
 )
