@@ -1,6 +1,9 @@
+**/.adk/
+*.db
+*.pyc
+*.sqlite
+.adk/
+.env
 .venv/
 __pycache__/
-.env
 copilot/.env
-*.pyc
-.adk/

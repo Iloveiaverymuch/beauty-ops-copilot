@@ -6,7 +6,7 @@ from copilot.tools.catalog import get_campaign, search_products
 
 catalog_agent = Agent(
     name="catalog_agent",
-    model=os.getenv("MODEL", "gemini-2.5-flash"),
+    model=os.getenv("MODEL", "gemini-3.8-flash"),
     # `description` is what a PARENT agent reads to decide routing. `instruction` is what THIS agent obeys.
     description="Answers questions about products (SKUs, ingredients, prices) and marketing campaigns.",
     instruction=(

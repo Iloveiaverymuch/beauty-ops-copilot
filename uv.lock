@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -71,19 +71,25 @@ wheels = [
 [[package]]
 name = "beauty-ops-copilot"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "google-adk" },
     { name = "mcp", extra = ["cli"] },
+]
+
+[package.dev-dependencies]
+dev = [
     { name = "pytest" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "google-adk", specifier = ">=2.13.0" },
-    { name = "mcp", extras = ["cli"], specifier = ">=2.3.0" },
-    { name = "pytest", specifier = ">=9.2.0" },
+    { name = "google-adk", specifier = "==2.13.0" },
+    { name = "mcp", extras = ["cli"], specifier = "==2.3.0" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.2.0" }]
 
 [[package]]
 name = "certifi"
