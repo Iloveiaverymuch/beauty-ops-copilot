@@ -9,10 +9,12 @@ Rule of thumb: transfer = "you take over the conversation"; AgentTool = "do this
 import os
 
 from google.adk.agents import Agent
+from google.adk.apps import App
 from google.adk.tools import AgentTool
 
 from copilot.catalog_agent import build_catalog_agent
-from copilot.m365_agent import build_m365_agent, build_m365_toolset
+from copilot.governance import GovernancePlugin
+from copilot.m365_agent import build_m365_agent, build_m365_toolsets
 
 _ROUTER_RULES = {
     "transfer": (
@@ -31,17 +33,27 @@ _ROUTER_RULES = {
 
 def build_root(mode: str | None = None, toolset=None) -> Agent:
     mode = mode or os.getenv("ROUTER_MODE", "agenttool")
-    extra = [AgentTool(agent=build_catalog_agent("catalog_lookup"))] if mode == "agenttool" else []
+    # include_plugins=True (default): the governance plugin also runs inside the nested catalog run
+    extra = [AgentTool(agent=build_catalog_agent("catalog_lookup"), include_plugins=True)] if mode == "agenttool" else []
     return Agent(
         name="copilot",
         model=os.getenv("MODEL", "gemini-3.8-flash"),
         description="Beauty Ops Copilot router.",
         instruction=_ROUTER_RULES[mode],
         sub_agents=[
-            build_m365_agent(toolset=toolset or build_m365_toolset(), extra_tools=extra),
+            build_m365_agent(toolset=toolset or build_m365_toolsets(), extra_tools=extra),
             build_catalog_agent(),
         ],
     )
 
 
+def build_app(mode: str | None = None, toolset=None, governance: bool | None = None) -> App:
+    """`adk web` / `adk run` pick up `app` before `root_agent`. Plugins live on the App (platform level)."""
+    if governance is None:
+        governance = os.getenv("GOVERNANCE", "enforce")
+    plugins = [] if governance in (False, "off") else [GovernancePlugin(enforce=governance not in ("shadow",))]
+    return App(name="copilot", root_agent=build_root(mode, toolset), plugins=plugins)
+
+
 root_agent = build_root()
+app = App(name="copilot", root_agent=root_agent, plugins=build_app().plugins)

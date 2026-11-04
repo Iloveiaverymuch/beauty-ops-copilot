@@ -42,18 +42,34 @@ def _instruction(text: str):
     return provider
 
 
-def build_m365_toolset() -> McpToolset:
-    return McpToolset(
-        connection_params=StreamableHTTPConnectionParams(
-            url=os.getenv("M365_MCP_URL", "http://127.0.0.1:8080/mcp"),
-            headers={"Authorization": f"Bearer {os.getenv('M365_MCP_TOKEN', 'dev-agent-token')}"},
-            timeout=10,
-        ),
-        tool_filter=M365_TOOLS,  # client-side allowlist: tools added to the server later are NOT exposed
+READ_TOOLS = ["search_mail", "list_events", "search_files"]
+WRITE_TOOLS = ["create_draft"]
+
+
+def _conn() -> StreamableHTTPConnectionParams:
+    return StreamableHTTPConnectionParams(
+        url=os.getenv("M365_MCP_URL", "http://127.0.0.1:8080/mcp"),
+        headers={"Authorization": f"Bearer {os.getenv('M365_MCP_TOKEN', 'dev-agent-token')}"},
+        timeout=10,
     )
 
 
-def build_m365_agent(variant: str | None = None, toolset: McpToolset | None = None,
+def build_m365_toolsets(confirm_writes: bool | None = None) -> list[McpToolset]:
+    """Reads and writes in separate toolsets so human approval (require_confirmation) applies to writes only.
+    tool_filter = client-side allowlist: tools added to the server later are NOT exposed."""
+    if confirm_writes is None:
+        confirm_writes = os.getenv("M365_CONFIRM_WRITES", "1") == "1"
+    return [
+        McpToolset(connection_params=_conn(), tool_filter=READ_TOOLS),
+        McpToolset(connection_params=_conn(), tool_filter=WRITE_TOOLS, require_confirmation=confirm_writes),
+    ]
+
+
+def build_m365_toolset() -> McpToolset:  # kept for D1.3 scripts: single toolset, no confirmation
+    return McpToolset(connection_params=_conn(), tool_filter=M365_TOOLS)
+
+
+def build_m365_agent(variant: str | None = None, toolset: McpToolset | list | None = None,
                      extra_tools: list | None = None) -> Agent:
     variant = variant or os.getenv("M365_PROMPT", "hardened")
     return Agent(
@@ -61,7 +77,8 @@ def build_m365_agent(variant: str | None = None, toolset: McpToolset | None = No
         model=os.getenv("MODEL", "gemini-3.8-flash"),
         description="Reads the user's Outlook mail, calendar and OneDrive/SharePoint files; can create email drafts.",
         instruction=_instruction(_HARDENED if variant == "hardened" else _NAIVE),
-        tools=[toolset or build_m365_toolset(), *(extra_tools or [])],
+        tools=[*(toolset if isinstance(toolset, list) else [toolset] if toolset else build_m365_toolsets()),
+               *(extra_tools or [])],
     )
 
 

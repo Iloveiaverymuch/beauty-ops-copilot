@@ -8,3 +8,4 @@
 __pycache__/
 copilot/.env
 m365_mcp/data/drafts.jsonl
+evals/audit*.jsonl
