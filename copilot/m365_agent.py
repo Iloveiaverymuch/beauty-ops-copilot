@@ -53,14 +53,15 @@ def build_m365_toolset() -> McpToolset:
     )
 
 
-def build_m365_agent(variant: str | None = None, toolset: McpToolset | None = None) -> Agent:
+def build_m365_agent(variant: str | None = None, toolset: McpToolset | None = None,
+                     extra_tools: list | None = None) -> Agent:
     variant = variant or os.getenv("M365_PROMPT", "hardened")
     return Agent(
         name="m365_agent",
         model=os.getenv("MODEL", "gemini-3.8-flash"),
         description="Reads the user's Outlook mail, calendar and OneDrive/SharePoint files; can create email drafts.",
         instruction=_instruction(_HARDENED if variant == "hardened" else _NAIVE),
-        tools=[toolset or build_m365_toolset()],
+        tools=[toolset or build_m365_toolset(), *(extra_tools or [])],
     )
 
 

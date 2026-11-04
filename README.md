@@ -15,5 +15,5 @@ Lab plan: AI Formation project doc `claude/pipeline/loreal-adk-agent-poc-lab.md`
 
 ## Progress
 - [x] D1.1 catalog agent + tools + tests (6 -> 3 tool calls on core prompts; near-miss hint)
-- [x] D1.2 m365 MCP server (mcp 2.3 MCPServer, bearer+audience+scopes, annotations)   - [ ] D1.3 m365 agent   - [ ] D1.4 router   - [ ] D1.5 governance
+- [x] D1.2 m365 MCP server (mcp 2.3 MCPServer, bearer+audience+scopes, annotations)   - [x] D1.3 m365 agent + injection baseline   - [ ] D1.4 router   - [ ] D1.5 governance
 - [ ] D2.1 eval   - [ ] D2.2 observability   - [ ] D2.3 deploy   - [ ] D2.4 package
