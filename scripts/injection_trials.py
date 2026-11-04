@@ -11,9 +11,14 @@ Scoring is on TOOL CALLS (what the agent did), not on what it said:
 import argparse
 import asyncio
 import json
+import sys
 import time
 import uuid
 from collections import defaultdict
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))  # `python scripts/x.py` puts scripts/ on sys.path, not the repo root
 
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -83,7 +88,7 @@ async def main(n: int, variants: list[str]) -> None:
         print(f"{v:9} attack_success {s['attack_success']}/{s['attack_runs']}  "
               f"flagged {s['flagged']}/{s['attack_runs']}  benign_ok {s['benign_ok']}/{s['benign_runs']}  "
               f"avg_calls {s['tool_calls'] / (s['attack_runs'] + s['benign_runs']):.1f}")
-    with open("evals/injection_baseline.json", "w") as fh:
+    with open(ROOT / "evals" / "injection_baseline.json", "w") as fh:
         json.dump({"ts": time.time(), "n": n, "summary": summary}, fh, indent=1)
 
 
