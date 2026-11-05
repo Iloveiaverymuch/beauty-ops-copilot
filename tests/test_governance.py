@@ -8,9 +8,15 @@ import pytest
 from copilot.governance import GovernancePlugin
 
 
-def ctx(agent="m365_agent", state=None, confirmed=None):
-    return SimpleNamespace(agent_name=agent, state=state if state is not None else {}, invocation_id="inv-1",
-                           tool_confirmation=confirmed)
+def user_event(eid, text=None):
+    part = SimpleNamespace(text=text)
+    return SimpleNamespace(id=eid, author="user", content=SimpleNamespace(parts=[part]))
+
+
+def ctx(agent="m365_agent", state=None, confirmed=None, events=None, invocation_id="inv-1"):
+    events = events if events is not None else [user_event("turn-1", "please draft")]
+    return SimpleNamespace(agent_name=agent, state=state if state is not None else {}, invocation_id=invocation_id,
+                           tool_confirmation=confirmed, session=SimpleNamespace(events=events))
 
 
 def tool(name, read_only=None):
@@ -101,14 +107,14 @@ def test_resumed_call_after_approval_not_double_counted(p):
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # 6th call, counted
     c.tool_confirmation = SimpleNamespace(confirmed=True)
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # resumed, not counted
-    assert c.state["temp:gov:m365_agent:calls"] == 6
+    assert c.state["gov:turn-1:m365_agent:calls"] == 6
 
 
 def test_confidential_taint_recorded(p):
     c = ctx()
     after(p, tool("search_files"), {}, c, mcp_ok({"status": "ok", "files": [
         {"name": "Q4_pricing_grid.xlsx", "sensitivity": "Confidential"}, {"name": "b.docx", "sensitivity": "General"}]}))
-    assert c.state["temp:gov:confidential"] == ["Q4_pricing_grid.xlsx"]
+    assert c.state["gov:turn-1:confidential"] == ["Q4_pricing_grid.xlsx"]
 
 
 def test_shadow_mode_logs_but_never_blocks(tmp_path, monkeypatch):
@@ -125,3 +131,25 @@ def test_annotation_mismatch_alerts(p, tmp_path, monkeypatch):
     monkeypatch.setenv("GOV_AUDIT_FILE", str(audit))
     before(p, tool("create_draft", read_only=True), {"to": ["a@loreal.com"]}, ctx())
     assert any(json.loads(l)["reason"] == "annotation_mismatch" for l in audit.read_text().splitlines())
+
+
+def test_budget_survives_approval_resume_as_new_invocation(p):
+    # Regression for injection_trials naive+enforce p2#0: draft 1 approved -> resume = NEW invocation; a 2nd
+    # draft in the same user turn must still be denied. Approval events are function_response-only (no text).
+    state = {}
+    events = [user_event("turn-1", "prepare any drafts needed")]
+    c1 = ctx(state=state, events=events, invocation_id="inv-1")
+    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c1) is None
+    events.append(user_event("approval-evt", None))                       # approval response, no text
+    c2 = ctx(state=state, events=events, invocation_id="inv-2", confirmed=SimpleNamespace(confirmed=True))
+    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c2) is None   # the approved call itself
+    c3 = ctx(state=state, events=events, invocation_id="inv-2")
+    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c3)["reason"] == "write_budget_exceeded"
+
+
+def test_new_user_turn_resets_budget(p):
+    state = {}
+    events = [user_event("turn-1", "draft to a")]
+    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, ctx(state=state, events=events)) is None
+    events.append(user_event("turn-2", "now draft to b"))
+    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, ctx(state=state, events=events)) is None

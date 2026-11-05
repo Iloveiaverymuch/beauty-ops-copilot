@@ -64,6 +64,18 @@ _MESSAGES = {
 }
 
 
+def _turn_id(ctx: ToolContext) -> str:
+    """Budgets are per USER TURN. A human approval resumes the run as a NEW invocation (temp: state is reset),
+    so invocation scope lets a 2nd write through after the 1st is approved. Key on the id of the last user event
+    that carries text (approvals are function_response-only events and don't start a turn)."""
+    session = getattr(ctx, "session", None)
+    for ev in reversed(getattr(session, "events", None) or []):
+        if getattr(ev, "author", None) == "user" and ev.content and any(
+                getattr(p, "text", None) for p in (ev.content.parts or [])):
+            return ev.id
+    return getattr(ctx, "invocation_id", "no-turn")
+
+
 def _sha(obj: Any) -> str:
     return hashlib.sha256(json.dumps(obj, sort_keys=True, default=str).encode()).hexdigest()[:12]
 
@@ -121,7 +133,8 @@ class GovernancePlugin(BasePlugin):
         if name not in pol.allow:
             return self._deny(tool_context, name, "tool_not_allowed", **args_info)
 
-        key_calls = f"temp:gov:{agent}:calls"
+        turn = _turn_id(tool_context)
+        key_calls = f"gov:{turn}:{agent}:calls"
         calls = st.get(key_calls, 0) + (0 if resumed else 1)
         st[key_calls] = calls
         if calls > pol.max_calls:
@@ -133,7 +146,7 @@ class GovernancePlugin(BasePlugin):
             self._audit(tool_context, name, "alert", "annotation_mismatch")  # server claims read-only; we disagree
 
         if is_write:
-            key_w = f"temp:gov:{agent}:writes"
+            key_w = f"gov:{turn}:{agent}:writes"
             # RESERVE the write slot at decision time (not on completion): the model can emit several
             # function calls in ONE response, and all their before-checks run before any tool executes.
             # Counting on completion = check-then-act race (gov_demo write_budget: 2 drafts slipped through).
@@ -145,10 +158,10 @@ class GovernancePlugin(BasePlugin):
             external = sorted({_domain(a) for a in to if not _is_internal(a)})
             if external:
                 return self._deny(tool_context, name, "external_recipient", external_domains=external,
-                                  confidential_seen=st.get("temp:gov:confidential", []), **args_info)
+                                  confidential_seen=st.get(f"gov:{turn}:confidential", []), **args_info)
 
         if is_write and not resumed:
-            st[f"temp:gov:{agent}:writes"] = st.get(f"temp:gov:{agent}:writes", 0) + 1  # reservation
+            st[f"gov:{turn}:{agent}:writes"] = st.get(f"gov:{turn}:{agent}:writes", 0) + 1  # reservation
         self._audit(tool_context, name, "allow", resumed=resumed, write=is_write, **args_info)
         return None
 
@@ -157,12 +170,13 @@ class GovernancePlugin(BasePlugin):
         agent, name, st = tool_context.agent_name, tool.name, tool_context.state
         payload = _mcp_payload(result)
         if name in self.policy.get(agent, _DENY_ALL).writes and payload.get("status") == "error":
-            key_w = f"temp:gov:{agent}:writes"  # release the reservation: a failed write didn't happen
+            key_w = f"gov:{_turn_id(tool_context)}:{agent}:writes"  # release: a failed write didn't happen
             st[key_w] = max(0, st.get(key_w, 0) - 1)
         if name == "search_files":  # taint: remember Confidential files that entered the context this turn
             conf = [f["name"] for f in payload.get("files", []) if f.get("sensitivity") == "Confidential"]
             if conf:
-                st["temp:gov:confidential"] = sorted(set(st.get("temp:gov:confidential", [])) | set(conf))
+                k = f"gov:{_turn_id(tool_context)}:confidential"
+                st[k] = sorted(set(st.get(k, [])) | set(conf))
                 self._audit(tool_context, name, "taint", "confidential_in_context", files=conf)
         if payload.get("status") == "error":
             self._audit(tool_context, name, "tool_error", payload.get("error_code", "unknown"))

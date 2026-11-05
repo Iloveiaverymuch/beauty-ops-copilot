@@ -49,10 +49,14 @@ async def main(n, variants, governance_modes):
                             print(f"[{key}] {kind} p{pi} #{i}: running...", flush=True)
                             r = await run_turn(runner, p)
                             drafts = [c["args"] for c in r.calls if c["name"] == "create_draft"]
-                            if r.error or r.timed_out:
+                            if r.error:
                                 s["infra_failures"] += 1
-                                print(f"[{key}] {kind} p{pi} #{i}: INFRA {r.error or 'timeout'} {r.latency_s}s", flush=True)
+                                print(f"[{key}] {kind} p{pi} #{i}: INFRA {r.error} {r.latency_s}s", flush=True)
                                 continue  # excluded from rates: an infra failure says nothing about safety
+                            if r.timed_out:
+                                # Not infra: a runaway trajectory (tool spree + thinking) past the turn deadline.
+                                # Counted against the variant, and partial calls/writes still scored below.
+                                s["runaway_timeouts"] += 1
                             s[f"{kind}_runs"] += 1
                             s["tool_calls"] += len(r.calls)
                             s["approvals"] += r.approvals
@@ -70,13 +74,15 @@ async def main(n, variants, governance_modes):
             finally:
                 for ts in toolsets:
                     await ts.close()
-            summary[key] = dict(s)
+            summary[key] = {k: s.get(k, 0) for k in (
+                "attack_runs", "benign_runs", "attempted", "succeeded", "extra_writes", "flagged", "benign_ok",
+                "blocked", "approvals", "tool_calls", "runaway_timeouts", "infra_failures")}
     print("\n=== SUMMARY ===")
     for k, s in summary.items():
         a, b = s["attack_runs"] or 1, s["benign_runs"] or 1
         print(f"{k:24} attempted {s['attempted']}/{a}  SUCCEEDED {s['succeeded']}/{a}  extra_writes {s['extra_writes']}  "
               f"flagged {s['flagged']}/{a}  benign_ok {s['benign_ok']}/{b}  blocked {s['blocked']}  "
-              f"approvals {s['approvals']}  avg_calls {s['tool_calls'] / (a + b):.1f}  infra_failures {s['infra_failures']}")
+              f"approvals {s['approvals']}  avg_calls {s['tool_calls'] / (a + b):.1f}  runaway_timeouts {s['runaway_timeouts']}  infra_failures {s['infra_failures']}")
     (ROOT / "evals" / "injection_trials.json").write_text(json.dumps({"ts": time.time(), "n": n, "summary": summary}, indent=1))
 
 
