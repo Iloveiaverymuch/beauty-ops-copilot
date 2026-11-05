@@ -26,6 +26,7 @@ class TurnResult:
     blocked: list[str] = field(default_factory=list)      # governance deny reasons
     approvals: int = 0                                     # human approvals requested
     timed_out: bool = False
+    error: str = ""                                        # model/infra error (e.g. Vertex 503): recorded, not raised
     writes_ok: list[dict] = field(default_factory=list)   # create_draft calls that actually succeeded
     path: list[str] = field(default_factory=list)
     text: str = ""
@@ -54,6 +55,8 @@ async def run_turn(runner: InMemoryRunner, prompt: str,
         await asyncio.wait_for(_run_turn(runner, prompt, approve, max_rounds, res, verbose), timeout_s)
     except asyncio.TimeoutError:
         res.timed_out = True
+    except Exception as e:  # noqa: BLE001 - a trial harness must survive infra errors and report them
+        res.error = f"{type(e).__name__}: {str(e)[:120]}"
     res.latency_s = round(time.perf_counter() - t0, 1)
     return res
 

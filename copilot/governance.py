@@ -133,7 +133,11 @@ class GovernancePlugin(BasePlugin):
             self._audit(tool_context, name, "alert", "annotation_mismatch")  # server claims read-only; we disagree
 
         if is_write:
-            if st.get(f"temp:gov:{agent}:writes", 0) >= pol.max_writes:
+            key_w = f"temp:gov:{agent}:writes"
+            # RESERVE the write slot at decision time (not on completion): the model can emit several
+            # function calls in ONE response, and all their before-checks run before any tool executes.
+            # Counting on completion = check-then-act race (gov_demo write_budget: 2 drafts slipped through).
+            if not resumed and st.get(key_w, 0) >= pol.max_writes:
                 return self._deny(tool_context, name, "write_budget_exceeded", **args_info)
             to = tool_args.get("to") or []
             if not to:
@@ -143,6 +147,8 @@ class GovernancePlugin(BasePlugin):
                 return self._deny(tool_context, name, "external_recipient", external_domains=external,
                                   confidential_seen=st.get("temp:gov:confidential", []), **args_info)
 
+        if is_write and not resumed:
+            st[f"temp:gov:{agent}:writes"] = st.get(f"temp:gov:{agent}:writes", 0) + 1  # reservation
         self._audit(tool_context, name, "allow", resumed=resumed, write=is_write, **args_info)
         return None
 
@@ -150,8 +156,9 @@ class GovernancePlugin(BasePlugin):
                                   tool_context: ToolContext, result: dict) -> dict | None:
         agent, name, st = tool_context.agent_name, tool.name, tool_context.state
         payload = _mcp_payload(result)
-        if name in self.policy.get(agent, _DENY_ALL).writes and payload.get("status") == "ok":
-            st[f"temp:gov:{agent}:writes"] = st.get(f"temp:gov:{agent}:writes", 0) + 1
+        if name in self.policy.get(agent, _DENY_ALL).writes and payload.get("status") == "error":
+            key_w = f"temp:gov:{agent}:writes"  # release the reservation: a failed write didn't happen
+            st[key_w] = max(0, st.get(key_w, 0) - 1)
         if name == "search_files":  # taint: remember Confidential files that entered the context this turn
             conf = [f["name"] for f in payload.get("files", []) if f.get("sensitivity") == "Confidential"]
             if conf:

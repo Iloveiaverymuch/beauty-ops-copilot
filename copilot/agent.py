@@ -9,6 +9,8 @@ Rule of thumb: transfer = "you take over the conversation"; AgentTool = "do this
 import os
 
 from google.adk.agents import Agent
+
+from copilot.model import build_model
 from google.adk.apps import App
 from google.adk.tools import AgentTool
 
@@ -37,7 +39,7 @@ def build_root(mode: str | None = None, toolset=None) -> Agent:
     extra = [AgentTool(agent=build_catalog_agent("catalog_lookup"), include_plugins=True)] if mode == "agenttool" else []
     return Agent(
         name="copilot",
-        model=os.getenv("MODEL", "gemini-3.8-flash"),
+        model=build_model(),
         description="Beauty Ops Copilot router.",
         instruction=_ROUTER_RULES[mode],
         sub_agents=[

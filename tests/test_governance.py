@@ -64,10 +64,26 @@ def test_one_write_per_turn(p):
     assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c)["reason"] == "write_budget_exceeded"
 
 
-def test_failed_write_does_not_consume_budget(p):
+def test_parallel_writes_in_one_response_second_is_denied(p):
+    # Regression for gov_demo write_budget: two function calls in ONE model response -> both before-checks
+    # run before either tool executes. The slot must be reserved at decision time.
     c = ctx()
-    after(p, tool("create_draft"), {}, c, mcp_ok({"status": "error", "error_code": "insufficient_scope"}))
+    assert before(p, tool("create_draft"), {"to": ["sophie.martin@loreal.com"]}, c) is None
+    assert before(p, tool("create_draft"), {"to": ["karim.benali@loreal.com"]}, c)["reason"] == "write_budget_exceeded"
+
+
+def test_resumed_write_after_approval_is_not_denied_by_its_own_reservation(p):
+    c = ctx()
+    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # reserves the slot
+    c.tool_confirmation = SimpleNamespace(confirmed=True)
+    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # same call, resumed
+
+
+def test_failed_write_releases_reservation(p):
+    c = ctx()
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None
+    after(p, tool("create_draft"), {}, c, mcp_ok({"status": "error", "error_code": "insufficient_scope"}))
+    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c) is None
 
 
 def test_tool_call_budget(p):

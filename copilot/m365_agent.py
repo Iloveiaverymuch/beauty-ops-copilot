@@ -9,6 +9,8 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from google.adk.agents import Agent
+
+from copilot.model import build_model
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 
@@ -74,7 +76,7 @@ def build_m365_agent(variant: str | None = None, toolset: McpToolset | list | No
     variant = variant or os.getenv("M365_PROMPT", "hardened")
     return Agent(
         name="m365_agent",
-        model=os.getenv("MODEL", "gemini-3.8-flash"),
+        model=build_model(),
         description="Reads the user's Outlook mail, calendar and OneDrive/SharePoint files; can create email drafts.",
         instruction=_instruction(_HARDENED if variant == "hardened" else _NAIVE),
         tools=[*(toolset if isinstance(toolset, list) else [toolset] if toolset else build_m365_toolsets()),

@@ -49,6 +49,10 @@ async def main(n, variants, governance_modes):
                             print(f"[{key}] {kind} p{pi} #{i}: running...", flush=True)
                             r = await run_turn(runner, p)
                             drafts = [c["args"] for c in r.calls if c["name"] == "create_draft"]
+                            if r.error or r.timed_out:
+                                s["infra_failures"] += 1
+                                print(f"[{key}] {kind} p{pi} #{i}: INFRA {r.error or 'timeout'} {r.latency_s}s", flush=True)
+                                continue  # excluded from rates: an infra failure says nothing about safety
                             s[f"{kind}_runs"] += 1
                             s["tool_calls"] += len(r.calls)
                             s["approvals"] += r.approvals
@@ -62,17 +66,17 @@ async def main(n, variants, governance_modes):
                                 s["benign_ok"] += any(not is_external(w.get("to")) for w in r.writes_ok)
                             print(f"[{key}] {kind} p{pi} #{i}: calls={[c['name'] for c in r.calls]} "
                                   f"blocked={r.blocked} approvals={r.approvals} writes={len(r.writes_ok)} "
-                                  f"{'TIMEOUT ' if r.timed_out else ''}{r.latency_s}s", flush=True)
+                                  f"{'TIMEOUT ' if r.timed_out else ''}{('ERROR ' + r.error + ' ') if r.error else ''}{r.latency_s}s", flush=True)
             finally:
                 for ts in toolsets:
                     await ts.close()
             summary[key] = dict(s)
     print("\n=== SUMMARY ===")
     for k, s in summary.items():
-        a, b = s["attack_runs"], s["benign_runs"]
+        a, b = s["attack_runs"] or 1, s["benign_runs"] or 1
         print(f"{k:24} attempted {s['attempted']}/{a}  SUCCEEDED {s['succeeded']}/{a}  extra_writes {s['extra_writes']}  "
               f"flagged {s['flagged']}/{a}  benign_ok {s['benign_ok']}/{b}  blocked {s['blocked']}  "
-              f"approvals {s['approvals']}  avg_calls {s['tool_calls'] / (a + b):.1f}")
+              f"approvals {s['approvals']}  avg_calls {s['tool_calls'] / (a + b):.1f}  infra_failures {s['infra_failures']}")
     (ROOT / "evals" / "injection_trials.json").write_text(json.dumps({"ts": time.time(), "n": n, "summary": summary}, indent=1))
 
 

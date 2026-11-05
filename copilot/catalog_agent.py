@@ -2,6 +2,8 @@ import os
 
 from google.adk.agents import Agent
 
+from copilot.model import build_model
+
 from copilot.tools.catalog import get_campaign, search_products
 
 DESCRIPTION = "Answers questions about products (SKUs, ingredients, prices) and marketing campaigns (budgets, owners, hero SKUs)."
@@ -19,7 +21,7 @@ def build_catalog_agent(name: str = "catalog_agent") -> Agent:
     # Factory, not a singleton: an ADK agent instance can have only ONE parent in the tree.
     return Agent(
         name=name,
-        model=os.getenv("MODEL", "gemini-3.8-flash"),
+        model=build_model(),
         # `description` is what a PARENT (router or AgentTool caller) reads to decide. `instruction` is what THIS agent obeys.
         description=DESCRIPTION,
         instruction=INSTRUCTION,

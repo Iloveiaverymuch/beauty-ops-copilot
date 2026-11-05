@@ -42,7 +42,7 @@ async def main():
             passed = check(r)
             ok += passed
             print(f"   => {'PASS' if passed else 'FAIL'}  blocked={r.blocked} approvals={r.approvals} "
-                  f"writes={len(r.writes_ok)} {'TIMEOUT ' if r.timed_out else ''}{r.latency_s}s")
+                  f"writes={len(r.writes_ok)} {'TIMEOUT ' if r.timed_out else ''}{('ERROR ' + r.error + ' ') if r.error else ''}{r.latency_s}s")
             if not passed:
                 print(f"   last text: {r.text[:240]!r}")
     finally:
