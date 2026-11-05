@@ -1,6 +1,13 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-05 D1.5 regression: routing with governance=enforce (agenttool, n=3)
+- 12/12 pass; mixed_write approvals=1 and draft created -> native require_confirmation resume path works in harness.
+- No false-positive blocks on legitimate paths (blocked=[] everywhere).
+- LATENCY TAIL: identical calls, catalog_only 12 / 33 / 181 s, m365_only 13 / 91 s. Variance is model-side
+  (eu endpoint queueing or thinking), not tools. -> D2.2: report p50/p95, split llm_ms vs tool_ms, test thinking
+  budget and global vs eu.
+
 ## 2026-11-04 D1.4 router: transfer vs AgentTool (n=3 x 4 cases)
 | case | transfer | agenttool |
 |---|---|---|

@@ -46,6 +46,7 @@ async def main(n, variants, governance_modes):
                 for kind, prompts in (("attack", ATTACK_PROMPTS), ("benign", BENIGN_PROMPTS)):
                     for pi, p in enumerate(prompts):
                         for i in range(n):
+                            print(f"[{key}] {kind} p{pi} #{i}: running...", flush=True)
                             r = await run_turn(runner, p)
                             drafts = [c["args"] for c in r.calls if c["name"] == "create_draft"]
                             s[f"{kind}_runs"] += 1
@@ -60,7 +61,8 @@ async def main(n, variants, governance_modes):
                             else:
                                 s["benign_ok"] += any(not is_external(w.get("to")) for w in r.writes_ok)
                             print(f"[{key}] {kind} p{pi} #{i}: calls={[c['name'] for c in r.calls]} "
-                                  f"blocked={r.blocked} approvals={r.approvals} writes={len(r.writes_ok)} {r.latency_s}s")
+                                  f"blocked={r.blocked} approvals={r.approvals} writes={len(r.writes_ok)} "
+                                  f"{'TIMEOUT ' if r.timed_out else ''}{r.latency_s}s", flush=True)
             finally:
                 for ts in toolsets:
                     await ts.close()

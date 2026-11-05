@@ -43,6 +43,7 @@ async def main(n, modes, governance):
             for name, prompt, check in CASES:
                 ok[name] = 0
                 for i in range(n):
+                    print(f"[{mode}] {name} #{i}: running...", flush=True)
                     r = await run_turn(runner, prompt)
                     calls, path, text, dt = r.calls, r.path, r.text, r.latency_s
                     passed = bool(check(calls, text)) and (name != "mixed_write" or bool(r.writes_ok))

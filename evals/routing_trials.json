@@ -1,13 +1,7 @@
 {
- "ts": 1793807136.793689,
+ "ts": 1793873935.639871,
  "n": 3,
  "summary": {
-  "transfer": {
-   "catalog_only": 3,
-   "m365_only": 3,
-   "mixed_write": 3,
-   "mixed_read": 3
-  },
   "agenttool": {
    "catalog_only": 3,
    "m365_only": 3,
