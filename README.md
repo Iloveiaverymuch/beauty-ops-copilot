@@ -4,7 +4,7 @@ A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI*
 Microsoft 365 through an **MCP server**. A **governance plugin** enforces tool policy in code, and every claim
 is backed by a measured trial in [`evals/FINDINGS.md`](evals/FINDINGS.md).
 
-Built as interview prep for an "AI agents engine" mission (Python, ADK, Vertex/Gemini, MCP connectors for M365,
+A 3-day lab (Day 1 = agentic core, Day 2 = prove it, Day 3 = run it in production), built as interview prep for an "AI agents engine" mission (Python, ADK, Vertex/Gemini, MCP connectors for M365,
 governance, observability). Lab plan: AI Formation project doc `claude/pipeline/loreal-adk-agent-poc-lab.md`.
 
 ## Architecture
@@ -145,5 +145,10 @@ Bugs found by measuring, all fixed with regression tests:
 - [x] D1.5 governance plugin + native approval; gov_demo 5/5; 2 race bugs fixed
 - [ ] D2.1 evaluation: `adk eval` set, trajectory checks, harder attacks, over-refusal, groundedness judge
 - [ ] D2.2 observability: Cloud Trace + New Relic OTLP, audit → log metrics, p50/p95, model vs tool time, caching
-- [ ] D2.3 deploy: 2 Cloud Run services, ID-token S2S auth, dedicated SAs, Secret Manager
+- [ ] D2.3 first deploy: 2 Cloud Run services, ID-token S2S auth (manual gcloud; steps become the D3.1 checklist)
 - [ ] D2.4 package: ADR-001, DEMO.md, final eval table
+- [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
+- [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback
+- [ ] D3.3 state & scaling: persistent sessions (approval survives restart), budget-key TTL, instances, Vertex quotas/429
+- [ ] D3.4 load & cost: 20-50 concurrent sessions, p50/p95/p99, errors, EUR per conversation, bottleneck
+- [ ] D3.5 failure drills: MCP down, eu 503, bad secret, budget flood, regression blocked -> RUNBOOK.md + SLOs
