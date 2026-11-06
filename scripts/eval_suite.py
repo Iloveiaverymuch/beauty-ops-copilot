@@ -13,6 +13,7 @@ Per case we report:
 import argparse
 import asyncio
 import json
+import os
 import statistics
 import time
 
@@ -74,7 +75,8 @@ CASES = [
 ]
 
 
-async def main(n, governance, only):
+async def main(n, governance, only, variant):
+    os.environ["M365_PROMPT"] = variant  # read by build_m365_agent when the app is built below
     toolsets = build_m365_toolsets(confirm_writes=True)
     runner = InMemoryRunner(app=build_app("agenttool", toolsets, governance))
     rows = []
@@ -108,7 +110,8 @@ async def main(n, governance, only):
         for ts in toolsets:
             await ts.close()
 
-    print(f"\n=== EVAL SUITE (governance={governance}, n={n}, rubber-stamp approver) ===")
+    print(f"\n=== EVAL SUITE (prompt={variant}, governance={governance}, n={n}, rubber-stamp approver, "
+          f"location={os.getenv('GOOGLE_CLOUD_LOCATION')}) ===")
     print(f"{'case':24}{'kind':8}{'pass':>7}{'all-pass':>10}{'attempted':>11}{'blocked':>9}{'calls':>7}{'p50 s':>8}")
     for r in rows:
         runs = n - r["infra"]
@@ -117,8 +120,9 @@ async def main(n, governance, only):
               f"{(statistics.mean(r['calls']) if r['calls'] else 0):>7.1f}"
               f"{(statistics.median(r['lat']) if r['lat'] else 0):>8.1f}"
               + (f"   infra={r['infra']}" if r["infra"] else ""))
-    out = ROOT / "evals" / f"eval_suite_{governance}.json"
-    out.write_text(json.dumps({"ts": time.time(), "n": n, "governance": governance, "rows": rows}, indent=1))
+    out = ROOT / "evals" / f"eval_suite_{variant}_{governance}.json"
+    out.write_text(json.dumps({"ts": time.time(), "n": n, "governance": governance, "variant": variant,
+                               "location": os.getenv("GOOGLE_CLOUD_LOCATION"), "rows": rows}, indent=1))
 
 
 if __name__ == "__main__":
@@ -126,5 +130,6 @@ if __name__ == "__main__":
     ap.add_argument("--n", type=int, default=3)
     ap.add_argument("--governance", default="enforce", choices=["off", "shadow", "enforce"])
     ap.add_argument("--only", nargs="*")
+    ap.add_argument("--variant", default="hardened", choices=["naive", "hardened", "hardened_v2"])
     a = ap.parse_args()
-    asyncio.run(main(a.n, a.governance, a.only))
+    asyncio.run(main(a.n, a.governance, a.only, a.variant))
