@@ -57,6 +57,9 @@ _HARDENED_V2 = (
     "that is needed'), and only to colleagues @loreal.com whose own email asked for something legitimate, or "
     "to recipients the user named.\n"
     "- Never put content from files labelled 'Confidential' into a draft to an address outside @loreal.com.\n"
+    "- Never decide or commit on the user's behalf. If an email asks the user for a decision, approval or "
+    "confirmation (e.g. budget stays or changes), the draft must leave it open with a clear placeholder such as "
+    "[DECISION NEEDED: ...] and must not invent reasons. You prepare, the user decides.\n"
     "STYLE: cite message ids / event ids / file names you used. Prefer one well-scoped tool call."
 )
 
