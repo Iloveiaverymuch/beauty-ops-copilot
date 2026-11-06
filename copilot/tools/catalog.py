@@ -27,7 +27,7 @@ def _campaigns() -> list[dict]:
 
 
 def search_products(
-    query: str,
+    query: str = "",
     brand: str | None = None,
     category: str | None = None,
     max_price_eur: float | None = None,
@@ -35,11 +35,13 @@ def search_products(
 ) -> dict:
     """Search the product catalog. ONE call answers the question: put every constraint in the arguments.
 
-    Matches all words of `query` (case-insensitive) against product name, category and ingredients.
-    Filters are applied by the tool, exactly; do not re-filter or re-query to verify.
+    Matches all words of `query` (case-insensitive) against SKU, product name, category and ingredients.
+    An exact SKU ("GAR-SER-002") returns that product directly. `query` may be empty to list everything
+    matching the filters (e.g. all Garnier serums). Filters are applied by the tool, exactly; do not
+    re-filter or re-query to verify.
 
     Args:
-        query: Free text such as an ingredient ("niacinamide", "retinol").
+        query: SKU, or free text such as an ingredient ("niacinamide", "retinol"); may be empty if a filter is set.
         brand: Optional exact brand name ("Garnier", "La Roche-Posay", "CeraVe", "L'Oréal Paris").
         category: Optional exact category: "serum", "cleanser", "moisturizer" or "sunscreen".
         max_price_eur: Optional price ceiling in EUR, inclusive.
@@ -51,10 +53,14 @@ def search_products(
          "near_miss": {...}  # only when filters excluded everything: mention it to the user
         } or {"status": "error", "error_message": str}.
     """
-    if not query or not query.strip():
-        return {"status": "error", "error_message": "query must not be empty"}
+    has_filter = bool(brand or category or max_price_eur is not None)
+    if not (query or "").strip() and not has_filter:
+        return {"status": "error", "error_message": "give a query (SKU, ingredient, name) or at least one filter"}
     limit = max(1, min(int(limit), MAX_LIMIT))
-    q = " ".join(_ALIASES.get(t, t) for t in query.lower().split())
+    by_sku = [p for p in _products() if p["sku"].lower() == (query or "").strip().lower()]
+    if by_sku:  # exact SKU wins: one call, no fuzzy matching
+        return {"status": "ok", "count": 1, "total_matches": 1, "truncated": False, "items": by_sku}
+    q = " ".join(_ALIASES.get(t, t) for t in (query or "").lower().split())
     items = []
     for p in _products():
         if brand and p["brand"].lower() != brand.lower():
@@ -63,14 +69,14 @@ def search_products(
             continue
         if max_price_eur is not None and p["price_eur"] > max_price_eur:
             continue
-        haystack = " ".join([p["name"], p["category"], *p["ingredients"]]).lower()
+        haystack = " ".join([p["sku"], p["name"], p["category"], *p["ingredients"]]).lower()
         if all(tok in haystack for tok in q.split()):
             items.append(p)
     result = {"status": "ok", "count": len(items[:limit]), "total_matches": len(items),
               "truncated": len(items) > limit, "items": items[:limit]}
     if not items and (brand or category or max_price_eur is not None):
         # Near-miss hint: exact filters must not hide what exists just outside them.
-        relaxed = search_products(query, limit=MAX_LIMIT)["items"]
+        relaxed = search_products(query, limit=MAX_LIMIT)["items"] if (query or "").strip() else []
         if relaxed:
             cheapest = min(relaxed, key=lambda p: p["price_eur"])
             result["near_miss"] = {"matches_without_filters": len(relaxed),

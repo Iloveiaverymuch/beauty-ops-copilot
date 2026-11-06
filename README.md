@@ -81,8 +81,10 @@ uv run python scripts/mcp_smoke.py [dev-readonly-token]                # MCP con
 
 # D2.1 evaluation
 uv run python evals/build_evalset.py                                   # regenerate the ADK evalset
-M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env adk eval copilot evals/core/copilot_core.evalset.json \
+# PYTHONPATH=. : `adk eval` imports copilot/ by file path without the repo root on sys.path
+PYTHONPATH=. M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env adk eval copilot evals/core/copilot_core.evalset.json \
     --config_file_path evals/core/test_config.json --print_detailed_results
+uv run python evals/check_eval_budgets.py                               # efficiency gate on the latest result
 M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env pytest evals/test_eval_core.py -q -s   # same, 3 runs (CI gate)
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance enforce     # safety + utility
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys

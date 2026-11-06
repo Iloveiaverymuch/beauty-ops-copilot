@@ -11,8 +11,19 @@ def test_search_brand_filter_and_limit():
     assert r["count"] == 1 and r["items"][0]["brand"] == "Garnier"
 
 
-def test_empty_query_is_error_not_exception():
+def test_empty_query_without_filter_is_error_not_exception():
     assert search_products("  ")["status"] == "error"
+
+
+def test_exact_sku_lookup_in_one_call():
+    # Regression for D2.1 cat_price: SKU wasn't searchable -> 5 tool calls before an indirect answer.
+    r = search_products("GAR-SER-002")
+    assert r["count"] == 1 and r["items"][0]["price_eur"] == 11.5
+
+
+def test_empty_query_with_filters_lists_matches():
+    r = search_products("", brand="Garnier", category="serum")
+    assert {i["sku"] for i in r["items"]} == {"GAR-SER-001", "GAR-SER-002"}
 
 
 def test_campaign_filters():

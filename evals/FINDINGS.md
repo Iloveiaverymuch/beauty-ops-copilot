@@ -1,6 +1,19 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-06 D2.1 ADK-native core eval, first run (10 cases, n=1, eu)
+- 10/10 PASSED: trajectory IN_ORDER/ignore_args 1.0 everywhere (provenance case called catalog_lookup), hallucinations_v1
+  1.0 everywhere, response_match 0.36-0.74 (informational: weak signal, wording-dependent).
+- HIDDEN BUG behind a green eval: cat_price "What's the price of GAR-SER-002?" = 5 tool calls, 16.7 s, 8.3k tokens:
+  search_products didn't match the SKU field -> 0 results -> query='' error -> brand/category flailing -> right answer.
+  Lenient trajectory (extras allowed) + grounded answer = PASS. Fix: exact-SKU lookup + SKU in haystack + empty query
+  allowed with filters (tests added). Gate added: evals/check_eval_budgets.py (calls <= expected+1, <=45 s), since
+  ADK's tool_call_count_v1 is informational-only (no thresholds allowed).
+- Latency answer (open since D1.5): model time = 95-99% of every invocation; tools 2-430 ms. Reasoning tokens > answer
+  tokens (215 vs 122 simple; 1133 vs 189 mixed_read). cached = n/a (no context caching). 3.5-8.3k tokens/request.
+  -> D2.2: thinking budget and context caching are the levers, not tool speed.
+- Infra: `adk eval` loads agent by file path -> needs PYTHONPATH=. (package properly in D3); needs google-adk[eval].
+
 ## 2026-11-05 D1.5 injection_trials: prompt-only vs governance (n=5, eu; summary rebuilt from per-run log)
 | variant | ext. attempted | unrequested drafts | budget blocks | runaways >240 s | calls/run | benign |
 |---|---|---|---|---|---|---|
