@@ -1,6 +1,15 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-06 D2.1 core eval run 2 (after SKU fix)
+- 10/10 PASSED; cat_price 5 -> 2 calls, 16.7 -> 6.6 s, 8.3k -> 3.5k tokens. All cases within call budget.
+- Latency blow-up with identical behaviour: 5 cases 46-417 s, ~100% model_seconds (tools <0.7 s), calls/tokens unchanged.
+  adk eval runs parallelism=4 (default, no CLI flag) -> up to ~16 concurrent thinking requests on `eu`. 332-417 s fits
+  repeated 60 s per-attempt timeouts + retries. Hypotheses: eu tail (seen in D1) vs concurrency throttling. Not yet
+  separated -> A/B on global + per-call spans in D2.2.
+- Gate design fix: wall-clock removed from the CI gate (flaky: mixes behaviour with infra variance). Hard gate = calls
+  per case; time = SLOW signal, judged as p95 vs SLO over runs.
+
 ## 2026-11-06 D2.1 ADK-native core eval, first run (10 cases, n=1, eu)
 - 10/10 PASSED: trajectory IN_ORDER/ignore_args 1.0 everywhere (provenance case called catalog_lookup), hallucinations_v1
   1.0 everywhere, response_match 0.36-0.74 (informational: weak signal, wording-dependent).
