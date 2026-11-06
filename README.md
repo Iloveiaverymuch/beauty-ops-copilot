@@ -39,7 +39,9 @@ Policy runs before approval on purpose: nobody is asked to approve something the
 | `copilot/m365_agent.py` | M365 agent; separate read/write toolsets; `naive` / `hardened` prompt variants |
 | `copilot/catalog_agent.py`, `copilot/tools/catalog.py` | Catalog agent + tools (constraints as params, near-miss hint) |
 | `copilot/governance.py` | `GovernancePlugin` + `POLICY` (modes: `off` / `shadow` / `enforce`) |
-| `copilot/model.py` | Gemini client: model id, timeout, retry policy |
+| `copilot/model.py` | Gemini client: model id, timeout, retry policy; thinking level |
+| `copilot/observability.py` | Telemetry setup: Cloud Trace / OTLP (New Relic) by env, content elided by default |
+| `evals/obs_report.py`, `evals/LATENCY.md` | p50/p95 + tokens + cache-hit report across adk eval runs; A/B log |
 | `m365_mcp/server.py`, `m365_mcp/data/` | Mock M365 MCP server; 11 mails incl. attacks `msg-005` (SYSTEM marker), `msg-009` (lookalike BEC), `msg-010` (internal authority, external target), `msg-011` (internal relay); Confidential `file-001` |
 | `m365_only/` | Second `adk web` app: the M365 agent alone |
 | `scripts/harness.py` | Runs one turn, answers approval pauses (simulated user), records calls/blocks/writes/errors |
@@ -89,6 +91,18 @@ uv run python evals/check_eval_budgets.py                               # effici
 M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env pytest evals/test_eval_core.py -q -s   # same, 3 runs (CI gate)
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance enforce     # safety + utility
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys
+
+# D2.2 observability
+TELEMETRY=gcp uv run --env-file copilot/.env adk web          # spans -> Cloud Trace (console: Trace Explorer)
+uv run python evals/obs_report.py --since <unix_ts> --label "<config>"   # p50/p95, model share, tokens, cache hits
+```
+
+New Relic (no code; ADK adds an OTLP exporter from standard env vars):
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
+export OTEL_EXPORTER_OTLP_HEADERS="api-key=<NEW_RELIC_LICENSE_KEY>"
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 ```
 
 ## Configuration (`copilot/.env`)
@@ -105,6 +119,10 @@ uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance o
 | `M365_CONFIRM_WRITES` | `1` | Native human approval on `create_draft` |
 | `GOVERNANCE` | `enforce` | `off` / `shadow` (log decisions, block nothing) / `enforce` |
 | `GOV_AUDIT_FILE` | unset | Also write audit JSON lines to a file (always logged to `governance.audit`) |
+| `TELEMETRY` | `off` | `gcp` = ADK spans to Cloud Trace + GenAI metrics to Cloud Monitoring |
+| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `false` | Prompts/responses in telemetry; `false` = `<elided>` (M365 content stays out of traces) |
+| `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default |
+| `CONTEXT_CACHE` | `0` | `1` = per-agent Gemini context cache (`CONTEXT_CACHE_MIN_TOKENS`, default 2048) |
 
 ## Governance policy (`copilot/governance.py`)
 

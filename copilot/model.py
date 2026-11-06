@@ -21,3 +21,13 @@ def build_model() -> Gemini:
         ),
         client_kwargs={"http_options": types.HttpOptions(timeout=int(timeout_s * 1000))},  # ms
     )
+
+
+def build_generate_config() -> types.GenerateContentConfig | None:
+    """THINKING_LEVEL=MINIMAL|LOW|MEDIUM|HIGH (Gemini 3). Unset = model default.
+    Why: D2.1 showed model time = 95-99% of latency and reasoning tokens > answer tokens; thinking is the lever."""
+    level = os.getenv("THINKING_LEVEL")
+    if not level:
+        return None
+    return types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel[level.upper()]))

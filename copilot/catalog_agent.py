@@ -2,7 +2,7 @@ import os
 
 from google.adk.agents import Agent
 
-from copilot.model import build_model
+from copilot.model import build_generate_config, build_model
 
 from copilot.tools.catalog import get_campaign, search_products
 
@@ -22,6 +22,7 @@ def build_catalog_agent(name: str = "catalog_agent") -> Agent:
     return Agent(
         name=name,
         model=build_model(),
+        generate_content_config=build_generate_config(),
         # `description` is what a PARENT (router or AgentTool caller) reads to decide. `instruction` is what THIS agent obeys.
         description=DESCRIPTION,
         instruction=INSTRUCTION,

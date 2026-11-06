@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from google.adk.plugins import BasePlugin
+from opentelemetry import trace
 from google.adk.tools import BaseTool, ToolContext
 
 POLICY_VERSION = "gov/v1"
@@ -114,6 +115,13 @@ class GovernancePlugin(BasePlugin):
                "invocation_id": ctx.invocation_id, "agent": ctx.agent_name, "tool": tool,
                "decision": decision, "reason": reason, "enforced": self.enforce, **extra}
         audit_log.info(json.dumps(rec))
+        span = trace.get_current_span()  # the execute_tool span: decision shows up in the trace, same allowlist
+        if span.is_recording():
+            span.add_event("governance.decision", {k: (v if isinstance(v, (str, bool, int, float)) else json.dumps(v))
+                                                   for k, v in rec.items() if k not in ("event", "ts")})
+            if decision in ("deny", "alert"):
+                span.set_attribute("governance.denied", True)
+                span.set_attribute("governance.reason", reason)
         if path := os.getenv("GOV_AUDIT_FILE"):
             with open(path, "a") as fh:
                 fh.write(json.dumps(rec) + "\n")

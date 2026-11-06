@@ -9,14 +9,15 @@ Rule of thumb: transfer = "you take over the conversation"; AgentTool = "do this
 import os
 
 from google.adk.agents import Agent
-
-from copilot.model import build_model
+from google.adk.agents.context_cache_config import ContextCacheConfig
 from google.adk.apps import App
 from google.adk.tools import AgentTool
 
 from copilot.catalog_agent import build_catalog_agent
 from copilot.governance import GovernancePlugin
 from copilot.m365_agent import build_m365_agent, build_m365_toolsets
+from copilot.model import build_generate_config, build_model
+from copilot.observability import setup_telemetry
 
 _ROUTER_RULES = {
     "transfer": (
@@ -33,6 +34,18 @@ _ROUTER_RULES = {
 }
 
 
+setup_telemetry()  # before any agent runs; no-op unless TELEMETRY / OTEL_EXPORTER_OTLP_* are set
+
+
+def _cache_config() -> ContextCacheConfig | None:
+    """CONTEXT_CACHE=1: per-agent Gemini context cache (ADK warned: every transfer re-sends the prompt uncached).
+    min_tokens avoids caching tiny prefixes (caching has a storage cost and a minimum size)."""
+    if os.getenv("CONTEXT_CACHE", "0") != "1":
+        return None
+    return ContextCacheConfig(min_tokens=int(os.getenv("CONTEXT_CACHE_MIN_TOKENS", "2048")), ttl_seconds=1800,
+                              cache_intervals=10)
+
+
 def build_root(mode: str | None = None, toolset=None) -> Agent:
     mode = mode or os.getenv("ROUTER_MODE", "agenttool")
     # include_plugins=True (default): the governance plugin also runs inside the nested catalog run
@@ -40,6 +53,7 @@ def build_root(mode: str | None = None, toolset=None) -> Agent:
     return Agent(
         name="copilot",
         model=build_model(),
+        generate_content_config=build_generate_config(),
         description="Beauty Ops Copilot router.",
         instruction=_ROUTER_RULES[mode],
         sub_agents=[
@@ -54,8 +68,9 @@ def build_app(mode: str | None = None, toolset=None, governance: bool | None = N
     if governance is None:
         governance = os.getenv("GOVERNANCE", "enforce")
     plugins = [] if governance in (False, "off") else [GovernancePlugin(enforce=governance not in ("shadow",))]
-    return App(name="copilot", root_agent=build_root(mode, toolset), plugins=plugins)
+    return App(name="copilot", root_agent=build_root(mode, toolset), plugins=plugins,
+               context_cache_config=_cache_config())
 
 
 root_agent = build_root()
-app = App(name="copilot", root_agent=root_agent, plugins=build_app().plugins)
+app = App(name="copilot", root_agent=root_agent, plugins=build_app().plugins, context_cache_config=_cache_config())

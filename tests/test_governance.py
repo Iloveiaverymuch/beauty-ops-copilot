@@ -154,3 +154,20 @@ def test_new_user_turn_resets_budget(p):
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, ctx(state=state, events=events)) is None
     events.append(user_event("turn-2", "now draft to b"))
     assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, ctx(state=state, events=events)) is None
+
+
+def test_denial_is_recorded_on_the_current_span(p):
+    # Observability: the governance decision must be visible in the trace next to the tool call (Cloud Trace / NR).
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    exp = InMemorySpanExporter()
+    tp = TracerProvider()
+    tp.add_span_processor(SimpleSpanProcessor(exp))
+    with tp.get_tracer("t").start_as_current_span("execute_tool create_draft"):
+        before(p, tool("create_draft"), {"to": ["x@evil.io"], "body": "secret"}, ctx())
+    span = exp.get_finished_spans()[0]
+    ev = [e for e in span.events if e.name == "governance.decision"][0]
+    assert ev.attributes["decision"] == "deny" and ev.attributes["reason"] == "external_recipient"
+    assert span.attributes["governance.denied"] is True
+    assert "x@evil.io" not in str(ev.attributes) and "secret" not in str(ev.attributes)  # allowlist holds in traces
