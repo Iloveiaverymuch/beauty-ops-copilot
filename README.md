@@ -51,7 +51,8 @@ Policy runs before approval on purpose: nobody is asked to approve something the
 | `evals/build_evalset.py`, `evals/core/` | ADK-native evalset (10 cases) + criteria: trajectory IN_ORDER/ignore_args, hallucinations_v1 judge, response match |
 | `evals/test_eval_core.py` | Same evalset as a pytest via `AgentEvaluator` (num_runs=3): the CI gate |
 | `scripts/eval_suite.py` | Safety/utility suite: 4 attacks (marker, lookalike BEC, internal authority, internal relay) + 2 benign; pass^n, attempted vs blocked |
-| `tests/` | 31 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
+| `tests/test_eval_checks.py` | Tests for the eval predicates themselves, on real agent outputs |
+| `tests/` | 35 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
 | `evals/FINDINGS.md` | Run log, newest first: setup -> numbers -> interpretation -> action |
 
 ## Setup (Mac)
@@ -70,7 +71,7 @@ Required APIs: aiplatform, run, cloudbuild, artifactregistry, secretmanager, clo
 ## Run
 
 ```bash
-uv run pytest -q                                   # 31 offline tests, no LLM, no server
+uv run pytest -q                                   # 35 offline tests, no LLM, no server
 uv run python -m m365_mcp.server                   # terminal 2: http://127.0.0.1:8080/mcp
 uv run adk web                                     # http://127.0.0.1:8000 -> "copilot" or "m365_only"
 
@@ -99,7 +100,7 @@ uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance o
 | `MODEL` | `gemini-3.8-flash` | Verify with `probe_models.py`: a model listed in the catalog isn't necessarily callable |
 | `MODEL_TIMEOUT_S` / `MODEL_RETRY_ATTEMPTS` | `60` / `3` | Per-attempt timeout; retries on 408/429/5xx |
 | `ROUTER_MODE` | `agenttool` | `transfer` kept for the D1.4 comparison |
-| `M365_PROMPT` | `hardened` | `naive` for baselines |
+| `M365_PROMPT` | `hardened` | `hardened_v2` = recommended (scoped caution, data minimization, no commitments); `naive` for baselines |
 | `M365_MCP_URL` / `M365_MCP_TOKEN` | `http://127.0.0.1:8080/mcp` / `dev-agent-token` | `dev-readonly-token` has no `Mail.ReadWrite` |
 | `M365_CONFIRM_WRITES` | `1` | Native human approval on `create_draft` |
 | `GOVERNANCE` | `enforce` | `off` / `shadow` (log decisions, block nothing) / `enforce` |
@@ -156,7 +157,7 @@ Bugs found by measuring, all fixed with regression tests:
 - [x] D1.3 M365 agent + injection baseline (naive vs hardened)
 - [x] D1.4 router: transfer vs AgentTool → AgentTool
 - [x] D1.5 governance plugin + native approval; gov_demo 5/5; 2 race bugs fixed
-- [ ] D2.1 evaluation: `adk eval` set, trajectory checks, harder attacks, over-refusal, groundedness judge
+- [x] D2.1 evaluation: ADK evalset 10/10 + call-budget gate; safety suite (4 attacks, over-refusal, commitment); prompt x governance matrix; hardened_v2 + budget 10
 - [ ] D2.2 observability: Cloud Trace + New Relic OTLP, audit → log metrics, p50/p95, model vs tool time, caching
 - [ ] D2.3 first deploy: 2 Cloud Run services, ID-token S2S auth (manual gcloud; steps become the D3.1 checklist)
 - [ ] D2.4 package: ADR-001, DEMO.md, final eval table
