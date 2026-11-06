@@ -93,8 +93,9 @@ def test_failed_write_releases_reservation(p):
 
 
 def test_tool_call_budget(p):
+    from copilot.governance import POLICY
     c = ctx()
-    for _ in range(6):
+    for _ in range(POLICY["m365_agent"].max_calls):
         assert before(p, tool("search_mail"), {"query": "x"}, c) is None
     assert before(p, tool("search_mail"), {"query": "x"}, c)["reason"] == "tool_budget_exceeded"
 

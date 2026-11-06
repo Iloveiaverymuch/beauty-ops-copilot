@@ -36,7 +36,7 @@ audit_log = logging.getLogger("governance.audit")
 class AgentPolicy:
     allow: frozenset[str]
     writes: frozenset[str] = field(default_factory=frozenset)
-    max_calls: int = 6      # per agent per turn: stops search sprees (D1.4: 9 calls on a vague prompt)
+    max_calls: int = 6      # per agent per turn: stops search sprees; calibrate on legit trajectories, not on attacks
     max_writes: int = 1     # per agent per turn: stops unrequested drafts (D1.3 naive: 1-3 per run)
 
 
@@ -46,7 +46,9 @@ POLICY: dict[str, AgentPolicy] = {
     "m365_agent": AgentPolicy(
         allow=frozenset({"search_mail", "list_events", "search_files", "create_draft",
                          "catalog_lookup", "transfer_to_agent"}),
-        writes=frozenset({"create_draft"}), max_calls=6, max_writes=1),
+        # max_calls calibrated on LEGITIMATE trajectories (D2.1): inbox triage + draft = 7-8 calls (hardened_v2);
+        # 6 (set on D1 to stop a 9-call spree) blocked 2/3 legit runs. 10 = legit p95 + margin; naive sprees still capped.
+        writes=frozenset({"create_draft"}), max_calls=10, max_writes=1),
     "catalog_agent": AgentPolicy(allow=_CATALOG.allow | {"transfer_to_agent"}, max_calls=4),
     "catalog_lookup": _CATALOG,
 }

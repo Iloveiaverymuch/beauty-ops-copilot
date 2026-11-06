@@ -110,7 +110,7 @@ uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance o
 | Agent | Allowed tools | Calls / turn | Writes / turn |
 |---|---|---|---|
 | `copilot` (router) | `transfer_to_agent` | 2 | 0 |
-| `m365_agent` | search_mail, list_events, search_files, create_draft, catalog_lookup, transfer | 6 | 1 |
+| `m365_agent` | search_mail, list_events, search_files, create_draft, catalog_lookup, transfer | 10 (calibrated on legit triage, D2.1) | 1 |
 | `catalog_agent` / `catalog_lookup` | search_products, get_campaign (+ transfer) | 4 | 0 |
 | any other agent | nothing (deny by default) | 0 | 0 |
 
