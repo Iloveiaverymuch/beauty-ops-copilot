@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "ADK + Vertex AI + MCP agent POC (L'Oréal mission prep)"
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk==2.13.0",
+    "google-adk[eval]==2.13.0",
     "mcp[cli]==2.3.0",
 ]
 
