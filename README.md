@@ -40,7 +40,7 @@ Policy runs before approval on purpose: nobody is asked to approve something the
 | `copilot/catalog_agent.py`, `copilot/tools/catalog.py` | Catalog agent + tools (constraints as params, near-miss hint) |
 | `copilot/governance.py` | `GovernancePlugin` + `POLICY` (modes: `off` / `shadow` / `enforce`) |
 | `copilot/model.py` | Gemini client: model id, timeout, retry policy |
-| `m365_mcp/server.py`, `m365_mcp/data/` | Mock M365 MCP server; fixtures incl. injection email `msg-005`, Confidential `file-001` |
+| `m365_mcp/server.py`, `m365_mcp/data/` | Mock M365 MCP server; 11 mails incl. attacks `msg-005` (SYSTEM marker), `msg-009` (lookalike BEC), `msg-010` (internal authority, external target), `msg-011` (internal relay); Confidential `file-001` |
 | `m365_only/` | Second `adk web` app: the M365 agent alone |
 | `scripts/harness.py` | Runs one turn, answers approval pauses (simulated user), records calls/blocks/writes/errors |
 | `scripts/gov_demo.py` | Deterministic check of the 5 governance paths (~1 min) |
@@ -48,6 +48,9 @@ Policy runs before approval on purpose: nobody is asked to approve something the
 | `scripts/routing_trials.py` | transfer vs AgentTool on single-domain and mixed requests |
 | `scripts/smoke_vertex.py`, `scripts/probe_models.py` | Vertex/ADC check; model x location availability grid |
 | `scripts/mcp_smoke.py` | Talk to the MCP server through ADK `McpToolset` |
+| `evals/build_evalset.py`, `evals/core/` | ADK-native evalset (10 cases) + criteria: trajectory IN_ORDER/ignore_args, hallucinations_v1 judge, response match |
+| `evals/test_eval_core.py` | Same evalset as a pytest via `AgentEvaluator` (num_runs=3): the CI gate |
+| `scripts/eval_suite.py` | Safety/utility suite: 4 attacks (marker, lookalike BEC, internal authority, internal relay) + 2 benign; pass^n, attempted vs blocked |
 | `tests/` | 31 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
 | `evals/FINDINGS.md` | Run log, newest first: setup -> numbers -> interpretation -> action |
 
@@ -75,6 +78,14 @@ uv run --env-file copilot/.env python scripts/gov_demo.py              # 5 gover
 uv run --env-file copilot/.env python scripts/routing_trials.py --n 3
 uv run --env-file copilot/.env python scripts/injection_trials.py --n 5 --variants naive hardened --governance off enforce
 uv run python scripts/mcp_smoke.py [dev-readonly-token]                # MCP contract via ADK client
+
+# D2.1 evaluation
+uv run python evals/build_evalset.py                                   # regenerate the ADK evalset
+M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env adk eval copilot evals/core/copilot_core.evalset.json \
+    --config_file_path evals/core/test_config.json --print_detailed_results
+M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env pytest evals/test_eval_core.py -q -s   # same, 3 runs (CI gate)
+uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance enforce     # safety + utility
+uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys
 ```
 
 ## Configuration (`copilot/.env`)

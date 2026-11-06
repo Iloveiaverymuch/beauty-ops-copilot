@@ -1,0 +1,480 @@
+{
+ "eval_set_id": "copilot_core",
+ "name": "copilot core behaviours",
+ "description": "Routing, provenance and tool use; safety lives in scripts/eval_suite.py",
+ "eval_cases": [
+  {
+   "eval_id": "catalog__cat_price",
+   "conversation": [
+    {
+     "invocation_id": "cat_price-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "What's the price of GAR-SER-002?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "GAR-SER-002 (Niacinamide 10% Pore Serum 30ml) costs EUR 11.50."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_products"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "catalog__cat_ingredient",
+   "conversation": [
+    {
+     "invocation_id": "cat_ingredient-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Which Garnier serums contain niacinamide?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "Two Garnier serums contain niacinamide: GAR-SER-001 Vitamin C Brightening Serum (EUR 12.90) and GAR-SER-002 Niacinamide 10% Pore Serum (EUR 11.50)."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_products"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "catalog__cat_budget",
+   "conversation": [
+    {
+     "invocation_id": "cat_budget-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "What's the Q4 Garnier campaign budget?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "The Garnier Glow Q4 campaign (CMP-2026-Q4-GAR) has a budget of EUR 450,000."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "get_campaign"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "m365__m365_calendar",
+   "conversation": [
+    {
+     "invocation_id": "m365_calendar-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "What meetings do I have on Thursday 5 November 2026?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "On Thursday 5 November 2026 you have the Garnier Glow Q4 steerco (evt-001) from 14:00 to 15:00 on Teams."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "list_events"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "m365__m365_files",
+   "conversation": [
+    {
+     "invocation_id": "m365_files-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Find the Retinol Starter brief."
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "The brief is Retinol_Starter_brief_v2.docx on the CeraVe SharePoint site (file-002)."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_files"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "m365__m365_mail",
+   "conversation": [
+    {
+     "invocation_id": "m365_mail-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "What did Karim say about the Sun All Year pharmacy listing?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "Karim (msg-002) said the pharmacy listing for LRP-SPF-001 slips one week to 2026-11-17; the Instagram flight is unchanged."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_mail"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "mixed__mixed_write",
+   "conversation": [
+    {
+     "invocation_id": "mixed_write-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Draft an email to sophie.martin@loreal.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs."
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "I created a draft to sophie.martin@loreal.com with the Garnier Glow Q4 campaign (CMP-2026-Q4-GAR): budget EUR 450,000, channels TikTok and retail media, hero SKUs GAR-SER-001 and GAR-SER-002."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "catalog_lookup"
+       },
+       {
+        "args": {},
+        "name": "create_draft"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "mixed__mixed_read",
+   "conversation": [
+    {
+     "invocation_id": "mixed_read-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Check Sophie's latest email about Garnier and tell me the prices of the hero SKUs she mentions."
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "Sophie's email (msg-001) mentions GAR-SER-001 (EUR 12.90) and GAR-SER-002 (EUR 11.50)."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_mail"
+       },
+       {
+        "args": {},
+        "name": "catalog_lookup"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "mixed__mixed_provenance",
+   "conversation": [
+    {
+     "invocation_id": "mixed_provenance-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Finance mentioned a Garnier Q4 budget in an email. Is it the same as the official campaign budget?"
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "Finance's email (msg-008) asks whether Garnier Glow Q4 stays at EUR 450k or moves to EUR 420k; the official campaign budget (CMP-2026-Q4-GAR) is EUR 450,000, so it matches unless the re-forecast is approved."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "search_mail"
+       },
+       {
+        "args": {},
+        "name": "catalog_lookup"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  },
+  {
+   "eval_id": "write__write_simple",
+   "conversation": [
+    {
+     "invocation_id": "write_simple-1",
+     "user_content": {
+      "parts": [
+       {
+        "text": "Draft an email to sophie.martin@loreal.com saying 'steerco deck coming tonight'."
+       }
+      ],
+      "role": "user"
+     },
+     "final_response": {
+      "parts": [
+       {
+        "text": "I created a draft to sophie.martin@loreal.com saying the steerco deck is coming tonight."
+       }
+      ],
+      "role": "model"
+     },
+     "intermediate_data": {
+      "tool_uses": [
+       {
+        "args": {},
+        "name": "transfer_to_agent"
+       },
+       {
+        "args": {},
+        "name": "create_draft"
+       }
+      ],
+      "tool_responses": [],
+      "intermediate_responses": []
+     },
+     "creation_timestamp": 0.0
+    }
+   ],
+   "session_input": {
+    "app_name": "copilot",
+    "user_id": "eval",
+    "state": {}
+   },
+   "creation_timestamp": 0.0,
+   "final_session_state": {}
+  }
+ ],
+ "creation_timestamp": 0.0
+}
