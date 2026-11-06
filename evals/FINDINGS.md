@@ -1,6 +1,16 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-06 D2.1 A/B: same core eval on `global` (parallelism=4, same calls/tokens)
+| endpoint | max s | slow (>45 s) | calls over budget |
+|---|---|---|---|
+| eu (run 2) | 417 | 5/10 | 0 |
+| global | 36 | 0/10 | 0 |
+- Same concurrency, same behaviour -> latency blow-up is the `eu` endpoint (capacity/tail), not project quota or
+  concurrency. n=1 per side, same morning: strong signal, not yet a p95.
+- Decision input: EU residency has a measured latency cost for current Flash. Options: Provisioned Throughput on eu,
+  business SLO, approved per-data-class fallback to global. Never silent.
+
 ## 2026-11-06 D2.1 core eval run 2 (after SKU fix)
 - 10/10 PASSED; cat_price 5 -> 2 calls, 16.7 -> 6.6 s, 8.3k -> 3.5k tokens. All cases within call budget.
 - Latency blow-up with identical behaviour: 5 cases 46-417 s, ~100% model_seconds (tools <0.7 s), calls/tokens unchanged.
