@@ -1,0 +1,10 @@
+# m365-mcp: mock Microsoft 365 MCP server (streamable HTTP, Google ID-token auth on Cloud Run)
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+WORKDIR /app
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PYTHONUNBUFFERED=1 PYTHONPATH=/app PATH="/app/.venv/bin:$PATH" \
+    HOST=0.0.0.0 MCP_STATELESS=1 MCP_AUTH=google DRAFTS_PATH=/tmp/drafts.jsonl
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+COPY m365_mcp ./m365_mcp
+USER nobody
+CMD ["python", "-m", "m365_mcp.server"]

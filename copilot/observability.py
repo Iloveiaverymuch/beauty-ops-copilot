@@ -74,3 +74,22 @@ def _setup() -> None:
         current.add_span_processor(sp)
     log.warning("telemetry: attached %d span processor(s) to existing provider (gcp=%s, otlp=%s)",
                 len(procs), gcp_ok, has_otlp)
+
+
+def configure_audit_logging() -> None:
+    """On Cloud Run (K_SERVICE set) or LOG_FORMAT=json: the governance audit logger writes ONE pure JSON object per
+    line to stdout. Cloud Run's agent turns that into a structured jsonPayload (+ severity, + trace link), which
+    log-based metrics and alerts can filter on (jsonPayload.decision="deny"). A prefixed text line would be an
+    opaque textPayload."""
+    import sys
+    if not (os.getenv("K_SERVICE") or os.getenv("LOG_FORMAT") == "json"):
+        return
+    audit = logging.getLogger("governance.audit")
+    if any(getattr(h, "_audit_json", False) for h in audit.handlers):
+        return
+    h = logging.StreamHandler(sys.stdout)
+    h.setFormatter(logging.Formatter("%(message)s"))
+    h._audit_json = True
+    audit.addHandler(h)
+    audit.setLevel(logging.INFO)
+    audit.propagate = False

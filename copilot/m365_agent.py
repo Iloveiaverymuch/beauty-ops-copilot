@@ -75,12 +75,36 @@ READ_TOOLS = ["search_mail", "list_events", "search_files"]
 WRITE_TOOLS = ["create_draft"]
 
 
+class GoogleIdTokenHeader:
+    """header_provider for Cloud Run S2S: a Google ID token for the MCP service's audience, from the metadata server
+    (the copilot service account). Cached until 5 min before expiry: fetching per call adds latency and quota."""
+
+    def __init__(self, audience: str):
+        self.audience, self._token, self._exp = audience, None, 0.0
+
+    def __call__(self, ctx=None) -> dict[str, str]:
+        import time
+
+        from google.auth import jwt
+        from google.auth.transport import requests as ga_requests
+        from google.oauth2 import id_token
+        if not self._token or time.time() > self._exp - 300:
+            self._token = id_token.fetch_id_token(ga_requests.Request(), self.audience)
+            self._exp = float(jwt.decode(self._token, verify=False).get("exp", time.time() + 3000))
+        return {"Authorization": f"Bearer {self._token}"}
+
+
+def _auth() -> tuple[dict | None, object | None]:
+    """M365_MCP_AUTH=static (dev bearer) | google (Cloud Run ID token, audience = M365_MCP_AUDIENCE)."""
+    if os.getenv("M365_MCP_AUTH", "static") == "google":
+        return None, GoogleIdTokenHeader(os.environ["M365_MCP_AUDIENCE"])
+    return {"Authorization": f"Bearer {os.getenv('M365_MCP_TOKEN', 'dev-agent-token')}"}, None
+
+
 def _conn() -> StreamableHTTPConnectionParams:
+    headers, _ = _auth()
     return StreamableHTTPConnectionParams(
-        url=os.getenv("M365_MCP_URL", "http://127.0.0.1:8080/mcp"),
-        headers={"Authorization": f"Bearer {os.getenv('M365_MCP_TOKEN', 'dev-agent-token')}"},
-        timeout=10,
-    )
+        url=os.getenv("M365_MCP_URL", "http://127.0.0.1:8080/mcp"), headers=headers, timeout=10)
 
 
 def build_m365_toolsets(confirm_writes: bool | None = None) -> list[McpToolset]:
@@ -88,9 +112,11 @@ def build_m365_toolsets(confirm_writes: bool | None = None) -> list[McpToolset]:
     tool_filter = client-side allowlist: tools added to the server later are NOT exposed."""
     if confirm_writes is None:
         confirm_writes = os.getenv("M365_CONFIRM_WRITES", "1") == "1"
+    _, header_provider = _auth()
     return [
-        McpToolset(connection_params=_conn(), tool_filter=READ_TOOLS),
-        McpToolset(connection_params=_conn(), tool_filter=WRITE_TOOLS, require_confirmation=confirm_writes),
+        McpToolset(connection_params=_conn(), tool_filter=READ_TOOLS, header_provider=header_provider),
+        McpToolset(connection_params=_conn(), tool_filter=WRITE_TOOLS, require_confirmation=confirm_writes,
+                   header_provider=header_provider),
     ]
 
 

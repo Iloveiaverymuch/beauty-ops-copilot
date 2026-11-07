@@ -1,0 +1,16 @@
+# Builds both images in Cloud Build and pushes them to Artifact Registry.
+# gcloud builds submit --config deploy/cloudbuild.yaml --substitutions=_REGION=europe-west1,_TAG=$(git rev-parse --short HEAD)
+substitutions:
+  _REGION: europe-west1
+  _REPO: agents
+  _TAG: dev
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "deploy/Dockerfile.mcp", "-t", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/m365-mcp:${_TAG}", "."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "deploy/Dockerfile.copilot", "-t", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/copilot-api:${_TAG}", "."]
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/m365-mcp:${_TAG}
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/copilot-api:${_TAG}
+options:
+  logging: CLOUD_LOGGING_ONLY

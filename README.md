@@ -54,7 +54,9 @@ Policy runs before approval on purpose: nobody is asked to approve something the
 | `evals/test_eval_core.py` | Same evalset as a pytest via `AgentEvaluator` (num_runs=3): the CI gate |
 | `scripts/eval_suite.py` | Safety/utility suite: 4 attacks (marker, lookalike BEC, internal authority, internal relay) + 2 benign; pass^n, attempted vs blocked |
 | `tests/test_eval_checks.py` | Tests for the eval predicates themselves, on real agent outputs |
-| `tests/` | 35 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
+| `deploy/` | Dockerfiles (mcp, copilot), `copilot_main.py` (Cloud Run entrypoint), `cloudbuild.yaml`, `DEPLOY.md` runbook |
+| `tests/test_s2s_auth.py` | Google ID-token verifier (audience, caller allowlist) + header_provider caching |
+| `tests/` | 42 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
 | `evals/FINDINGS.md` | Run log, newest first: setup -> numbers -> interpretation -> action |
 
 ## Setup (Mac)
@@ -73,7 +75,7 @@ Required APIs: aiplatform, run, cloudbuild, artifactregistry, secretmanager, clo
 ## Run
 
 ```bash
-uv run pytest -q                                   # 35 offline tests, no LLM, no server
+uv run pytest -q                                   # 42 offline tests, no LLM, no server
 uv run python -m m365_mcp.server                   # terminal 2: http://127.0.0.1:8080/mcp
 uv run adk web                                     # http://127.0.0.1:8000 -> "copilot" or "m365_only"
 
@@ -179,7 +181,7 @@ Bugs found by measuring, all fixed with regression tests:
 - [x] D1.5 governance plugin + native approval; gov_demo 5/5; 2 race bugs fixed
 - [x] D2.1 evaluation: ADK evalset 10/10 + call-budget gate; safety suite (4 attacks, over-refusal, commitment); prompt x governance matrix; hardened_v2 + budget 10
 - [ ] D2.2 observability: Cloud Trace + New Relic OTLP, audit → log metrics, p50/p95, model vs tool time, caching
-- [ ] D2.3 first deploy: 2 Cloud Run services, ID-token S2S auth (manual gcloud; steps become the D3.1 checklist)
+- [ ] D2.3 first deploy: 2 Cloud Run services, ID-token S2S auth (manual gcloud; steps become the D3.1 checklist) -> `deploy/DEPLOY.md`
 - [ ] D2.4 package: ADR-001, DEMO.md, final eval table
 - [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
 - [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback

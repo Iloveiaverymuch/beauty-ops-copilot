@@ -1,0 +1,13 @@
+# copilot-api: ADK FastAPI server (API + dev UI) around the copilot App (router, agents, governance plugin)
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+WORKDIR /app
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PYTHONUNBUFFERED=1 PYTHONPATH=/app PATH="/app/.venv/bin:$PATH"
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+# Only the agent package + entrypoint: the agents dir then lists exactly one app ("copilot"). No .env in the image:
+# config comes from Cloud Run env vars (and Secret Manager in D3.1).
+COPY copilot ./copilot
+COPY deploy/copilot_main.py ./main.py
+RUN rm -f copilot/.env copilot/.env.example && rm -rf copilot/.adk
+USER nobody
+CMD ["python", "main.py"]

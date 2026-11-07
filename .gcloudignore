@@ -1,0 +1,15 @@
+# What `gcloud builds submit` uploads (the build context). Keep secrets, venvs and local state out.
+.git/
+.venv/
+**/__pycache__/
+**/.adk/
+**/.env
+.pytest_cache/
+evals/
+scripts/
+tests/
+m365_only/
+m365_mcp/data/drafts.jsonl
+docs/
+*.md
+!deploy/*.md

@@ -17,7 +17,7 @@ from copilot.catalog_agent import build_catalog_agent
 from copilot.governance import GovernancePlugin
 from copilot.m365_agent import build_m365_agent, build_m365_toolsets
 from copilot.model import build_generate_config, build_model
-from copilot.observability import setup_telemetry
+from copilot.observability import configure_audit_logging, setup_telemetry
 
 _ROUTER_RULES = {
     "transfer": (
@@ -35,6 +35,7 @@ _ROUTER_RULES = {
 
 
 setup_telemetry()  # before any agent runs; no-op unless TELEMETRY / OTEL_EXPORTER_OTLP_* are set
+configure_audit_logging()  # Cloud Run: governance audit = pure JSON lines -> structured Cloud Logging entries
 
 
 def _cache_config() -> ContextCacheConfig | None:

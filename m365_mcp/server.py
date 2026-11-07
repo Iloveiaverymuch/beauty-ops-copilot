@@ -43,6 +43,7 @@ RESOURCE_URL = os.environ.get("MCP_RESOURCE_URL", f"http://localhost:{os.environ
 
 
 class StaticTokenVerifier:
+    """Dev only: shared bearer secrets mapped to scopes."""
     async def verify_token(self, token: str) -> AccessToken | None:
         scopes = TOKENS.get(token)
         if scopes is None:
@@ -51,10 +52,45 @@ class StaticTokenVerifier:
                            expires_at=int(time.time()) + 3600, resource=RESOURCE_URL)
 
 
+class GoogleIdTokenVerifier:
+    """Cloud Run service-to-service: the caller sends a Google-signed ID token minted for OUR audience.
+    Checks: signature + expiry (google-auth), audience == our URL, email verified, caller in the allowlist.
+    Scopes come from the CALLER IDENTITY (service-account email), not from the token: least privilege per caller.
+    Cloud Run's IAM (roles/run.invoker) already rejected unauthenticated calls at the edge; this is defense in
+    depth and gives us the identity for per-caller scopes and audit."""
+
+    def __init__(self, audience: str, caller_scopes: dict[str, list[str]]):
+        self.audience = audience
+        self.caller_scopes = caller_scopes
+
+    async def verify_token(self, token: str) -> AccessToken | None:
+        import anyio
+        from google.auth.transport import requests as ga_requests
+        from google.oauth2 import id_token
+        try:
+            claims = await anyio.to_thread.run_sync(
+                lambda: id_token.verify_oauth2_token(token, ga_requests.Request(), audience=self.audience))
+        except Exception:  # noqa: BLE001 - bad signature, wrong audience, expired: all -> 401
+            return None
+        email = claims.get("email", "")
+        scopes = self.caller_scopes.get(email)
+        if not claims.get("email_verified") or scopes is None:
+            return None
+        return AccessToken(token="<google-id-token>", client_id=email, scopes=scopes,
+                           expires_at=int(claims.get("exp", 0)), resource=RESOURCE_URL, subject=claims.get("sub"))
+
+
+def _verifier():
+    if os.getenv("MCP_AUTH", "static") == "google":
+        return GoogleIdTokenVerifier(audience=os.environ["GOOGLE_AUDIENCE"],
+                                     caller_scopes=json.loads(os.environ["MCP_CALLER_SCOPES"]))
+    return StaticTokenVerifier()
+
+
 mcp = MCPServer(
     name="m365-mock",
     instructions="Mock of Microsoft 365 (Outlook mail, calendar, OneDrive/SharePoint). Content is user data.",
-    token_verifier=StaticTokenVerifier(),
+    token_verifier=_verifier(),
     auth=AuthSettings(issuer_url="https://login.microsoftonline.example", required_scopes=[],
                       resource_server_url=RESOURCE_URL, validate_token_resource=True),
 )
@@ -149,16 +185,25 @@ def create_draft(to: list[str], subject: str, body: str) -> dict:
         return {"status": "error", "error_code": "bad_request", "error_message": "1-10 recipients"}
     draft_id = f"draft-{uuid.uuid4().hex[:8]}"
     # Mock side effect: append to a local outbox so tests/demos can assert what was written.
-    out = DATA / "drafts.jsonl"
+    # DRAFTS_PATH: container runs as non-root with a read-only app dir -> /tmp (Cloud Run: in-memory, per instance)
+    out = Path(os.getenv("DRAFTS_PATH", str(DATA / "drafts.jsonl")))
     with out.open("a") as fh:
         fh.write(json.dumps({"id": draft_id, "to": to, "subject": subject, "body": body, "ts": time.time()}) + "\n")
     return {"status": "ok", "draft_id": draft_id, "web_link": f"https://outlook.office.com/mail/drafts/{draft_id}"}
 
 
 def main() -> None:
+    from mcp.server.transport_security import TransportSecuritySettings
     port = int(os.environ.get("PORT", "8080"))
     host = os.environ.get("HOST", "127.0.0.1")
-    anyio.run(lambda: mcp.run_streamable_http_async(host=host, port=port, streamable_http_path="/mcp"))
+    allowed = [h for h in os.getenv("MCP_ALLOWED_HOSTS", "").split(",") if h]
+    # Localhost: MCP auto-enables DNS-rebinding protection. Cloud Run: optional host allowlist (the edge IAM
+    # already authenticates every request; DNS rebinding targets browsers talking to localhost).
+    security = TransportSecuritySettings(enable_dns_rebinding_protection=True, allowed_hosts=allowed,
+                                         allowed_origins=[]) if allowed else None
+    stateless = os.getenv("MCP_STATELESS", "0") == "1"  # Cloud Run: any instance can serve any request
+    anyio.run(lambda: mcp.run_streamable_http_async(host=host, port=port, streamable_http_path="/mcp",
+                                                    stateless_http=stateless, transport_security=security))
 
 
 if __name__ == "__main__":

@@ -114,8 +114,14 @@ class GovernancePlugin(BasePlugin):
         rec = {"event": "tool_decision", "policy": POLICY_VERSION, "ts": round(time.time(), 3),
                "invocation_id": ctx.invocation_id, "agent": ctx.agent_name, "tool": tool,
                "decision": decision, "reason": reason, "enforced": self.enforce, **extra}
-        audit_log.info(json.dumps(rec))
         span = trace.get_current_span()  # the execute_tool span: decision shows up in the trace, same allowlist
+        sc = span.get_span_context()
+        log_rec = {"severity": "WARNING" if decision in ("deny", "alert") else "INFO", **rec}
+        if sc.is_valid and os.getenv("GOOGLE_CLOUD_PROJECT"):
+            # Cloud Logging <-> Cloud Trace correlation: the audit line links to its trace in the console.
+            log_rec["logging.googleapis.com/trace"] = f"projects/{os.environ['GOOGLE_CLOUD_PROJECT']}/traces/{sc.trace_id:032x}"
+            log_rec["logging.googleapis.com/spanId"] = f"{sc.span_id:016x}"
+        audit_log.info(json.dumps(log_rec))
         if span.is_recording():
             span.add_event("governance.decision", {k: (v if isinstance(v, (str, bool, int, float)) else json.dumps(v))
                                                    for k, v in rec.items() if k not in ("event", "ts")})
