@@ -1,6 +1,22 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-07 D2.2 step 2: thinking level & context cache A/B (global, 3 runs x 10 cases each, SEQUENTIAL)
+| config | pass | p50 s | p95 s | reasoning tok (mixed_write / calendar / cat_price) | cached tok |
+|---|---|---|---|---|---|
+| baseline | 29/30 | 14.8 | 70.1 | 773 / 414 / 193 | 0 |
+| thinking=LOW | 29/30 | 23.8 | 109.3 | 86 / 17 / 63 (-80..95%) | 0 |
+| cache=on | 30/30 | 17.9 | 107.2 | ~baseline | 0 |
+- HYPOTHESIS REFUTED: D2.1 suggested thinking was the latency lever. LOW cut reasoning tokens 80-95% and latency did
+  not improve (got worse). Latency is dominated by provider queueing/tail variance, not thinking compute.
+- LOW = cost lever (reasoning billed as output; output/request roughly halved), quality equal on core eval (single
+  failures on different cases = flake). NOT adopted until the safety suite passes under LOW (two-axis rule).
+- Context cache: 0 cached tokens. ADK never caches on first sight (fingerprint first, create on a later matching
+  call, read only after that); eval cases are single-turn sessions with ~2 calls/agent -> created at most on the last
+  call, never read. Valid test, no benefit for this workload. Revisit for multi-turn sessions (D3.3).
+- METHOD FLAW: configs ran sequentially over ~1 h -> time-of-day confounded with config (p95 swings > any config
+  effect). D3.4 must interleave configs run-by-run (review queue #6).
+
 ## 2026-11-07 D2.2 step 1 DONE: governance visible in Cloud Trace
 - Trace 2b088ffed (gmail draft): router 1.3 s -> m365 generate_content 2.7 s -> execute_tool create_draft 696 us with
   governance.denied=true, governance.reason=external_recipient, NO MCP tools/call child (tool never ran) -> model
