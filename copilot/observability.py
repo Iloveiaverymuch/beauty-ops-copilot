@@ -29,7 +29,7 @@ def setup_telemetry() -> None:
     if _done:
         return
     _done = True
-    os.environ.setdefault("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
+    os.environ.setdefault("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "NO_CONTENT")  # off for BOTH ADK (only 1/true = on) and the GenAI instrumentor (enum)
     try:
         _setup()
     except Exception:  # noqa: BLE001

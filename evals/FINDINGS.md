@@ -1,6 +1,15 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-07 D2.2 traces live in Cloud Trace (adk web --otel_to_cloud)
+- First real trace (GAR-SER-002): invoke_workflow 35.3 s = router generate_content 2.2 s + catalog_agent 33.0 s, of
+  which ONE generate_content = 28.3 s (80% of the request), answer call 4.7 s, tool in ms. The latency tail is now
+  attributable to a single model call in a trace, not just inferred from totals.
+- Metrics export 400 (traces OK): Cloud Monitoring API not enabled in H0 (enabled trace/telemetry/logging only).
+- Same env var, two conventions: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT is true/false for ADK and an enum
+  (NO_CONTENT|SPAN_ONLY|EVENT_ONLY|SPAN_AND_EVENT) for the GenAI instrumentor. NO_CONTENT = off for both.
+- Needed google-adk[otel] (GenAI SDK instrumentation) + opentelemetry-resourcedetector-gcp (Cloud Run attrs).
+
 ## 2026-11-07 D2.2 bug 2: spans exported but HTTP 400 from telemetry.googleapis.com
 - Cause: Google's Telemetry API (OTLP) requires resource attribute gcp.project_id. We attached our exporter to
   adk web's pre-existing provider, whose resource has none; a provider's resource is immutable -> 400 on every batch.

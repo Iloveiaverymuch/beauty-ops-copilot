@@ -121,7 +121,7 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 | `GOVERNANCE` | `enforce` | `off` / `shadow` (log decisions, block nothing) / `enforce` |
 | `GOV_AUDIT_FILE` | unset | Also write audit JSON lines to a file (always logged to `governance.audit`) |
 | `TELEMETRY` | `off` | `gcp` = ADK spans to Cloud Trace + GenAI metrics to Cloud Monitoring |
-| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `false` | Prompts/responses in telemetry; `false` = `<elided>` (M365 content stays out of traces) |
+| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `NO_CONTENT` | Prompts/responses in telemetry. Two libs read it with different conventions (ADK: `true`/`false`; GenAI instrumentor: `NO_CONTENT`/`SPAN_ONLY`/...). `NO_CONTENT` = off for both: M365 content stays out of traces |
 | `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default |
 | `CONTEXT_CACHE` | `0` | `1` = per-agent Gemini context cache (`CONTEXT_CACHE_MIN_TOKENS`, default 2048) |
 
