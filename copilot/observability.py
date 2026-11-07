@@ -29,7 +29,8 @@ def setup_telemetry() -> None:
     if mode == "off" and not has_otlp:
         return
     from google.adk.telemetry.google_cloud import get_gcp_exporters
-    from google.adk.telemetry.setup import maybe_set_otel_providers
+    from google.adk.telemetry.setup import _get_otel_exporters, maybe_set_otel_providers
+    from opentelemetry import trace
     from opentelemetry.sdk.resources import Resource
 
     os.environ.setdefault("OTEL_SERVICE_NAME", "beauty-ops-copilot")
@@ -43,6 +44,17 @@ def setup_telemetry() -> None:
         "deployment.environment": os.getenv("DEPLOY_ENV", "local"),
         "gcp.project_id": os.getenv("GOOGLE_CLOUD_PROJECT", ""),
     })
-    maybe_set_otel_providers(otel_hooks_to_setup=hooks, otel_resource=resource)
-    log.info("telemetry: mode=%s otlp=%s content_capture=%s", mode, has_otlp,
-             os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"])
+    current = trace.get_tracer_provider()
+    if isinstance(current, trace.ProxyTracerProvider):
+        # Nobody set a provider yet (scripts, harness, our own server): let ADK build it with our resource.
+        maybe_set_otel_providers(otel_hooks_to_setup=hooks, otel_resource=resource)
+        how = "new provider"
+    else:
+        # `adk web` / `adk api_server` already installed a TracerProvider for the dev UI BEFORE loading the agent;
+        # maybe_set_otel_providers would be a silent no-op (D2.2 bug: zero spans in Cloud Trace). Attach instead.
+        procs = [sp for h in hooks for sp in h.span_processors] + list(_get_otel_exporters().span_processors)
+        for sp in procs:
+            current.add_span_processor(sp)
+        how = f"attached {len(procs)} span processor(s) to existing provider (metrics: provider kept as is)"
+    log.warning("telemetry: mode=%s otlp=%s content_capture=%s -> %s", mode, has_otlp,
+                os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"], how)

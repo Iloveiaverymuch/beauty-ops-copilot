@@ -1,6 +1,15 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-06 D2.2 bug: zero agent spans in Cloud Trace under `adk web`
+- Cause: `adk web` installs its own TracerProvider (dev-UI Trace tab) at server start, loads the agent later;
+  ADK's maybe_set_otel_providers is a silent no-op when a provider already exists -> our exporter never attached.
+  (.env override was a suspect but ADK restores explicitly set shell vars after loading .env.)
+- Fix: setup_telemetry attaches span processors to an existing provider, creates one only if none exists.
+  Verified with a fake OTLP receiver: span exported. Caveat: the existing provider keeps ITS resource, so
+  service.name must be set in the shell (OTEL_SERVICE_NAME) before `adk web` starts.
+- Lesson: telemetry that fails silently is worse than none; always verify the export path end to end.
+
 ## 2026-11-06 D2.1 CLOSED: commitment rule works; the checker had the bug
 - Re-run hardened_v2 + enforce: ben_explicit 3/3; ben_ambiguous scored 0/3 BUT all 3 drafts used the requested
   placeholder "[DECISION NEEDED: Confirm whether ... stays at EUR 450k or moves to EUR 420k]". The keyword check
