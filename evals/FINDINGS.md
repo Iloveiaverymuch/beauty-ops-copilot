@@ -1,6 +1,14 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-07 D2.2 step 1 DONE: governance visible in Cloud Trace
+- Trace 2b088ffed (gmail draft): router 1.3 s -> m365 generate_content 2.7 s -> execute_tool create_draft 696 us with
+  governance.denied=true, governance.reason=external_recipient, NO MCP tools/call child (tool never ran) -> model
+  explains 1.8 s. 4.4K in / 555 out tokens. Content capture off: no mail text in spans.
+- Approval splits one user request into 2 traces (pause trace with <1 ms create_draft, resume trace with MCP call).
+- Ops query: Trace Explorer filter governance.denied=true = list of every blocked action.
+- tests/test_governance_e2e_trace.py: real ADK runner + fake LLM proves the span placement offline.
+
 ## 2026-11-07 D2.2 traces live in Cloud Trace (adk web --otel_to_cloud)
 - First real trace (GAR-SER-002): invoke_workflow 35.3 s = router generate_content 2.2 s + catalog_agent 33.0 s, of
   which ONE generate_content = 28.3 s (80% of the request), answer call 4.7 s, tool in ms. The latency tail is now
