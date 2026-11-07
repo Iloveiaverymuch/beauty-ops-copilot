@@ -122,7 +122,8 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 | `GOV_AUDIT_FILE` | unset | Also write audit JSON lines to a file (always logged to `governance.audit`) |
 | `TELEMETRY` | `off` | `gcp` = ADK spans to Cloud Trace + GenAI metrics to Cloud Monitoring |
 | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `NO_CONTENT` | Prompts/responses in telemetry. Two libs read it with different conventions (ADK: `true`/`false`; GenAI instrumentor: `NO_CONTENT`/`SPAN_ONLY`/...). `NO_CONTENT` = off for both: M365 content stays out of traces |
-| `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default |
+| `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default (global fallback) |
+| `THINKING_LEVEL_ROUTER` / `_CATALOG` / `_M365` | `LOW` / `LOW` / unset | Per-agent thinking by risk: LOW where there are no writes and no untrusted content; full reasoning for the M365 agent (under LOW it attempted an exfil 2/3, blocked by policy) |
 | `CONTEXT_CACHE` | `0` | `1` = per-agent Gemini context cache (`CONTEXT_CACHE_MIN_TOKENS`, default 2048) |
 
 ## Governance policy (`copilot/governance.py`)

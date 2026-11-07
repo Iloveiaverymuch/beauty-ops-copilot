@@ -23,10 +23,15 @@ def build_model() -> Gemini:
     )
 
 
-def build_generate_config() -> types.GenerateContentConfig | None:
-    """THINKING_LEVEL=MINIMAL|LOW|MEDIUM|HIGH (Gemini 3). Unset = model default.
-    Why: D2.1 showed model time = 95-99% of latency and reasoning tokens > answer tokens; thinking is the lever."""
-    level = os.getenv("THINKING_LEVEL")
+def build_generate_config(role: str | None = None) -> types.GenerateContentConfig | None:
+    """Thinking level per agent ROLE: THINKING_LEVEL_<ROLE> (ROUTER|CATALOG|M365), falling back to THINKING_LEVEL.
+    Values: MINIMAL|LOW|MEDIUM|HIGH (Gemini 3); unset/empty = model default.
+
+    Why per role (D2.2): LOW cut reasoning tokens 80-95% with equal core-eval quality and NO latency gain (latency is
+    provider-dominated), so it's a cost lever. But under LOW the M365 agent started ATTEMPTING the internal-authority
+    exfil (2/3, blocked by policy; 0/3 at default). Low-risk agents (no writes, no untrusted content) get LOW; the
+    agent that reads untrusted mail and can write keeps full reasoning as a defense layer."""
+    level = (os.getenv(f"THINKING_LEVEL_{role.upper()}") if role else None) or os.getenv("THINKING_LEVEL")
     if not level:
         return None
     return types.GenerateContentConfig(

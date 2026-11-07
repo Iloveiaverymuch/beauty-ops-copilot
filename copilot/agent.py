@@ -53,7 +53,7 @@ def build_root(mode: str | None = None, toolset=None) -> Agent:
     return Agent(
         name="copilot",
         model=build_model(),
-        generate_content_config=build_generate_config(),
+        generate_content_config=build_generate_config("router"),
         description="Beauty Ops Copilot router.",
         instruction=_ROUTER_RULES[mode],
         sub_agents=[

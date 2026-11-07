@@ -22,7 +22,7 @@ def build_catalog_agent(name: str = "catalog_agent") -> Agent:
     return Agent(
         name=name,
         model=build_model(),
-        generate_content_config=build_generate_config(),
+        generate_content_config=build_generate_config("catalog"),
         # `description` is what a PARENT (router or AgentTool caller) reads to decide. `instruction` is what THIS agent obeys.
         description=DESCRIPTION,
         instruction=INSTRUCTION,

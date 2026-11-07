@@ -104,7 +104,7 @@ def build_m365_agent(variant: str | None = None, toolset: McpToolset | list | No
     return Agent(
         name="m365_agent",
         model=build_model(),
-        generate_content_config=build_generate_config(),
+        generate_content_config=build_generate_config("m365"),
         description="Reads the user's Outlook mail, calendar and OneDrive/SharePoint files; can create email drafts.",
         instruction=_instruction({"hardened": _HARDENED, "hardened_v2": _HARDENED_V2}.get(variant, _NAIVE)),
         tools=[*(toolset if isinstance(toolset, list) else [toolset] if toolset else build_m365_toolsets()),
