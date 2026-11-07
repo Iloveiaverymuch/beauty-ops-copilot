@@ -1,6 +1,15 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-07 D2.2 bug 2: spans exported but HTTP 400 from telemetry.googleapis.com
+- Cause: Google's Telemetry API (OTLP) requires resource attribute gcp.project_id. We attached our exporter to
+  adk web's pre-existing provider, whose resource has none; a provider's resource is immutable -> 400 on every batch.
+  Plus "MetricReader not registered" spam: metric readers created for a provider we didn't own.
+- Fix: adk web -> native `--otel_to_cloud` (ADK builds the provider with get_gcp_resource incl. gcp.project_id);
+  setup_telemetry only exports to GCP when it owns the provider or the resource has gcp.project_id, else logs a
+  clear error; metrics only when owning the provider; setup wrapped so telemetry failure never breaks the agent.
+- Lessons: (1) know who owns the TracerProvider in your process; (2) telemetry must degrade, never crash the app.
+
 ## 2026-11-06 D2.2 bug: zero agent spans in Cloud Trace under `adk web`
 - Cause: `adk web` installs its own TracerProvider (dev-UI Trace tab) at server start, loads the agent later;
   ADK's maybe_set_otel_providers is a silent no-op when a provider already exists -> our exporter never attached.

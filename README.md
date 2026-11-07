@@ -93,7 +93,8 @@ uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance e
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys
 
 # D2.2 observability
-TELEMETRY=gcp uv run --env-file copilot/.env adk web          # spans -> Cloud Trace (console: Trace Explorer)
+OTEL_SERVICE_NAME=beauty-ops-copilot uv run --env-file copilot/.env adk web --otel_to_cloud   # adk web: native flag
+TELEMETRY=gcp uv run --env-file copilot/.env python scripts/gov_demo.py                    # scripts: our setup
 uv run python evals/obs_report.py --since <unix_ts> --label "<config>"   # p50/p95, model share, tokens, cache hits
 ```
 
