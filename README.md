@@ -180,8 +180,8 @@ Bugs found by measuring, all fixed with regression tests:
 - [x] D1.4 router: transfer vs AgentTool → AgentTool
 - [x] D1.5 governance plugin + native approval; gov_demo 5/5; 2 race bugs fixed
 - [x] D2.1 evaluation: ADK evalset 10/10 + call-budget gate; safety suite (4 attacks, over-refusal, commitment); prompt x governance matrix; hardened_v2 + budget 10
-- [ ] D2.2 observability: Cloud Trace + New Relic OTLP, audit → log metrics, p50/p95, model vs tool time, caching
-- [ ] D2.3 first deploy: 2 Cloud Run services, ID-token S2S auth (manual gcloud; steps become the D3.1 checklist) -> `deploy/DEPLOY.md`
+- [x] D2.2 observability: Cloud Trace (governance on spans, content elided), thinking/cache A/B (latency = provider-bound), per-agent thinking by risk
+- [x] D2.3 first deploy: 2 private Cloud Run services, Google ID-token S2S + per-caller scopes (403 edge / 401 app), structured audit logs + `governance_denies` metric -> `deploy/DEPLOY.md`
 - [ ] D2.4 package: ADR-001, DEMO.md, final eval table
 - [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
 - [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback

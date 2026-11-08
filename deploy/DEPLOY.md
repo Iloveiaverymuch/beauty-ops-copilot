@@ -18,7 +18,11 @@ export MCP_URL=https://m365-mcp-$PROJECT_NUMBER.$REGION.run.app        # Cloud R
 export COPILOT_SA=copilot-sa@$PROJECT.iam.gserviceaccount.com MCP_SA=mcp-sa@$PROJECT.iam.gserviceaccount.com
 export VERTEX_LOCATION=eu      # residency; switch to global if the eu tail hurts the demo (record the decision)
 gcloud config set project $PROJECT
+gcloud config set run/region $REGION    # stops every `gcloud run` command from prompting for a region
+echo "project=$PROJECT number=$PROJECT_NUMBER tag=$TAG mcp=$MCP_URL"   # all must be non-empty
 ```
+`export` lives only in the current terminal: in any NEW terminal, re-run this block first (empty variables were the
+cause of the H0 `.env` and region-prompt surprises).
 
 ## 1. APIs + Artifact Registry
 ```bash
@@ -53,6 +57,8 @@ gcloud builds submit --config deploy/cloudbuild.yaml --substitutions=_REGION=$RE
 gcloud run deploy m365-mcp --image=$REGION-docker.pkg.dev/$PROJECT/$REPO/m365-mcp:$TAG --region=$REGION \
   --service-account=$MCP_SA --no-allow-unauthenticated --max-instances=2 --memory=512Mi \
   --set-env-vars="^|^GOOGLE_AUDIENCE=$MCP_URL|MCP_RESOURCE_URL=$MCP_URL/mcp|MCP_CALLER_SCOPES={\"$COPILOT_SA\": [\"Mail.Read\", \"Calendars.Read\", \"Files.Read.All\", \"Mail.ReadWrite\"]}"
+# Cloud Run gives each service 2 URLs (deterministic https://SVC-PROJECT_NUMBER.REGION.run.app + legacy hash URL);
+# both work. We use the deterministic one everywhere: token audience, GOOGLE_AUDIENCE and M365_MCP_URL must match.
 # only the copilot identity may call it (service-level binding, not project-wide)
 gcloud run services add-iam-policy-binding m365-mcp --region=$REGION \
   --member=serviceAccount:$COPILOT_SA --role=roles/run.invoker
@@ -73,6 +79,8 @@ Only for the IAM-private demo with the dev UI on; in prod set `ADK_WEB=0` and dr
 ```bash
 gcloud run services proxy copilot-api --region=$REGION --port=8000      # then open http://localhost:8000
 # first use installs the cloud-run-proxy component; if it says "binary not installed", just run it again
+# open it in Chrome/Safari (an editor's embedded preview browser can't run the dev UI); hard-refresh if you ran
+# a local `adk web` on the same port before (cached assets)
 ```
 Send the same requests as in D2.2 (mixed draft with approval, then the gmail draft that gets blocked).
 
@@ -80,10 +88,11 @@ Send the same requests as in D2.2 (mixed draft with approval, then the gmail dra
 ```bash
 curl -s -o /dev/null -w "no token        -> %{http_code}\n" -X POST $MCP_URL/mcp                     # edge: 403
 curl -s -o /dev/null -w "your user token -> %{http_code}\n" -X POST $MCP_URL/mcp \
-  -H "Authorization: Bearer $(gcloud auth print-identity-token --audiences=$MCP_URL 2>/dev/null || gcloud auth print-identity-token)" \
+  -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
   -H "content-type: application/json" -H "accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-# Expected: you pass the EDGE (Owner => run.invoker) but the APP returns 401 (your email isn't in MCP_CALLER_SCOPES).
+# Expected (observed 2026-11-08): 403 without token (edge), 401 with your user token: you pass the EDGE
+# (Owner => run.invoker) but the APP rejects you (your email isn't in MCP_CALLER_SCOPES).
 ```
 
 ## 8. Audit log -> Cloud Logging -> metric
@@ -96,6 +105,29 @@ gcloud logging metrics create governance_denies \
 ```
 In the console, open a denied entry and click the trace link (`logging.googleapis.com/trace`): it takes you to the span.
 
+## Redeploy after a code change (no infra change)
+`services update` swaps the image and keeps every other setting (env, SA, limits).
+```bash
+git add -A && git commit -m "..." && export TAG=$(git rev-parse --short HEAD)
+gcloud builds submit --config deploy/cloudbuild.yaml --substitutions=_REGION=$REGION,_REPO=$REPO,_TAG=$TAG
+gcloud run services update m365-mcp    --image=$REGION-docker.pkg.dev/$PROJECT/$REPO/m365-mcp:$TAG
+gcloud run services update copilot-api --image=$REGION-docker.pkg.dev/$PROJECT/$REPO/copilot-api:$TAG \
+  --update-env-vars=SERVICE_VERSION=$TAG
+# config-only change, no rebuild, e.g. the residency/availability switch (record it as a decision):
+# gcloud run services update copilot-api --update-env-vars=GOOGLE_CLOUD_LOCATION=global
+```
+
+## Troubleshooting (all hit on the first deploy, 2026-11-08)
+| Symptom | Cause | Fix |
+|---|---|---|
+| Dev UI blank; logs: JS chunks `403`, CSS `200` | ADK origin-check middleware: browser `Origin: localhost:8000` vs `Host: ...run.app` through the proxy (only CORS-mode JS module requests send `Origin`) | `ALLOW_ORIGINS=http://localhost:8000,http://127.0.0.1:8000` (dev UI only; prod `ADK_WEB=0`) |
+| `POST /run_sse 500`, `PermissionError ... agent.py` | Source files were mode 600; container runs as `nobody` | Dockerfiles `chmod -R a+rX` (readable, not writable by the process); normalize repo file modes |
+| Startup dump `Cloud Resource Manager API has not been used` | ADK telemetry resolves the project number for span labels | Enable `cloudresourcemanager.googleapis.com` (block 1) |
+| `cloud-run-proxy binary not installed` | Component installed during the same command | Run the proxy command again |
+| `gcloud` asks for a region / variables empty | New terminal, block 0 not re-run | Re-run block 0 |
+| Message sent, no answer, no error | Vertex `eu` latency tail (seen up to 417 s) | Wait, or switch `GOOGLE_CLOUD_LOCATION=global` (explicit decision) |
+| MCP `401` in m365-mcp logs | Token audience != `GOOGLE_AUDIENCE`, or caller email not in `MCP_CALLER_SCOPES` | Same deterministic URL on both sides; check the SA email |
+
 ## 9. Cost and teardown
 Both services scale to zero (min-instances=0): no idle cost. Delete everything:
 ```bash
@@ -104,5 +136,8 @@ gcloud artifacts repositories delete $REPO --location=$REGION -q
 ```
 
 ## Manual steps log (input for D3.1 Terraform)
-APIs (6) · AR repo · 2 SAs · 4 project roles copilot-sa · 1 project role mcp-sa · 3 roles build SA ·
-2 Cloud Run services (env, SA, limits, ingress) · 1 service-level run.invoker binding · 1 log-based metric.
+APIs (6, incl. cloudresourcemanager) · AR repo · 2 SAs · 4 project roles copilot-sa · 1 project role mcp-sa ·
+3 roles build SA · 2 Cloud Run services (image, env incl. ALLOW_ORIGINS, SA, limits: copilot max 1 / 1Gi / 600 s,
+mcp max 2 / 512Mi, ingress private) · 1 service-level run.invoker binding · 1 log-based metric (governance_denies).
+Not yet: Secret Manager (no secrets so far: S2S uses ID tokens, no API keys), alert policy on governance_denies,
+persistent sessions (D3.3).
