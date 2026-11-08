@@ -23,7 +23,9 @@ gcloud config set project $PROJECT
 ## 1. APIs + Artifact Registry
 ```bash
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com \
-  monitoring.googleapis.com iamcredentials.googleapis.com
+  monitoring.googleapis.com iamcredentials.googleapis.com cloudresourcemanager.googleapis.com
+# cloudresourcemanager: ADK's otel_to_cloud resolves the project NUMBER for span labels (agent URN); without it a
+# noisy PERMISSION/SERVICE_DISABLED dump at startup (cosmetic, traces still flow).
 gcloud artifacts repositories create $REPO --repository-format=docker --location=$REGION
 ```
 
@@ -62,12 +64,15 @@ gcloud run services add-iam-policy-binding m365-mcp --region=$REGION \
 ```bash
 gcloud run deploy copilot-api --image=$REGION-docker.pkg.dev/$PROJECT/$REPO/copilot-api:$TAG --region=$REGION \
   --service-account=$COPILOT_SA --no-allow-unauthenticated --max-instances=1 --memory=1Gi --cpu=1 --timeout=600 \
-  --set-env-vars="^|^GOOGLE_GENAI_USE_VERTEXAI=TRUE|GOOGLE_CLOUD_PROJECT=$PROJECT|GOOGLE_CLOUD_LOCATION=$VERTEX_LOCATION|MODEL=gemini-3.8-flash|M365_MCP_URL=$MCP_URL/mcp|M365_MCP_AUTH=google|M365_MCP_AUDIENCE=$MCP_URL|M365_PROMPT=hardened_v2|M365_CONFIRM_WRITES=1|GOVERNANCE=enforce|ROUTER_MODE=agenttool|THINKING_LEVEL_ROUTER=LOW|THINKING_LEVEL_CATALOG=LOW|OTEL_SERVICE_NAME=copilot-api|OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT|DEPLOY_ENV=cloudrun|SERVICE_VERSION=$TAG"
+  --set-env-vars="^|^GOOGLE_GENAI_USE_VERTEXAI=TRUE|GOOGLE_CLOUD_PROJECT=$PROJECT|GOOGLE_CLOUD_LOCATION=$VERTEX_LOCATION|MODEL=gemini-3.8-flash|M365_MCP_URL=$MCP_URL/mcp|M365_MCP_AUTH=google|M365_MCP_AUDIENCE=$MCP_URL|M365_PROMPT=hardened_v2|M365_CONFIRM_WRITES=1|GOVERNANCE=enforce|ROUTER_MODE=agenttool|THINKING_LEVEL_ROUTER=LOW|THINKING_LEVEL_CATALOG=LOW|OTEL_SERVICE_NAME=copilot-api|OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT|DEPLOY_ENV=cloudrun|SERVICE_VERSION=$TAG|ALLOW_ORIGINS=http://localhost:8000,http://127.0.0.1:8000"
 ```
+`ALLOW_ORIGINS`: ADK's origin check (CSRF defence) otherwise 403s the dev UI's JS through the proxy (blank page).
+Only for the IAM-private demo with the dev UI on; in prod set `ADK_WEB=0` and drop it.
 
 ## 6. Use it (the proxy adds your identity token; you're Owner so run.invoker is implied)
 ```bash
 gcloud run services proxy copilot-api --region=$REGION --port=8000      # then open http://localhost:8000
+# first use installs the cloud-run-proxy component; if it says "binary not installed", just run it again
 ```
 Send the same requests as in D2.2 (mixed draft with approval, then the gmail draft that gets blocked).
 
@@ -99,5 +104,5 @@ gcloud artifacts repositories delete $REPO --location=$REGION -q
 ```
 
 ## Manual steps log (input for D3.1 Terraform)
-APIs (5) · AR repo · 2 SAs · 4 project roles copilot-sa · 1 project role mcp-sa · 3 roles build SA ·
+APIs (6) · AR repo · 2 SAs · 4 project roles copilot-sa · 1 project role mcp-sa · 3 roles build SA ·
 2 Cloud Run services (env, SA, limits, ingress) · 1 service-level run.invoker binding · 1 log-based metric.
