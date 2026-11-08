@@ -16,16 +16,8 @@ gcloud run services proxy copilot-api --port=8000          # Chrome: http://loca
 - **Check traces export** (they silently didn't on the first deploy, see DEPLOY.md troubleshooting): send the 2:00
   prompt once, take the newest deny's `trace` in Logs Explorer, open it via Trace Explorer → Trace ID.
 - **Fallback:** if live breaks (eu tail, cold start, proxy), switch without apologizing: "here's the same run from
-  this morning". Screenshots in `docs/demo/` (2026-11-08, deployed service), mapped to the script:
-
-| Script step | Screenshot |
-|---|---|
-| 2:00 blocked draft | `01-ui-blocked.png` (policy blocks before any approval prompt) |
-| 1:30 / 2:20 waterfall | `02-trace-waterfall.png` (15 spans, 21.7 s, MCP init ~35% of the turn) |
-| 2:20 denied span | `03-trace-denied-span.png` (`governance.denied=true`, no content) |
-| 2:45 audit line | `04-audit-log.png` (same trace ID as 02/03) |
-| 2:45 metric | `05-metric.png` (counts per 5 min; 5 vs 6 in logs: a log metric never backfills) |
-| 3:10 prompt layer | `06-ui-prompt-refusal.png` (hardened_v2 flags msg-005 with no tool call) |
+  this morning". Screenshots (2026-11-08, deployed service) are in [Fallback screenshots](#fallback-screenshots) at the
+  end of this file, in script order.
 
 ## The script
 
@@ -53,3 +45,36 @@ gcloud run services proxy copilot-api --port=8000          # Chrome: http://loca
 | Data residency / sovereignty? | eu endpoint default, explicit switch; S3NS: Cloud Run/Vertex/Gemini availability lags, GKE + open-weight path, re-run evals | ADR §1, §9 |
 | RAG? | Own store (AlloyDB pgvector / RAG Engine) for shared corporate knowledge; federated retrieval via Graph for M365 (permission trimming) | ADR §3 |
 | Agent Engine vs Cloud Run? | Cloud Run for exporter/middleware control in the POC; Agent Engine for managed sessions/memory, watch forced content capture | ADR §9 |
+
+## Fallback screenshots
+
+### 2:00 Policy blocks the draft before any approval
+![2:00 Policy blocks the draft before any approval](docs/demo/01-ui-blocked.png)
+
+`create_draft` to an external recipient returns `blocked / external_recipient`; no confirmation dialog: policy runs before the human.
+
+### 1:30 / 2:20 The production trace
+![1:30 / 2:20 The production trace](docs/demo/02-trace-waterfall.png)
+
+15 spans, 21.7 s, 4.5K in / 534 out tokens. Model calls ≈ 15 s; MCP initialize ≈ 35% of the turn (cold start + handshake per toolset). `(Missing span ID)` = Cloud Run's own unsampled parent.
+
+### 2:20 The denied span
+![2:20 The denied span](docs/demo/03-trace-denied-span.png)
+
+`governance.denied = true`, `governance.reason = external_recipient` on `execute_tool create_draft`; no prompt or mail content in the attributes.
+
+### 2:45 The audit line, linked to the same trace
+![2:45 The audit line, linked to the same trace](docs/demo/04-audit-log.png)
+
+Structured WARNING in Cloud Logging: reason, policy version, external domain; `trace` = the same ID as the waterfall above.
+
+### 2:45 The metric you alert on
+![2:45 The metric you alert on](docs/demo/05-metric.png)
+
+`governance_denies` per 5 min. Logs show 6 denies, the metric 5: a log-based metric never backfills entries from before it existed.
+
+### 3:10 The prompt layer, for contrast
+![3:10 The prompt layer, for contrast](docs/demo/06-ui-prompt-refusal.png)
+
+hardened_v2 flags the injected msg-005 and makes no tool call. Prompts lower the odds; the policy above is the guarantee.
+
