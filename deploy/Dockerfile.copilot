@@ -8,6 +8,8 @@ RUN uv sync --frozen --no-dev --no-install-project
 # config comes from Cloud Run env vars (and Secret Manager in D3.1).
 COPY copilot ./copilot
 COPY deploy/copilot_main.py ./main.py
-RUN rm -f copilot/.env copilot/.env.example && rm -rf copilot/.adk
+# Readable by the non-root runtime user, NOT owned by it (code must not be writable by the process).
+# Never trust the build context's permission bits (D2.3: files arrived as 600 -> PermissionError on import).
+RUN rm -f copilot/.env copilot/.env.example && rm -rf copilot/.adk && chmod -R a+rX /app/copilot /app/main.py
 USER nobody
 CMD ["python", "main.py"]

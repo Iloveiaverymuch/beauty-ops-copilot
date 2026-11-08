@@ -6,5 +6,7 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PYTHONUNBUFFERED=1 PYTHONPATH=/app P
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY m365_mcp ./m365_mcp
+# readable by the non-root runtime user, not owned by it; don't trust build-context permission bits
+RUN chmod -R a+rX /app/m365_mcp
 USER nobody
 CMD ["python", "-m", "m365_mcp.server"]
