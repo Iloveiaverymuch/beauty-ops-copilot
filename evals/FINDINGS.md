@@ -1,6 +1,20 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-08 D2.4: traces missing on Cloud Run (5th "works locally, fails in the container")
+- Symptom: audit log carried trace/spanId, Cloud Trace said "Trace not found"; only short FastAPI spans visible;
+  zero exporter errors.
+- Wrong first hypothesis: CPU throttling starving the BatchSpanProcessor. --no-cpu-throttling changed nothing.
+- Root cause: Cloud Run's front end sends traceparent with sampled=0 on most requests; ADK's TracerProvider uses the
+  default parentbased_always_on sampler -> every agent span non-recording (valid IDs, never exported, no error).
+  Locally there is no header, so each request is a sampled root span (why D2.2 worked).
+- Fix: OTEL_TRACES_SAMPLER=always_on (env only). Proof: full waterfall (15 spans, 21.7 s, 4.5K in / 534 out tokens);
+  root shows "(Missing span ID ...)" = Cloud Run's own unsampled parent.
+- New numbers from the first prod trace: MCP initialize 5.4 s + 2.1 s (two toolsets, m365-mcp cold start + ID token)
+  = ~35% of the turn; model calls 5.5 + 6.8 + 2.9 s. -> D3.3/D3.4: MCP min-instances or connection reuse.
+- Side bug: dev server writes ~/.adk as nobody (home /nonexistent) -> HOME=/tmp.
+- Lesson: check spans are RECORDING, not just that they have IDs; the platform in front makes sampling decisions.
+
 ## 2026-11-08 D2.3 DONE: first deploy on Cloud Run (europe-west1), both services private
 - Chain works end to end: proxy (user identity) -> copilot-api (copilot-sa) -> Vertex + Google ID token ->
   m365-mcp (private) -> scope check -> draft. Governance enforced in prod.

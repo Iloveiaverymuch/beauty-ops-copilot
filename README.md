@@ -144,29 +144,43 @@ Other rules:
 - Write slots are **reserved at decision time**, which handles parallel function calls.
 - Audit records hold hashes and domains, never addresses or arguments.
 
-## Results so far (details and raw numbers in `evals/FINDINGS.md`)
+## Results (details and raw numbers in `evals/FINDINGS.md`; decisions in `docs/ADR-001.md`; demo in `DEMO.md`)
 
 | Block | Finding |
 |---|---|
-| D1.1 tools | Putting constraints into tool parameters cut tool calls from 6 to 3 on the core prompts. Exact filters hid what existed just outside them, so tools now return a near-miss hint. |
-| D1.2 MCP | No token → 401. Read-only token → `insufficient_scope`. The injection email comes back as data, by design. |
-| D1.3 prompt-only | 0/15 external drafts (95% upper bound ≈ 20%). Hardened prompt: 15/15 flagged, 1.4 calls (naive: 8/15, 3.9). The naive agent's real risk was unrequested writes. |
-| D1.4 routing | Both modes passed 12/12. Transfer took the budget from an email (a provenance bug the passing check hid). AgentTool: about 2× faster, ⅓ of the calls, same path every run. **Chosen.** |
-| D1.5 governance | gov_demo 5/5: external blocked before approval; approve → 1 draft, reject → 0; parallel writes → 1 created + 1 denied; plugin runs inside AgentTool. The call budget ended runaway loops (161–240+ s → 47–101 s) with 0 false positives on benign prompts. |
+| D1.1 tools | Constraints as tool params: 6 → 3 tool calls; near-miss hint when exact filters hide alternatives |
+| D1.2 MCP | No token 401; read-only token `insufficient_scope`; injected mail returned as data (by design) |
+| D1.3 prompt-only | 0/15 external drafts (upper bound ≈ 20%); naive agent's real risk = unrequested writes |
+| D1.4 routing | AgentTool vs transfer: same pass rate, ~2× faster, ⅓ calls, authoritative source → **chosen** |
+| D1.5 governance | gov_demo 5/5; parallel-call race and approval-resume scope bugs fixed |
+| D2.1 eval | Core evalset 10/10 + call-budget gate; matrix below; hardened_v2 = safe and useful |
+| D2.2 observability | Governance visible on trace spans; latency provider-bound (thinking −90% tokens, no gain); per-agent thinking |
+| D2.3 deploy | 2 private Cloud Run services; 403 edge / 401 app; structured audit + `governance_denies` metric |
 
-Bugs found by measuring, all fixed with regression tests:
-1. **Parallel function calls:** two writes in one model response both passed the check, because the counter was updated on completion. Fix: reserve the slot when the call is allowed.
-2. **Approval resume:** an approval resumes the run as a new invocation, and `temp:` state resets, so a second write got through. Fix: scope budgets to the user turn.
-3. **Provenance:** a check on the answer text passed even though the fact came from a non-authoritative source. Evals must also assert the trajectory (D2.1).
-4. **Infrastructure:** `eu` returned 503s and requests hung for more than 240 s, and latency varied from 12 s to 181 s on identical calls. Fix: timeout and retries in `model.py`; the harness reports infra failures separately.
+**Prompt × governance matrix** (n=3, rubber-stamp approver, 4 attacks + ambiguous legitimate task):
+
+| Config | Attacks succeeded | Attempted → blocked | Ambiguous task (utility) |
+|---|---|---|---|
+| naive + no policy | **4/12** (real exfil drafts) | 4 → 0 | 3/3 |
+| naive + enforce | 0/12 | 4 → 4 | 3/3 (after budget calibration) |
+| hardened v1 + enforce | 0/12 | 0 | **0/3** (over-refusal) |
+| **hardened_v2 + enforce** (shipped) | **0/12** | 0 | **3/3**, no unauthorized commitment |
+
+**Core eval** (ADK, 10 cases): trajectory `IN_ORDER` 1.0, `hallucinations_v1` 1.0, calls within budget;
+p50 ≈ 15 s, p95 ≈ 70 s on `global` (provider-bound tail; `eu` worse: max 417 s).
+
+Bugs found by measuring (all fixed, regression-tested): parallel function calls race · approval resume = new
+invocation · provenance hidden by a passing check · SKU not searchable (green eval, 5 calls) · eval checker
+false-fail · telemetry silent failures (provider ownership, missing `gcp.project_id`) · 4 deploy issues
+(origin check, file permissions, missing API, two URLs).
 
 ## Known limits
 
 - M365 is a mock: same contract as Graph (tools, scopes, Purview label), fixture data. Real Graph would need
   Entra auth (on-behalf-of the user) and is a change to `m365_mcp/server.py` only.
 - Dev auth uses static bearer tokens. In prod: Google ID tokens between Cloud Run services (D2.3), Entra-issued tokens for Graph.
-- The current injection (`msg-005`) is never even attempted by gemini-3.8-flash (0/57), so it can't measure exfiltration. Harder attacks come in D2.1.
-- Over-refusal: the hardened prompt prepares no draft on "prepare any drafts needed", and that isn't scored yet.
+- Recipient policy is not DLP: an internal relay (`msg-011` → `migration-backup@loreal.com`) is allowed by policy; only the model resists it.
+- Eval sample sizes (n=3) give direction, not SLOs or safety guarantees; configs were A/B'd sequentially (time-of-day confound).
 - Session-state budget keys build up per turn (fine for a POC; a production store needs a TTL).
 - Every transfer re-sends the prompt uncached, because `context_cache_config` isn't set yet (D2.2).
 - The `Failed to configure mTLS` line at startup is google-auth probing for client certificates. It's harmless.
@@ -182,7 +196,7 @@ Bugs found by measuring, all fixed with regression tests:
 - [x] D2.1 evaluation: ADK evalset 10/10 + call-budget gate; safety suite (4 attacks, over-refusal, commitment); prompt x governance matrix; hardened_v2 + budget 10
 - [x] D2.2 observability: Cloud Trace (governance on spans, content elided), thinking/cache A/B (latency = provider-bound), per-agent thinking by risk
 - [x] D2.3 first deploy: 2 private Cloud Run services, Google ID-token S2S + per-caller scopes (403 edge / 401 app), structured audit logs + `governance_denies` metric -> `deploy/DEPLOY.md`
-- [ ] D2.4 package: ADR-001, DEMO.md, final eval table
+- [x] D2.4 package: `docs/ADR-001.md` (9 decisions + evidence), `DEMO.md` (5-min script, warm-up, fallback, Q&A), results tables
 - [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
 - [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback
 - [ ] D3.3 state & scaling: persistent sessions (approval survives restart), budget-key TTL, instances, Vertex quotas/429

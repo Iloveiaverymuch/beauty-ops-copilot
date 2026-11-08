@@ -69,9 +69,14 @@ gcloud run services add-iam-policy-binding m365-mcp --region=$REGION \
 `timeout=600`: agent turns plus SSE can be long (we've measured 100 s+ tails).
 ```bash
 gcloud run deploy copilot-api --image=$REGION-docker.pkg.dev/$PROJECT/$REPO/copilot-api:$TAG --region=$REGION \
-  --service-account=$COPILOT_SA --no-allow-unauthenticated --max-instances=1 --memory=1Gi --cpu=1 --timeout=600 \
-  --set-env-vars="^|^GOOGLE_GENAI_USE_VERTEXAI=TRUE|GOOGLE_CLOUD_PROJECT=$PROJECT|GOOGLE_CLOUD_LOCATION=$VERTEX_LOCATION|MODEL=gemini-3.8-flash|M365_MCP_URL=$MCP_URL/mcp|M365_MCP_AUTH=google|M365_MCP_AUDIENCE=$MCP_URL|M365_PROMPT=hardened_v2|M365_CONFIRM_WRITES=1|GOVERNANCE=enforce|ROUTER_MODE=agenttool|THINKING_LEVEL_ROUTER=LOW|THINKING_LEVEL_CATALOG=LOW|OTEL_SERVICE_NAME=copilot-api|OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT|DEPLOY_ENV=cloudrun|SERVICE_VERSION=$TAG|ALLOW_ORIGINS=http://localhost:8000,http://127.0.0.1:8000"
+  --service-account=$COPILOT_SA --no-allow-unauthenticated --max-instances=1 --memory=1Gi --cpu=1 --timeout=600 --no-cpu-throttling \
+  --set-env-vars="^|^GOOGLE_GENAI_USE_VERTEXAI=TRUE|GOOGLE_CLOUD_PROJECT=$PROJECT|GOOGLE_CLOUD_LOCATION=$VERTEX_LOCATION|MODEL=gemini-3.8-flash|M365_MCP_URL=$MCP_URL/mcp|M365_MCP_AUTH=google|M365_MCP_AUDIENCE=$MCP_URL|M365_PROMPT=hardened_v2|M365_CONFIRM_WRITES=1|GOVERNANCE=enforce|ROUTER_MODE=agenttool|THINKING_LEVEL_ROUTER=LOW|THINKING_LEVEL_CATALOG=LOW|OTEL_SERVICE_NAME=copilot-api|OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT|DEPLOY_ENV=cloudrun|SERVICE_VERSION=$TAG|ALLOW_ORIGINS=http://localhost:8000,http://127.0.0.1:8000|OTEL_TRACES_SAMPLER=always_on|HOME=/tmp"
 ```
+`OTEL_TRACES_SAMPLER=always_on`: Cloud Run's front end sends `traceparent` with sampled=0 on most requests; the default
+parent-based sampler inherits it, so agent spans get IDs but are never recorded/exported. At scale: ratio sampling
+(not parent-based) or tail sampling in a collector (keep errors + denies).
+`HOME=/tmp`: the image runs as `nobody` (home `/nonexistent`); the ADK dev server writes `~/.adk/`.
+`--no-cpu-throttling`: CPU stays on outside requests so the BatchSpanProcessor can flush (idle cost; revisit in D3.4).
 `ALLOW_ORIGINS`: ADK's origin check (CSRF defence) otherwise 403s the dev UI's JS through the proxy (blank page).
 Only for the IAM-private demo with the dev UI on; in prod set `ADK_WEB=0` and drop it.
 
@@ -126,6 +131,8 @@ gcloud run services update copilot-api --image=$REGION-docker.pkg.dev/$PROJECT/$
 | `cloud-run-proxy binary not installed` | Component installed during the same command | Run the proxy command again |
 | `gcloud` asks for a region / variables empty | New terminal, block 0 not re-run | Re-run block 0 |
 | Message sent, no answer, no error | Vertex `eu` latency tail (seen up to 417 s) | Wait, or switch `GOOGLE_CLOUD_LOCATION=global` (explicit decision) |
+| Audit log has `trace`/`spanId` but Trace says `Trace not found`; no export errors | Cloud Run `traceparent` sampled=0 + default `parentbased_always_on`: spans non-recording (IDs exist, nothing exported). Locally no header -> root span -> sampled | `OTEL_TRACES_SAMPLER=always_on`. Waterfall then shows `(Missing span ID ...)` = Cloud Run's own unsampled parent |
+| `FileNotFoundError: '/nonexistent/.adk...'` on dev UI requests | ADK dev server writes telemetry consent to `~/.adk/`; `nobody` has no home | `HOME=/tmp` |
 | MCP `401` in m365-mcp logs | Token audience != `GOOGLE_AUDIENCE`, or caller email not in `MCP_CALLER_SCOPES` | Same deterministic URL on both sides; check the SA email |
 
 ## 9. Cost and teardown
@@ -138,6 +145,7 @@ gcloud artifacts repositories delete $REPO --location=$REGION -q
 ## Manual steps log (input for D3.1 Terraform)
 APIs (6, incl. cloudresourcemanager) · AR repo · 2 SAs · 4 project roles copilot-sa · 1 project role mcp-sa ·
 3 roles build SA · 2 Cloud Run services (image, env incl. ALLOW_ORIGINS, SA, limits: copilot max 1 / 1Gi / 600 s,
-mcp max 2 / 512Mi, ingress private) · 1 service-level run.invoker binding · 1 log-based metric (governance_denies).
+mcp max 2 / 512Mi, ingress private) · 1 service-level run.invoker binding · 1 log-based metric (governance_denies) · copilot: --no-cpu-throttling,
+env OTEL_TRACES_SAMPLER=always_on + HOME=/tmp.
 Not yet: Secret Manager (no secrets so far: S2S uses ID tokens, no API keys), alert policy on governance_denies,
 persistent sessions (D3.3).
