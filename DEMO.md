@@ -13,8 +13,19 @@ gcloud run services proxy copilot-api --port=8000          # Chrome: http://loca
   and say so during the demo (it's a residency decision, not a hack).
 - Open tabs: Cloud Trace Explorer (filter `governance.denied = true`), Logs Explorer (copilot-api), this file,
   `evals/FINDINGS.md`, `docs/ADR-001.md`.
-- **Fallback:** screenshots in `docs/demo/` (trace waterfall, denied span, audit log line, eval tables). If live breaks,
-  switch without apologizing: "here's the same run from this morning".
+- **Check traces export** (they silently didn't on the first deploy, see DEPLOY.md troubleshooting): send the 2:00
+  prompt once, take the newest deny's `trace` in Logs Explorer, open it via Trace Explorer → Trace ID.
+- **Fallback:** if live breaks (eu tail, cold start, proxy), switch without apologizing: "here's the same run from
+  this morning". Screenshots in `docs/demo/` (2026-11-08, deployed service), mapped to the script:
+
+| Script step | Screenshot |
+|---|---|
+| 2:00 blocked draft | `01-ui-blocked.png` (policy blocks before any approval prompt) |
+| 1:30 / 2:20 waterfall | `02-trace-waterfall.png` (15 spans, 21.7 s, MCP init ~35% of the turn) |
+| 2:20 denied span | `03-trace-denied-span.png` (`governance.denied=true`, no content) |
+| 2:45 audit line | `04-audit-log.png` (same trace ID as 02/03) |
+| 2:45 metric | `05-metric.png` (counts per 5 min; 5 vs 6 in logs: a log metric never backfills) |
+| 3:10 prompt layer | `06-ui-prompt-refusal.png` (hardened_v2 flags msg-005 with no tool call) |
 
 ## The script
 

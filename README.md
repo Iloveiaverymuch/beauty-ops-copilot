@@ -174,6 +174,16 @@ invocation · provenance hidden by a passing check · SKU not searchable (green 
 false-fail · telemetry silent failures (provider ownership, missing `gcp.project_id`) · 4 deploy issues
 (origin check, file permissions, missing API, two URLs).
 
+### Evidence screenshots (deployed service, 2026-11-08)
+| | |
+|---|---|
+| Policy blocks before approval | [`docs/demo/01-ui-blocked.png`](docs/demo/01-ui-blocked.png) |
+| Prod trace waterfall | [`docs/demo/02-trace-waterfall.png`](docs/demo/02-trace-waterfall.png) |
+| Denied span (`governance.denied`) | [`docs/demo/03-trace-denied-span.png`](docs/demo/03-trace-denied-span.png) |
+| Audit log line, same trace | [`docs/demo/04-audit-log.png`](docs/demo/04-audit-log.png) |
+| `governance_denies` metric | [`docs/demo/05-metric.png`](docs/demo/05-metric.png) |
+| Prompt layer refuses an injection | [`docs/demo/06-ui-prompt-refusal.png`](docs/demo/06-ui-prompt-refusal.png) |
+
 ## Known limits
 
 - M365 is a mock: same contract as Graph (tools, scopes, Purview label), fixture data. Real Graph would need
