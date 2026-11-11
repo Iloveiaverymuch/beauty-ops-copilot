@@ -1,8 +1,9 @@
 # Beauty Ops Copilot: ADK + Vertex AI + MCP agent POC
 
-Current interview-lab continuation (advisor, claims workflow and HTTP evaluations):
+Current interview-lab continuation (advisor, claims workflow, ADK native and Vertex AI evaluations):
 [`docs/LAB_PLAN.md`](docs/LAB_PLAN.md), [`docs/PROJECT_HANDOVER.md`](docs/PROJECT_HANDOVER.md),
-[`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md). The original copilot notes below are retained.
+[`docs/ADR-002.md`](docs/ADR-002.md), [`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
+The original copilot notes below are retained.
 
 A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI**. One agent reaches
 Microsoft 365 through an **MCP server**. A **governance plugin** enforces tool policy in code, and every claim
@@ -79,7 +80,8 @@ Required APIs: aiplatform, run, cloudbuild, artifactregistry, secretmanager, clo
 ## Run
 
 ```bash
-uv run pytest -q                                   # 42 offline tests, no LLM, no server
+uv run pytest -q                                   # 106 offline tests, no LLM, no server
+uv run python -m evals.adk.run_adk_eval --offline  # 7 deterministic ADK evaluations in <1s
 uv run python -m m365_mcp.server                   # terminal 2: http://127.0.0.1:8080/mcp
 uv run adk web                                     # http://127.0.0.1:8000 -> "copilot" or "m365_only"
 
@@ -148,7 +150,7 @@ Other rules:
 - Write slots are **reserved at decision time**, which handles parallel function calls.
 - Audit records hold hashes and domains, never addresses or arguments.
 
-## Results (details and raw numbers in `evals/FINDINGS.md`; decisions in `docs/ADR-001.md`; demo in `DEMO.md`)
+## Results (details and raw numbers in `evals/FINDINGS.md`; decisions in `docs/ADR-001.md` and `docs/ADR-002.md`; demo in `DEMO.md`)
 
 | Block | Finding |
 |---|---|
@@ -160,6 +162,7 @@ Other rules:
 | D2.1 eval | Core evalset 10/10 + call-budget gate; matrix below; hardened_v2 = safe and useful |
 | D2.2 observability | Governance visible on trace spans; latency provider-bound (thinking −90% tokens, no gain); per-agent thinking |
 | D2.3 deploy | 2 private Cloud Run services; 403 edge / 401 app; structured audit + `governance_denies` metric |
+| R5 ADK & Vertex Eval | Replaced Promptfoo with ADK eval (`evals/adk/`) + Vertex AI Eval (`evals/vertex/`). CI gate: 106 tests + 7 ADK offline (<25s); regression blocked on PR. Live run: 7/7 passed, Vertex LLM judge 5.0/5.0 |
 
 **Prompt × governance matrix** (n=3, rubber-stamp approver, 4 attacks + ambiguous legitimate task):
 
@@ -211,6 +214,7 @@ false-fail · telemetry silent failures (provider ownership, missing `gcp.projec
 - [x] D2.2 observability: Cloud Trace (governance on spans, content elided), thinking/cache A/B (latency = provider-bound), per-agent thinking by risk
 - [x] D2.3 first deploy: 2 private Cloud Run services, Google ID-token S2S + per-caller scopes (403 edge / 401 app), structured audit logs + `governance_denies` metric -> `deploy/DEPLOY.md`
 - [x] D2.4 package: `docs/ADR-001.md` (9 decisions + evidence), `DEMO.md` (5-min script, warm-up, fallback, Q&A), results tables
+- [x] R5 evaluation modernization: replace Promptfoo with native ADK evalset (`evals/adk/`) + Vertex AI Evaluation Service (`evals/vertex/`), 106 tests, CI gate verified with regression blocking, live cloud eval 7/7 passed + 5.0/5.0 judge -> `docs/ADR-002.md`
 - [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
 - [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback
 - [ ] D3.3 state & scaling: persistent sessions (approval survives restart), budget-key TTL, instances, Vertex quotas/429

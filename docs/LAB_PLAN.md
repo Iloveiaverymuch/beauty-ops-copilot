@@ -26,7 +26,7 @@ The original 8-hour allocation below is context, not a new estimate of time alre
 | Block | Original allocation | Verified position / finish line |
 |---|---|---|
 | 1. LangGraph claims + Pub/Sub | 2h30 | Main flow demonstrated in supplied run logs. Read-only inspection of local checkpoints independently confirmed both example claims are refunded with `next=[]`, one refund history entry each. Supplied worker logs show 503 failures, repeated retries and eventual success. Optional final evidence: observe outcome events without replaying a refund. |
-| 2. `/chat/sync` + Promptfoo + GitHub Actions | 1h | Implemented locally, replacing the original GitLab draft. Automatic CI gate runs Python tests, evaluator regressions and fixture HTTP checks. Live seven-case run: original checks 7/7, stricter offline rescoring 6/7 after manual review caught an off-topic answer. Node evaluator regressions 10 passed. Remote Actions execution and required-check branch settings remain unverified. See `evals/promptfoo/results/live_20261111.summary.json`. |
+| 2. ADK Native Evaluation + Vertex AI + GitHub Actions CI Gate | 1h | **Complete & Verified Green.** Replaced Promptfoo with ADK built-in evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation (`evals/vertex/`). Pure Python stack (uv, ADK 2.13, Vertex AI), zero Node.js/npm dependencies in CI. Automatic CI gate runs 106 Python tests + 7 deterministic ADK evaluations in ~21s on PRs and pushes to `master`. Regression blocking was proven on PR via branch `test/eval-gate-regression`. Live cloud evaluation workflow verified in GitHub Actions with GCP service account auth: 7/7 cases passed against Gemini 3.8 Flash + Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0. |
 | 3. Model Armor + GCP tracing | 1h | GCP tracing verified: read-only API returned eight frontend traces with model/tool/RAG spans, correlated to KPI turn IDs. Saved `evals/tracing/advisor_20261111.summary.json`. Individual LangGraph nodes/worker continuation are not traced. Next: timebox one Model Armor experiment; distinguish sanitization from deterministic tool authorization. No Langfuse work. |
 | 4. Neutralize, cleanup, review, docs, French demo | 2h30 | Pending. Fictional branding, tighten unsupported claim-status wording, rehearse architecture and failure recovery in French, concise commands and evidence. Avoid broad rewrites. |
 | 5. Buffer | 1h | Preserve time for broken integration or interview rehearsal; don't consume it with optional production infrastructure. |
@@ -47,12 +47,10 @@ The original 8-hour allocation below is context, not a new estimate of time alre
 
 ## Next practical step
 
-Proceed to the Model Armor portion of the tracing/guardrail block. GCP export is now verified on eight frontend
-turns: `POST /chat` → `chat.turn` → ADK workflow/agent → model/tool spans, with custom RAG attributes.
-The live JSON endpoint and seven-case evaluation have now run. Record the off-topic scope violation for prompt
-cleanup: Léa answered the unrelated question before redirecting; the strengthened assertion rejects that saved
-response. This is an evaluation finding, not an infrastructure blocker. Do not let broad production tasks
-displace tracing/guardrail demonstration and French rehearsal.
+The evaluation pipeline is fully modernized and verified in both offline CI (<25s gate, 106 unit tests + 7 deterministic ADK cases) and live cloud runs (7/7 cases + 5.0/5.0 Vertex AI LLM judge). PR blocking on regression was proven on branch `test/eval-gate-regression`.
+
+Proceed to the Model Armor portion of the tracing/guardrail block. GCP export is verified on frontend turns: `POST /chat` → `chat.turn` → ADK workflow/agent → model/tool spans, with custom RAG attributes.
+Follow with the cleanup and French rehearsal blocks (fictional branding, tighten claim-status wording, rehearse architecture and failure recovery). Do not let broad production tasks displace tracing/guardrail demonstration and French rehearsal.
 
 Production gaps (auth/ownership, robust index metadata updates, cache freshness, persistent refund idempotency,
 retention, deployment scaling) remain documented in `PROJECT_HANDOVER.md` as discussion material. Fix only what
