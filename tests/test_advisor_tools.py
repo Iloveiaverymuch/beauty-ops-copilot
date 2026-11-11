@@ -1,4 +1,6 @@
 """Offline tests for the deterministic parts of the advisor tools (no GCP)."""
+import pytest
+
 from advisor.retrieval.modes import rrf
 from advisor.tools import card, differences, estimate
 
@@ -16,6 +18,63 @@ def test_estimate_three_months_rounds_up_and_applies_promo():
 
 def test_estimate_exact_multiple_does_not_add_a_unit():
     assert estimate(SERUM, 60)["units"] == 1   # 30 ml exactly: float noise must not round up to 2
+
+
+@pytest.mark.parametrize("filters,expected_args", [
+    ({"skin_type": "sèche"}, ("sèche", None, None, None, None)),
+    ({"concern": "rides"}, (None, "rides", None, None, None)),
+    ({"category": "crème"}, (None, None, "crème", None, None)),
+    ({"max_price_eur": 1}, (None, None, None, 1, None)),
+    ({"fragrance_free": True}, (None, None, None, None, True)),
+    ({"skin_type": "sensible", "max_price_eur": 5, "fragrance_free": True},
+     ("sensible", None, None, 5, True)),
+])
+def test_exact_sku_cannot_bypass_sql_filters(monkeypatch, filters, expected_args):
+    """A named product excluded by SQL must never be reintroduced by the exact-reference boost."""
+    import advisor.tools as tools
+
+    calls = []
+    # The SQL boundary has excluded this product; the wrapper must respect that decision for EVERY filter.
+    monkeypatch.setattr(tools.store, "public_products", lambda: {SERUM["sku"]: SERUM})
+    monkeypatch.setattr(tools, "embed_query", lambda q: [1.0])
+    def filtered(*args):
+        calls.append(args)
+        return []
+    monkeypatch.setattr(tools.store, "filtered_product_search", filtered)
+    result = tools.search_products(SERUM["sku"], **filters)
+    assert calls == [([1.0], *expected_args)]
+    assert result["total_matches"] == 0
+    assert result["products"] == []
+
+
+def test_exact_sku_boosts_only_eligible_products_once_and_preserves_dense_order(monkeypatch):
+    import advisor.tools as tools
+
+    others = [{**SERUM, "sku": sku} for sku in ("DER-SER-002", "BOT-SER-003", "LUM-SER-011")]
+    catalog = {p["sku"]: p for p in [SERUM, *others]}
+    monkeypatch.setattr(tools.store, "public_products", lambda: catalog)
+    monkeypatch.setattr(tools, "embed_query", lambda q: [1.0])
+    # BOT-SER-003 is known but excluded by the active filters. The two non-exact hits keep their dense order.
+    monkeypatch.setattr(tools.store, "filtered_product_search", lambda *a: [
+        ("DER-SER-002", 0.9), ("LUM-SER-011", 0.8), (SERUM["sku"], 0.7)])
+    result = tools.search_products("bot-ser-003 lum-ser-001 LUM-SER-001 XXX-YYY-999", max_price_eur=15, limit=5)
+    assert result["total_matches"] == 3
+    assert [p["sku"] for p in result["products"]] == ["LUM-SER-001", "DER-SER-002", "LUM-SER-011"]
+
+
+@pytest.mark.parametrize("query", ["sérum léger", ""])
+def test_product_search_without_exact_sku_preserves_filtered_order(monkeypatch, query):
+    import advisor.tools as tools
+
+    other = {**SERUM, "sku": "DER-SER-002"}
+    monkeypatch.setattr(tools.store, "public_products", lambda: {p["sku"]: p for p in (SERUM, other)})
+    embedded = []
+    monkeypatch.setattr(tools, "embed_query", lambda q: embedded.append(q) or [1.0])
+    monkeypatch.setattr(tools.store, "filtered_product_search", lambda *a: [(other["sku"], 0.9), (SERUM["sku"], 0.7)])
+    result = tools.search_products(query, skin_type="grasse", limit=1)
+    assert result["total_matches"] == 2
+    assert [p["sku"] for p in result["products"]] == [other["sku"]]
+    assert embedded == ([query] if query else [])
 
 
 def test_rrf_rewards_agreement_over_a_single_first_place():
