@@ -58,10 +58,19 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      GOOGLE_CLOUD_PROJECT: 'rk-adk-poc-1104'
+      GOOGLE_CLOUD_LOCATION: 'eu'
+      EMBED_LOCATION: 'europe-west1'
+      MODEL: 'gemini-3.8-flash'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           python-version: '3.12'
