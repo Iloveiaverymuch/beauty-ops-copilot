@@ -20,7 +20,9 @@ def test_cards_come_from_tool_results_not_from_text():
 def test_suggestions_follow_what_just_happened():
     assert suggestions([("search_knowledge", {"status": "no_answer"})], False) == ["Parler à un conseiller"]
     assert "Réessayer" in suggestions([("check_availability", {"status": "unavailable"})], True)
-    assert suggestions([], False) == ["Peau grasse", "Peau sèche", "Peau sensible"]
+    assert suggestions([], True, "Quel est votre type de peau ?") == ["Peau grasse", "Peau sèche", "Peau sensible"]
+    assert suggestions([], True, "Avez-vous une photo de la réaction ?") == []   # regression: chips on a refund request
+    assert suggestions([], False) == []          # regression: skin chips appeared mid-conversation
 
 
 def test_chat_request_validation():

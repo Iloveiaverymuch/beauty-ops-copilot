@@ -51,6 +51,7 @@ app = FastAPI(title="Beauty Advisor API", version="1.0")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 ENGINES = {"adk": AdkEngine()}
 _locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)   # one turn at a time per conversation
+_turns: dict[str, int] = defaultdict(int)                       # turn counter per conversation (chips, KPIs)
 
 
 class ChatRequest(BaseModel):
@@ -107,10 +108,12 @@ async def chat(req: ChatRequest):
         results: list[tuple[str, dict]] = []
         tok_in = tok_out = tok_think = chunks = model_calls = 0
         tool_ms = 0.0
+        reply = []
         tool_t0: list[float] = []
         error = ""
         yield sse("meta", {"thread_id": thread_id, "turn_id": turn_id, "engine": engine.name})
         async with _locks[thread_id]:
+            _turns[thread_id] += 1
             with tracer.start_as_current_span("chat.turn") as span:
                 span.set_attributes({"chat.turn_id": turn_id, "chat.engine": engine.name})
                 try:
@@ -118,6 +121,7 @@ async def chat(req: ChatRequest):
                         if ev["type"] == "text":
                             ttft = ttft or time.perf_counter() - t0
                             chunks += 1
+                            reply.append(ev["delta"])
                             yield sse("text", {"delta": ev["delta"]})
                         elif ev["type"] == "tool_call":
                             tools.append(ev["name"])
@@ -139,7 +143,7 @@ async def chat(req: ChatRequest):
                     error = f"{type(e).__name__}: {str(e)[:200]}"
                     log.exception("turn failed")
                     yield sse("text", {"delta": "Désolée, je rencontre un problème technique. Pouvez-vous réessayer ?"})
-                chips = suggestions(results, has_products_in_thread=any(n == "search_products" for n, _ in results))
+                chips = suggestions(results, first_turn=_turns[thread_id] == 1 and not req.thread_id, reply_text="".join(reply))
                 if chips:
                     yield sse("suggestions", {"chips": chips})
                 kb = [r for n, r in results if n == "search_knowledge"]

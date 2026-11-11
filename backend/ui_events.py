@@ -34,7 +34,7 @@ def ui_event_for_tool_result(name: str, resp: dict) -> dict | None:
     return None
 
 
-def suggestions(tool_results: list[tuple[str, dict]], has_products_in_thread: bool) -> list[str]:
+def suggestions(tool_results: list[tuple[str, dict]], first_turn: bool, reply_text: str = "") -> list[str]:
     """Next-best-action chips, decided by the backend from what just happened (deterministic, testable)."""
     last = tool_results[-1] if tool_results else (None, {})
     name, resp = last
@@ -48,6 +48,7 @@ def suggestions(tool_results: list[tuple[str, dict]], has_products_in_thread: bo
         return ["Parler à un conseiller"]
     if name in ("check_availability", "delivery_options") and resp.get("status") == "unavailable":
         return ["Réessayer", "Parler à un conseiller"]
-    if not tool_results and not has_products_in_thread:
+    if not tool_results and first_turn and "type de peau" in reply_text.lower():
+        # skin-type chips only when the assistant is actually asking for the skin type (not on a refund request)
         return ["Peau grasse", "Peau sèche", "Peau sensible"]
     return []
