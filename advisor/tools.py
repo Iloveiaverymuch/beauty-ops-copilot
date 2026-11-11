@@ -209,7 +209,8 @@ def compare_products(skus: list[str]) -> dict:
 def estimate(product: dict, days: int) -> dict:
     """Pure calculation (unit-tested): units needed for `days` of use, always rounded UP to whole units."""
     need_ml = days * product["usage_ml_per_day"]
-    units = max(1, math.ceil(need_ml / product["size_ml"] - 1e-9))
+    # Deliberate regression to test the CI gate: truncates instead of rounding up
+    units = max(1, int(need_ml / product["size_ml"]))
     unit_paid = _eff(product)
     return {"sku": product["sku"], "name": product["name"], "days": days,
             "usage_ml_per_day": product["usage_ml_per_day"], "routine_moment": product["routine_moment"],
