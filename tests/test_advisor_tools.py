@@ -5,7 +5,8 @@ from advisor.tools import card, differences, estimate
 SERUM = {"sku": "LUM-SER-001", "name": "Sérum Niacinamide", "brand": "Lumiderm", "category": "sérum",
          "price_eur": 12.90, "promo_price_eur": 9.90, "size_ml": 30, "usage_ml_per_day": 0.5,
          "routine_moment": "matin et soir", "skin_types": ["grasse", "mixte"], "concerns": ["imperfections"],
-         "fragrance_free": True, "actives": [{"name": "niacinamide", "pct": 10}], "image": "x"}
+         "fragrance_free": True, "actives": [{"name": "niacinamide", "pct": 10}], "image": "x",
+         "description": "Réduit les imperfections et resserre les pores."}
 
 
 def test_estimate_three_months_rounds_up_and_applies_promo():
@@ -29,3 +30,57 @@ def test_differences_only_lists_attributes_that_differ_in_priority_order():
     attrs = [d["attribute"] for d in diff]
     assert attrs[:2] == ["price_paid_eur", "price_per_100ml"] and "fragrance_free" in attrs and "brand" in attrs
     assert "actives" not in attrs and "skin_types" not in attrs   # identical -> not a difference
+
+
+def test_store_lazy_init_does_not_deadlock(monkeypatch):
+    """Regression: public_chunks() held a non-reentrant lock and called bq(), which took the same lock -> hang."""
+    import threading
+
+    import advisor.retrieval.store as st
+
+    class Fake:
+        def query(self, *a, **k):
+            return type("R", (), {"result": lambda self: []})()
+
+    monkeypatch.setattr(st.bigquery, "Client", lambda **k: Fake())
+    monkeypatch.setattr(st, "_bq", None)
+    monkeypatch.setattr(st, "_chunks", None)
+    monkeypatch.setattr(st, "_products", None)
+    done = threading.Event()
+    threading.Thread(target=lambda: (st.public_chunks(), st.public_products(), done.set()), daemon=True).start()
+    assert done.wait(3), "deadlock in store lazy init"
+
+
+def test_memory_search_matches_cosine_order(monkeypatch):
+    import advisor.retrieval.store as st
+    monkeypatch.setattr(st, "_vectors", [("a", [1.0, 0.0]), ("b", [0.6, 0.8]), ("c", [0.0, 1.0])])
+    assert [cid for cid, _ in st.memory_search_chunks([0.8, 0.6], k=3)] == ["b", "a", "c"]
+
+
+def test_adk_adapter_caps_knowledge_searches_per_turn(monkeypatch):
+    """Regression: 7 search_knowledge calls in one turn on an uncovered question. Cap = 2, then a stop message."""
+    import beauty_advisor.agent as ag
+
+    monkeypatch.setattr(ag.core, "search_knowledge", lambda q: {"status": "ok", "passages": []})
+    ctx = type("Ctx", (), {"state": {}})()
+    statuses = [ag.search_knowledge("q", ctx)["status"] for _ in range(4)]
+    assert statuses == ["ok", "ok", "budget_exhausted", "budget_exhausted"]
+
+
+def test_tool_removed_from_model_request_once_budget_spent():
+    """The soft 'budget_exhausted' message can be ignored by the model; removing the declaration can't."""
+    from google.adk.models.llm_request import LlmRequest
+    from google.adk.tools import FunctionTool
+
+    import beauty_advisor.agent as ag
+
+    req = LlmRequest()
+    req.append_tools([FunctionTool(ag.search_knowledge), FunctionTool(ag.search_products)])
+    ctx = type("Ctx", (), {"state": {"temp:kb_searches": ag.MAX_KB_SEARCHES_PER_TURN}})()
+    ag.drop_exhausted_tools(ctx, req)
+    names = [d.name for t in req.config.tools for d in (t.function_declarations or [])]
+    assert names == ["search_products"] and "search_knowledge" not in req.tools_dict
+    ctx.state["temp:kb_searches"] = 0
+    req2 = LlmRequest(); req2.append_tools([FunctionTool(ag.search_knowledge)])
+    ag.drop_exhausted_tools(ctx, req2)
+    assert "search_knowledge" in req2.tools_dict          # under budget: untouched

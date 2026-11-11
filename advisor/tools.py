@@ -48,6 +48,7 @@ def card(p: dict) -> dict:
             "skin_types": list(p["skin_types"]), "concerns": list(p["concerns"]),
             "fragrance_free": p["fragrance_free"], "routine_moment": p["routine_moment"],
             "actives": [f"{a['name']} {a['pct']}%" if a["pct"] is not None else a["name"] for a in p["actives"]],
+            "description": p["description"],   # the ONLY source for "why this product": the model must not invent benefits
             "image": p["image"]}
 
 

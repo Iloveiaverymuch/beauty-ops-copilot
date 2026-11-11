@@ -1,6 +1,7 @@
 """The 4 retrieval modes behind one interface, from cheapest to most precise.
 
-    dense   : question embedding -> BigQuery VECTOR_SEARCH (cosine)          meaning, synonyms, paraphrases
+    dense_bq: question embedding -> BigQuery VECTOR_SEARCH (cosine)          ~1 s/query (job overhead), reference
+    dense   : question embedding -> cosine over vectors cached in memory      same results, ~ms (serving default)
     bm25    : question tokens   -> BM25 over the same chunks, in process      exact terms: "0,3 %", "PAO", "24 heures"
     hybrid  : both lists (50 candidates each) fused by Reciprocal Rank Fusion  robust default
     rerank  : hybrid top 20 -> Vertex AI ranking API (cross-encoder) -> top k  best precision, extra latency
@@ -9,6 +10,7 @@ Each Result carries `meta["ms"]` timings per stage so the eval can report latenc
 """
 from __future__ import annotations
 
+import os
 import threading
 import time
 from collections import defaultdict
@@ -47,14 +49,21 @@ def rrf(ranked_lists: list[list[str]], k: int = RRF_K) -> list[tuple[str, float]
 
 
 class DenseRetriever:
+    """backend="memory" (default for serving): cosine over vectors cached from BigQuery, ~ms.
+    backend="bq": BigQuery VECTOR_SEARCH per question, ~1 s (kept as a mode to show the trade-off)."""
     name = "dense"
+
+    def __init__(self, backend: str | None = None):
+        self.backend = backend or os.getenv("DENSE_BACKEND", "memory")
+        self.name = "dense" if self.backend == "memory" else "dense_bq"
 
     def scored(self, query: str, k: int) -> tuple[list[tuple[str, float]], dict]:
         t0 = time.perf_counter()
         qvec = embed_query(query)
         t1 = time.perf_counter()
-        hits = store.vector_search_chunks(qvec, k)
-        return hits, {"embed": round((t1 - t0) * 1000), "vector_search": round((time.perf_counter() - t1) * 1000)}
+        search = store.memory_search_chunks if self.backend == "memory" else store.vector_search_chunks
+        hits = search(qvec, k)
+        return hits, {"embed": round((t1 - t0) * 1000), f"vector_{self.backend}": round((time.perf_counter() - t1) * 1000, 1)}
 
     def search(self, query: str, k: int = 5) -> list[Result]:
         hits, ms = self.scored(query, max(k, 1))
@@ -139,7 +148,8 @@ class RerankRetriever:
         return out
 
 
-MODES = {"dense": DenseRetriever, "bm25": BM25Retriever, "hybrid": HybridRetriever, "rerank": RerankRetriever}
+MODES = {"dense_bq": lambda: DenseRetriever("bq"), "dense": DenseRetriever, "bm25": BM25Retriever,
+         "hybrid": HybridRetriever, "rerank": RerankRetriever}
 
 
 def get_retriever(name: str):

@@ -21,7 +21,7 @@ QUESTIONS = [
     ("Quel est le code remise du personnel ?", None),                                            # must find nothing internal
 ]
 
-store.public_chunks()  # warm the cache so the first mode isn't charged for it
+store.public_chunks(); store.public_chunk_vectors()  # warm the caches so no mode is charged for them
 modes = {name: cls() for name, cls in MODES.items()}
 for q, expected in QUESTIONS:
     print(f"\nQ: {q}   (expected doc: {expected})")
@@ -31,4 +31,4 @@ for q, expected in QUESTIONS:
         total = (time.perf_counter() - t0) * 1000
         hit = "OK " if expected and res and res[0].doc_id == expected else ("-- " if expected else "   ")
         top = " | ".join(f"{x.citation} ({x.score:.3f})" for x in res)
-        print(f"  {hit}{name:7s} {total:6.0f} ms {res[0].meta.get('ms', {}) if res else ''}\n          {top}")
+        print(f"  {hit}{name:8s} {total:6.0f} ms {res[0].meta.get('ms', {}) if res else ''}\n          {top}")
