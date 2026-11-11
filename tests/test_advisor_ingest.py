@@ -18,7 +18,7 @@ def test_chunk_ids_deterministic_and_unique():
 
 def test_every_doc_chunked_with_context_prefix_and_cap():
     chunks = load_kb(DATA / "kb")
-    assert len({c.doc_id for c in chunks}) == len(list((DATA / "kb").glob("*.md")))
+    assert len({(c.doc_id, c.version) for c in chunks}) == len(list((DATA / "kb").glob("*.md")))
     for c in chunks:
         assert c.embed_text.startswith(f"{c.title} > {c.section}\n")
         assert len(c.text.split()) <= MAX_WORDS
@@ -101,3 +101,14 @@ def test_product_text_contains_sku_and_bm25_finds_it():
     idx = BM25Index([(p["sku"], product_text(p)) for p in P])
     for sku in ("LUM-SER-011", "DER-SER-008", "BOT-SPF-005"):
         assert idx.search(sku, 1)[0][0] == sku
+
+
+def test_versions_never_collide_and_only_one_current_per_doc():
+    chunks = load_kb(DATA / "kb")
+    archived = [c for c in chunks if c.status == "archived"]
+    assert archived and all(c.doc_id == "pol-retours" for c in archived)
+    current_versions = {}
+    for c in chunks:
+        if c.status == "current":
+            current_versions.setdefault(c.doc_id, set()).add(c.version)
+    assert all(len(v) == 1 for v in current_versions.values())      # exactly one live version per document

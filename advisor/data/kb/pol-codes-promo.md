@@ -3,6 +3,9 @@ doc_id: pol-codes-promo
 title: Codes promotionnels
 type: politique
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Règles d'utilisation

@@ -3,6 +3,9 @@ doc_id: faq-quantites-duree
 title: Quelle quantité utiliser et combien de temps dure un produit ?
 type: faq
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Quantités recommandées par application

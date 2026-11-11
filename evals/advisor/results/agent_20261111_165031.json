@@ -1,0 +1,148 @@
+[
+ {
+  "id": "A3",
+  "title": "policy: express delivery fee",
+  "pass_all": true,
+  "runs": [
+   {
+    "errors": [],
+    "turns": [
+     {
+      "user": "Combien coûte la livraison express ?",
+      "text": "La livraison express coûte 6,90 € et permet d'être livré en 24 heures pour toute commande passée avant 13 h, du lundi au vendredi (aucune livraison n'a lieu le dimanche) [pol-livraison#Livraison express].",
+      "calls": [
+       {
+        "name": "search_knowledge",
+        "args": {
+         "question": "Combien coûte la livraison express ?"
+        },
+        "response": {
+         "status": "ok",
+         "latency_ms": 4296,
+         "mode": "rerank",
+         "passages": [
+          {
+           "citation": "pol-livraison#Livraison express",
+           "title": "Livraison et retrait en magasin",
+           "section": "Livraison express",
+           "source_text": "Livraison en 24 heures pour 6,90 €, pour toute commande passée avant 13 h du lundi au vendredi. Aucune livraison n'est effectuée le dimanche.",
+           "relevance": 0.9673
+          }
+         ]
+        }
+       }
+      ],
+      "ms": 16519,
+      "tokens_in": 5049,
+      "tokens_out": 78,
+      "error": ""
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "A4",
+  "title": "policy: opened product + reaction",
+  "pass_all": true,
+  "runs": [
+   {
+    "errors": [],
+    "turns": [
+     {
+      "user": "J'ai ouvert un sérum et j'ai fait une réaction, je peux être remboursée ?",
+      "text": "Je suis désolée pour cette réaction cutanée. En cas de réaction, les produits ouverts peuvent être remboursés si vous le signalez au service client sous 14 jours après l'achat, avec une photo de la zone et du produit [pol-retours#Produits ouverts]. \n\nJ'ai immédiatement transmis votre dossier à un conseiller humain (ticket **HD-3A9D52**), qui vous répondra ici sous 2 heures (du lundi au samedi, 9h-19h). En attendant, cessez l'application et n'hésitez pas à consulter un médecin ou un pharmacien si les symptômes persistent.",
+      "calls": [
+       {
+        "name": "search_knowledge",
+        "args": {
+         "question": "Quelle est la politique de retour ou remboursement pour un produit ouvert ayant provoqué une réaction allergique ou cutanée ?"
+        },
+        "response": {
+         "status": "ok",
+         "latency_ms": 287,
+         "mode": "rerank",
+         "passages": [
+          {
+           "citation": "pol-retours#Produits ouverts",
+           "title": "Retours et remboursements",
+           "section": "Produits ouverts",
+           "source_text": "Pour des raisons d'hygiène, les produits ouverts ne sont ni repris ni échangés, sauf en cas de réaction cutanée. Dans ce cas, signalez-la au service client sous 14 jours après l'achat, avec une photo de la zone et du produit : le produit est remboursé.",
+           "relevance": 0.974
+          }
+         ]
+        }
+       },
+       {
+        "name": "request_human_advisor",
+        "args": {
+         "reason": "skin_reaction",
+         "summary": "Réaction cutanée suite à l'ouverture d'un sérum et demande de remboursement."
+        },
+        "response": {
+         "status": "ok",
+         "ticket_id": "HD-3A9D52",
+         "reason": "skin_reaction",
+         "message": "A human advisor will reply in this chat within 2 hours (Monday-Saturday, 9:00-19:00)."
+        }
+       }
+      ],
+      "ms": 7004,
+      "tokens_in": 5211,
+      "tokens_out": 220,
+      "error": ""
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "A12",
+  "title": "document versions: current policy wins (30 days, not the archived 21)",
+  "pass_all": true,
+  "runs": [
+   {
+    "errors": [],
+    "turns": [
+     {
+      "user": "Combien de jours ai-je pour retourner un produit non ouvert ?",
+      "text": "Vous disposez de 30 jours après réception pour retourner un produit non ouvert, dans son emballage d'origine [pol-retours#Produits non ouverts]. Le remboursement sera ensuite effectué sous 10 jours après réception de votre colis, sur le moyen de paiement utilisé [pol-retours#Produits non ouverts].",
+      "calls": [
+       {
+        "name": "search_knowledge",
+        "args": {
+         "question": "Combien de jours pour retourner un produit non ouvert ?"
+        },
+        "response": {
+         "status": "ok",
+         "latency_ms": 329,
+         "mode": "rerank",
+         "passages": [
+          {
+           "citation": "pol-retours#Produits non ouverts",
+           "title": "Retours et remboursements",
+           "section": "Produits non ouverts",
+           "source_text": "Vous disposez de 30 jours après réception pour retourner un produit non ouvert, dans son emballage d'origine. Le remboursement est effectué sous 10 jours après réception du retour, sur le moyen de paiement utilisé.",
+           "relevance": 0.9873
+          },
+          {
+           "citation": "pol-retours#Échange",
+           "title": "Retours et remboursements",
+           "section": "Échange",
+           "source_text": "L'échange d'un produit non ouvert contre un autre produit est possible en magasin sous 30 jours, sur présentation du ticket de caisse.",
+           "relevance": 0.9066
+          }
+         ]
+        }
+       }
+      ],
+      "ms": 4123,
+      "tokens_in": 5136,
+      "tokens_out": 96,
+      "error": ""
+     }
+    ]
+   }
+  ]
+ }
+]

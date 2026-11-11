@@ -58,6 +58,37 @@ def card(p: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------------- knowledge
+MAX_CONTEXT_WORDS = int(os.getenv("MAX_CONTEXT_WORDS", "450"))
+
+
+def assemble_context(ranked: list[dict], corpus: list[dict], budget_words: int = MAX_CONTEXT_WORDS) -> list[dict]:
+    """Context assembly between retrieval and generation (pure, unit-tested):
+    1. NEIGHBOUR EXPANSION: if a hit is one piece of a section that was split at ingest, return the whole section
+       (pieces in order) so the model never sees half a rule.
+    2. DEDUP: two hits from the same section become one passage (keeps the best rank).
+    3. TOKEN BUDGET: passages are added in rank order until `budget_words`; the rest is dropped, never truncated
+       mid-passage (a cut sentence can invert a rule). The top passage is always kept.
+    ranked: [{"chunk_id", "doc_id", "section", ...}] best first; corpus: all public chunks with "position"/"text".
+    """
+    by_section: dict[tuple[str, str], list[dict]] = {}
+    for c in corpus:
+        by_section.setdefault((c["doc_id"], c["section"]), []).append(c)
+    out, seen, used = [], set(), 0
+    for r in ranked:
+        key = (r["doc_id"], r["section"])
+        if key in seen:
+            continue
+        seen.add(key)
+        pieces = sorted(by_section.get(key, [r]), key=lambda c: c.get("position", 0))
+        text = "\n\n".join(c["text"] for c in pieces)
+        words = len(text.split())
+        if out and used + words > budget_words:
+            continue
+        out.append({**r, "text": text, "expanded": len(pieces) > 1})
+        used += words
+    return out
+
+
 def search_knowledge(question: str) -> dict:
     """Search the brand's knowledge base: ingredient guides, compatibility rules (e.g. retinol + vitamin C),
     routines, how-to FAQ, and store policies (returns, delivery, loyalty, promo codes).
@@ -86,9 +117,12 @@ def search_knowledge(question: str) -> dict:
     if abstain:
         return {"status": "no_answer", "best_relevance": best, "passages": [], "latency_ms": ms}
     keep = [r for r in results if KNOWLEDGE_MODE != "rerank" or r.score >= MIN_RELEVANCE]
+    ranked = [{"chunk_id": r.chunk_id, "doc_id": r.doc_id, "section": r.section, "title": r.title, "text": r.text,
+               "score": r.score, "citation": r.citation} for r in keep]
+    passages = assemble_context(ranked, store.public_chunks())
     return {"status": "ok", "latency_ms": ms, "mode": KNOWLEDGE_MODE,
-            "passages": [{"citation": r.citation, "title": r.title, "section": r.section, "source_text": r.text,
-                          "relevance": r.score} for r in keep]}
+            "passages": [{"citation": p["citation"], "title": p["title"], "section": p["section"],
+                          "source_text": p["text"], "relevance": p["score"]} for p in passages]}
 
 
 # ----------------------------------------------------------------------------------------------------- products

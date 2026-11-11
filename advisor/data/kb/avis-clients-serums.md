@@ -3,6 +3,9 @@ doc_id: avis-clients-serums
 title: Avis clients sur nos sérums
 type: avis
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Sérum Niacinamide 10% Anti-Imperfections

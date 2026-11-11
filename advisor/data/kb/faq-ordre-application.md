@@ -3,6 +3,9 @@ doc_id: faq-ordre-application
 title: Dans quel ordre appliquer ses soins ?
 type: faq
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## La règle générale

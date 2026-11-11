@@ -3,6 +3,9 @@ doc_id: ing-apaisants
 title: Centella asiatica et acide azélaïque
 type: guide
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## La centella asiatica

@@ -3,6 +3,9 @@ doc_id: comp-retinol-acides
 title: Rétinol et acides exfoliants (AHA, BHA)
 type: compatibilite
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## La règle

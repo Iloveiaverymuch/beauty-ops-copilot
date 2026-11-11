@@ -3,6 +3,9 @@ doc_id: faq-conservation
 title: Conservation et date d'utilisation
 type: faq
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Le symbole PAO

@@ -129,3 +129,16 @@ def test_compact_history_shrinks_old_tool_results_only_and_never_mutates_session
         "status": "ok", "products": [{"sku": "S0", "name": "P0"}, {"sku": "S1", "name": "P1"}, {"sku": "S2", "name": "P2"}]}
     assert req.contents[4].parts[0].function_response.response == big          # current turn: full result
     assert old_fr.function_response.response == big                            # stored event object untouched
+
+
+def test_assemble_context_expands_split_sections_dedups_and_respects_budget():
+    from advisor.tools import assemble_context
+    corpus = [{"chunk_id": "a1", "doc_id": "d", "section": "S", "position": 0, "text": "Règle partie un."},
+              {"chunk_id": "a2", "doc_id": "d", "section": "S", "position": 1, "text": "Sauf exception partie deux."},
+              {"chunk_id": "b", "doc_id": "e", "section": "T", "position": 0, "text": " ".join(["mot"] * 50)},
+              {"chunk_id": "c", "doc_id": "f", "section": "U", "position": 0, "text": "court"}]
+    hit = lambda cid: {**next(c for c in corpus if c["chunk_id"] == cid)}  # noqa: E731
+    out = assemble_context([hit("a2"), hit("a1"), hit("b"), hit("c")], corpus, budget_words=20)
+    assert out[0]["text"] == "Règle partie un.\n\nSauf exception partie deux." and out[0]["expanded"]
+    assert [o["chunk_id"] for o in out] == ["a2", "c"]          # a1 deduped (same section), b over budget, c fits
+    assert assemble_context([hit("b")], corpus, budget_words=5)[0]["chunk_id"] == "b"   # top passage always kept

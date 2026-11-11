@@ -88,3 +88,38 @@ citation correctness, groundedness.
 | BigQuery VECTOR_SEARCH can serve the chatbot | **No**: ~0.8-1 s/query (job overhead) vs 3-5 ms in memory, identical results | BigQuery = source of truth; serving copy in memory (Vector Search / AlloyDB at scale) |
 Limits: one author for corpus and questions; n = 51 (95% CI on 50/51 = [0.90, 1.00]); corpus far smaller than a
 retail catalog. Directional evidence, not a benchmark.
+
+## 7. Index lifecycle (R4)
+| Concern | How it's handled | Interview line |
+|---|---|---|
+| Incremental updates | Staging table + one atomic `MERGE` per table. Chunks keyed by `sha(doc, version, section, text)`: an edited paragraph is a new id -> inserted; the old one -> `WHEN NOT MATCHED BY SOURCE DELETE`. Products keyed by SKU, updated only when `content_sha` changes | "Content-addressed ids turn updates into insert + delete, so a MERGE is enough and deletions can't be forgotten" |
+| Deletions | Same MERGE: a doc removed from the source disappears from the index on the next run | Stale content is the most common RAG production bug |
+| Idempotency / retries | Re-run with no change = 0 inserted / 0 updated / 0 deleted / 0 embedding calls; a failed run is simply re-run (staging is overwritten, MERGE is atomic) | "Safe to retry blindly" |
+| Plan before apply | `--dry-run` compares ids/hashes with BigQuery and prints what would change | Same discipline as `terraform plan` |
+| Audit | `index_runs` row per run: time, git commit, model, dim, counts, note (incremental / schema migration / rollback) | "What did the bot know on date X?" + versions kept in `chunks` |
+| Rollback | `--rollback-minutes N`: BigQuery time travel (`FOR SYSTEM_TIME AS OF`, 7-day window) restores base tables, then public tables are rebuilt | No backup job for short-horizon mistakes; longer horizon = table snapshots |
+| Embedding migration | Each row stores `embed_model` + `embed_dim`; cache key includes both, so vectors are never mixed. Migration = blue/green: ingest into a new dataset, run the eval on both, switch the serving config, keep the old for rollback | Never re-embed in place |
+| Versions & conflicts | Docs carry `version / status / effective_date`. All versions stored (audit), only `current` indexed. Planted conflict: archived returns policy (21 days) vs current (30 days); eval A12 fails if "21 jours" appears | Conflicts are resolved by the data (status, effective date), not by asking the model to pick |
+| Freshness | `index_runs.ts` = age of the index; alert if older than the content SLA (e.g. 24 h for policies, 1 h for prices) | Freshness is a monitored KPI, not an assumption |
+
+## 8. Context assembly (R4)
+Between retrieval and generation (`assemble_context`, unit-tested): (1) neighbour expansion: a hit that is one
+piece of a split section returns the whole section, in order; (2) dedup by section; (3) word budget (450 words by
+default): passages added in rank order, never truncated mid-passage, top passage always kept. Conversation-level
+budget is handled separately (earlier turns' tool results compacted: -40% input tokens on a 6-turn chat).
+
+## 9. Search infrastructure at scale: exact vs approximate (ANN)
+Here: exact (brute-force) cosine over 59 chunks in memory (~3-5 ms) is the right choice: 100% recall, no index to
+maintain. Exact search is O(N x d) per query: fine to ~10^5 vectors in memory, not for 10^7 product embeddings.
+| Index | How it works | Knobs (recall vs latency vs memory) | Where on GCP |
+|---|---|---|---|
+| HNSW | Multi-layer proximity graph, greedy descent | `M` (links per node: recall + memory up), `ef_construction` (build quality), `ef_search` (query recall vs latency) | AlloyDB / Cloud SQL pgvector (`hnsw`), AlloyDB ScaNN index |
+| IVF | k-means partitions, search the `nprobe` closest | `lists` (more = faster, lower recall), `nprobe` (more = recall up, latency up) | BigQuery `CREATE VECTOR INDEX ... IVF` (tables >= 5,000 rows), pgvector `ivfflat` |
+| ScaNN / tree-AH | Partitioning + anisotropic quantization (compressed vectors) | leaves to search, reorder count | Vertex AI Vector Search, BigQuery `TREE_AH` |
+How to choose: measure recall@k of the ANN index AGAINST exact search on a sample of real queries (target e.g.
+>= 0.95), then tune for p95 latency and memory. Metadata filtering: pre-filter (filter then search: exact, can
+starve ANN partitions) vs post-filter (search then filter: fast, can return fewer than k) vs filtered/restricted
+search supported natively (Vector Search restricts, pgvector iterative scans); product search with hard attribute
+filters (price, skin type) needs pre-filtering or native restricts, not post-filtering.
+Multi-tenant / permissions at scale: the permission filter is part of the query (namespace/restrict per tenant or
+ACL), and any cache key includes the caller's access scope so one user's results are never served to another.

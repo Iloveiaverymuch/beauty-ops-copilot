@@ -3,6 +3,9 @@ doc_id: routine-peau-sensible
 title: Routine pour peau sensible
 type: routine
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Principe

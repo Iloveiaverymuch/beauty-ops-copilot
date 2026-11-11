@@ -3,6 +3,9 @@ doc_id: comp-niacinamide-vitamine-c
 title: Niacinamide et vitamine C
 type: compatibilite
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Une idée reçue

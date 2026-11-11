@@ -3,6 +3,9 @@ doc_id: ing-protection-solaire
 title: La protection solaire au quotidien
 type: guide
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Quel indice choisir ?

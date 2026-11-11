@@ -3,6 +3,9 @@ doc_id: comp-grossesse
 title: Soins et grossesse
 type: compatibilite
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Actifs à éviter

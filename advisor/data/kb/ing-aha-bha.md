@@ -3,6 +3,9 @@ doc_id: ing-aha-bha
 title: Les acides exfoliants AHA et BHA
 type: guide
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## AHA ou BHA ?

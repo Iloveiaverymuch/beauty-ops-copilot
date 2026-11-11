@@ -3,6 +3,9 @@ doc_id: int-plan-black-friday
 title: Plan promotionnel Black Friday (interne)
 type: interne
 visibility: internal
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Calendrier

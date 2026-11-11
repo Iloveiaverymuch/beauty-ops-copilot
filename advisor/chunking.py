@@ -12,7 +12,9 @@ Strategy (justified in docs/RAG_DECISIONS.md):
 - CONTEXTUAL PREFIX: "Title > Section" is prepended to the text that gets EMBEDDED (not to the text we show).
   A bare chunk like "Oui, mais pas au même moment." means nothing on its own; with its title it becomes
   findable by "rétinol vitamine C".
-- DETERMINISTIC IDS: chunk_id = sha256(doc_id, section, text). Re-running ingest produces the same ids, so a
+- VERSIONS: each doc carries version / status (current|archived) / effective_date. All versions are stored (audit:
+  "what did the bot know on date X"), only `current` ones are indexed for customers.
+- DETERMINISTIC IDS: chunk_id = sha256(doc_id, version, section, text). Re-running ingest produces the same ids, so a
   re-run can never duplicate rows, and an unchanged chunk keeps its cached embedding.
 """
 from __future__ import annotations
@@ -35,6 +37,9 @@ class Chunk:
     title: str
     doc_type: str        # guide | compatibilite | routine | faq | politique | avis | interne
     visibility: str      # public | internal  -> internal chunks never reach the customer-facing index
+    version: str         # document version, e.g. "2026-01"
+    status: str          # current | archived  -> archived versions stay in the warehouse (audit), never indexed
+    effective_date: str
     section: str
     position: int        # order inside the document (to re-assemble neighbours if ever needed)
     text: str            # what we SHOW and cite
@@ -87,8 +92,10 @@ def chunk_doc(raw: str) -> list[Chunk]:
             continue
         section, _, text = block.partition("\n")
         for piece in split_long(text.strip()):
-            chunks.append(Chunk(_sha(meta["doc_id"], section, piece), meta["doc_id"], meta["title"], meta["type"],
-                                meta.get("visibility", "public"), section.strip(), pos, piece))
+            # version is part of the id: two versions of the same section are different rows, never a collision
+            chunks.append(Chunk(_sha(meta["doc_id"], meta.get("version", ""), section, piece), meta["doc_id"],
+                                meta["title"], meta["type"], meta.get("visibility", "public"), meta.get("version", ""),
+                                meta.get("status", "current"), meta.get("effective_date", ""), section.strip(), pos, piece))
             pos += 1
     return chunks
 

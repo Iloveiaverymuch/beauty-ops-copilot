@@ -3,6 +3,9 @@ doc_id: int-consignes-conseillers
 title: Consignes internes pour les conseillers
 type: interne
 visibility: internal
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Remise collaborateur

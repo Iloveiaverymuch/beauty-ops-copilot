@@ -3,6 +3,9 @@ doc_id: pol-retours
 title: Retours et remboursements
 type: politique
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Produits non ouverts

@@ -3,6 +3,9 @@ doc_id: ing-vitamine-c
 title: La vitamine C
 type: guide
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Bienfaits

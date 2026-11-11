@@ -3,6 +3,9 @@ doc_id: routine-anti-age-debutant
 title: Débuter une routine anti-âge
 type: routine
 visibility: public
+version: 2026-01
+status: current
+effective_date: 2026-01-01
 ---
 
 ## Les trois piliers
