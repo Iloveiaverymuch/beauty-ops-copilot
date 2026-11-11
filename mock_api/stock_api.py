@@ -1,4 +1,4 @@
-"""Mock retail API (stock per store + delivery options): the "external API" the chatbot integrates with.
+"""Mock retail API (stock, delivery, orders, refunds): the "external APIs" the chatbot and the claims workflow use.
 
     uv run uvicorn mock_api.stock_api:app --port 8090
 
@@ -16,7 +16,8 @@ import json
 from datetime import date, timedelta
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query
+from pydantic import BaseModel
 
 app = FastAPI(title="Mock retail API (stock + delivery)")
 SKUS = {p["sku"] for p in json.loads((Path(__file__).resolve().parents[1] / "advisor" / "data" / "products.json").read_text())}
@@ -82,3 +83,45 @@ async def delivery(sku: str, postcode: str = Query(pattern=r"^\d{5}$")):
     if in_stock:
         opts.append({"type": "express", "eta": business_days(1), "fee_eur": 6.90, "order_before": "13:00"})
     return {"sku": sku, "postcode": postcode, "deliverable": True, "warehouse_in_stock": in_stock, "options": opts}
+
+
+# ------------------------------------------------------------------------------------------------- orders + refunds
+# Orders: fixed demo orders, dated relative to today so the return windows always behave the same way.
+_ORDERS = {  # order_id: (days_ago, [(sku, qty, unit_price_paid)])
+    "CMD-1001": (5, [("LUM-SER-001", 1, 9.90)]),
+    "CMD-1002": (10, [("DER-SER-008", 2, 19.90)]),
+    "CMD-1003": (40, [("AQU-CRE-002", 1, 15.90)]),
+    "CMD-1004": (3, [("SOL-SPF-002", 1, 14.90)]),
+    "CMD-1005": (12, [("AQU-CRE-007", 1, 29.90), ("DER-SER-008", 1, 19.90)]),
+}
+REFUNDS: dict[str, dict] = {}   # idempotency_key -> refund (in memory: the demo's "payment system")
+
+
+@app.get("/orders/{order_id}")
+async def order(order_id: str):
+    await _fault()
+    if order_id not in _ORDERS:
+        raise HTTPException(404, "unknown order")
+    days, lines = _ORDERS[order_id]
+    return {"order_id": order_id, "purchase_date": (date.today() - timedelta(days=days)).isoformat(),
+            "days_since_purchase": days,
+            "lines": [{"sku": s, "qty": q, "unit_price_eur": u, "amount_eur": round(q * u, 2)} for s, q, u in lines]}
+
+
+class RefundRequest(BaseModel):
+    order_id: str
+    amount_eur: float
+    reason: str
+
+
+@app.post("/refunds")
+async def refund(req: RefundRequest, idempotency_key: str = Header(...)):
+    """Exactly-once refunds: the caller sends an Idempotency-Key (the claim id). A retry or a duplicate event with
+    the same key returns the ORIGINAL refund instead of paying twice."""
+    await _fault()
+    if idempotency_key in REFUNDS:
+        return {**REFUNDS[idempotency_key], "duplicate": True}
+    r = {"refund_id": "RF-" + hashlib.sha256(idempotency_key.encode()).hexdigest()[:8].upper(),
+         "order_id": req.order_id, "amount_eur": req.amount_eur, "status": "issued", "duplicate": False}
+    REFUNDS[idempotency_key] = r
+    return r

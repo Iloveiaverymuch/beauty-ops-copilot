@@ -116,6 +116,7 @@ const render = {
         ? `Express : le ${esc(o.eta)} · ${eur(o.fee_eur)} (commande avant ${esc(o.order_before)})`
         : `Standard : du ${esc(o.eta_from)} au ${esc(o.eta_to)} · ${eur(o.fee_eur)}, offerte dès ${eur(o.free_from_eur)}`).join("<br>")}</div>`,
   sources: d => d.passages.length ? `<div class="sources">Sources : ${d.passages.map(p => esc(p.title + " › " + p.section)).join(" · ")}</div>` : "",
+  claim: d => `<div class="box ${["rejected","rejected_by_reviewer","needs_info"].includes(d.status) ? "warn" : ""}"><h4>Dossier ${esc(d.claim_id)}</h4>${esc(d.message || d.status)}${d.amount_eur ? ` · ${eur(d.amount_eur)}` : ""}${d.refund_id ? ` · remboursement ${esc(d.refund_id)}` : ""}</div>`,
   handoff: d => `<div class="box"><h4>Conseiller</h4>Demande transmise · ticket <b>${esc(d.ticket_id)}</b></div>`,
 };
 

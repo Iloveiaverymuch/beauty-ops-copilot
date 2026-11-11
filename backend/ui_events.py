@@ -10,6 +10,7 @@ TOOL_LABELS = {  # progress line shown while a tool runs ("Recherche dans le cat
     "estimate_quantity": "Calcul des quantités", "search_knowledge": "Recherche dans nos guides",
     "check_availability": "Vérification du stock en magasin", "delivery_options": "Calcul des options de livraison",
     "request_human_advisor": "Transfert vers un conseiller",
+    "open_return_claim": "Ouverture du dossier de retour", "get_claim_status": "Recherche du dossier",
 }
 
 
@@ -26,6 +27,8 @@ def ui_event_for_tool_result(name: str, resp: dict) -> dict | None:
     if name == "search_knowledge":
         return {"event": "sources", "data": {"status": status, "passages": [
             {"citation": p["citation"], "title": p["title"], "section": p["section"]} for p in resp.get("passages", [])]}}
+    if name in ("open_return_claim", "get_claim_status") and resp.get("claim_id"):
+        return {"event": "claim", "data": resp}
     if name == "request_human_advisor" and status == "ok":
         return {"event": "handoff", "data": {"ticket_id": resp["ticket_id"], "message": resp["message"]}}
     return None

@@ -163,6 +163,39 @@ async def chat(req: ChatRequest):
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
+class DecisionRequest(BaseModel):
+    decision: Literal["approve", "reject"]
+    reviewer: str = Field(min_length=2, max_length=40, pattern=r"^[A-Za-z0-9._-]+$")
+
+
+@app.get("/claims/pending")
+def claims_pending():
+    """Back office: claims waiting for a human or for a refund retry (no auth here: in production behind IAP/SSO)."""
+    from claims.service import pending
+    return [{k: c[k] for k in ("claim_id", "status", "amount_eur", "rule")} for c in pending()]
+
+
+@app.post("/claims/{claim_id}/decision")
+def claims_decide(claim_id: str, req: DecisionRequest):
+    """Reviewer decision -> published as an event (Pub/Sub with CLAIMS_BUS=pubsub; the worker resumes the graph).
+    With the local bus there is no worker, so the event is handled in-process (same idempotent handler)."""
+    from fastapi import HTTPException
+
+    from claims.bus import LocalBus, bus
+    from claims.service import handle_decision, status, submit_decision
+    current = status(claim_id)["status"]
+    if current == "unknown_claim":
+        raise HTTPException(404, f"unknown claim {claim_id}")
+    if current not in ("pending_review", "refund_failed"):
+        raise HTTPException(409, f"claim {claim_id} is '{current}', not waiting for a decision")
+    msg_id = submit_decision(claim_id, req.decision, req.reviewer)
+    kpi({"kind": "claim_decision", "claim_id": claim_id, "decision": req.decision, "reviewer": req.reviewer})
+    if isinstance(bus(), LocalBus):
+        outcome, st = handle_decision({"claim_id": claim_id, "decision": req.decision, "reviewer": req.reviewer})
+        return {"message_id": msg_id, "outcome": outcome, "status": st["status"]}
+    return {"message_id": msg_id, "outcome": "published"}
+
+
 @app.post("/feedback")
 def feedback(req: FeedbackRequest):
     kpi({"kind": "feedback", **req.model_dump()})

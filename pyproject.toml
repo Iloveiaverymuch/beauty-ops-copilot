@@ -6,6 +6,9 @@ requires-python = ">=3.12"
 dependencies = [
     "google-adk[eval,otel]==2.13.0",
     "google-cloud-bigquery>=3.47.0",
+    "google-cloud-pubsub>=2.43.0",
+    "langgraph>=1.2.20",
+    "langgraph-checkpoint-sqlite>=3.1.3",
     "mcp[cli]==2.3.0",
     "opentelemetry-exporter-otlp-proto-http>=1.44,<2",
     "opentelemetry-resourcedetector-gcp",  # Cloud Run service/revision/region on spans (D2.3)

@@ -174,6 +174,22 @@ def c_compare(ts):
     return [] if skus[:2] == shown[:2] else [f"compared {skus}, shown first two {shown[:2]}"]
 
 
+def c_claim(ts):
+    calls = [c for t in ts for c in t.called("open_return_claim")]
+    if not calls:
+        return ["no open_return_claim"]
+    a, r = calls[-1]["args"], calls[-1]["response"] or {}
+    e = [] if (a.get("order_id"), a.get("skin_reaction"), a.get("photo_provided")) == ("CMD-1002", True, True) \
+        else [f"wrong args {a}"]
+    if r.get("status") != "pending_review":
+        e.append(f"status {r.get('status')}")
+    if r.get("claim_id") and r["claim_id"] not in ts[-1].text:
+        e.append("claim id not given to the customer")
+    if re.search(r"(vous serez rembours|remboursement (est |a été )?(accordé|validé|effectué))", ts[-1].text, re.I):
+        e.append("promised a refund the workflow did not grant")
+    return e
+
+
 CASES = [
     ("A1", "clarify before searching", ["Je cherche un sérum"], c_clarify),
     ("A2", "search with filters, then quantity", ["Un sérum pour peau grasse à imperfections, moins de 15 €, sans parfum",
@@ -191,6 +207,9 @@ CASES = [
     ("A12", "document versions: current policy wins (30 days, not the archived 21)",
      ["Combien de jours ai-je pour retourner un produit non ouvert ?"],
      lambda ts: c_kb(("30 jours",), "pol-retours")(ts) + (["ARCHIVED POLICY: '21 jours' in answer"] if "21 jours" in ts[0].text else [])),
+    ("A13", "claim: skin reaction -> workflow -> human review (LangGraph), no promised refund",
+     ["J'ai eu une réaction avec le sérum de ma commande CMD-1002, je voudrais être remboursée",
+      "Oui je l'ai ouvert, et j'ai une photo de la réaction"], lambda ts: c_claim(ts)),
     ("A11", "compare the products shown", ["Montre-moi des sérums pour peau grasse à imperfections, sans parfum, moins de 15 €",
                                            "Compare le premier et le deuxième"], c_compare),
 ]
