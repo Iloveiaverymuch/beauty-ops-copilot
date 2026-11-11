@@ -1,6 +1,24 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-11 B: chatbot backend + UI, first real conversations (KPI log per turn)
+- Flow works end to end in the UI: clarify + chips, cards from tool data (promo strike, EUR/100 ml), comparison,
+  estimate (2 x 30 ml, 19,80 EUR), store stock, retail API DOWN -> honest message + retry/advisor chips (no guess),
+  'not covered' answer with sources, feedback logged.
+- Input tokens grew every turn (2.3K -> 28.3K over 7 turns): every earlier tool result re-sent on every call.
+  Fix: before-model hook compacts EARLIER turns' tool results to stubs (SKUs, names, citations, totals kept;
+  current turn full; stored session untouched). Same flow: compare 9.2K -> 7.5K, quantity 14.2K -> 8.7K,
+  stock 16.0K -> 9.9K, retinol 28.3K -> 16.9K (-40%). Token counts are time-independent -> fair before/after.
+- Latency breakdown (new KPIs): model = 85-100% of the turn; tools ~0 except product search 2.5 s (BigQuery job
+  overhead) and 2 KB searches 4.1 s. ~7-10 s per model call with 250-1000 thinking tokens; 1-call turn 3.9 s.
+  Streaming works (3-8 chunks) but TTFT ~= total by structure: call 1 decides the tool, call 2 writes -> no words
+  before call 2. Levers: thinking level (A/B next), fewer model calls per turn, global endpoint (= residency
+  decision), product vectors in memory.
+- UX bug: 'les deux premiers' compared cards 1 and 3 (model listed products in its own order, cards in tool order).
+  Fix: present products in tool order = card order. Verified.
+- KPI nuance: retriever abstention (kb_abstained) != model abstention (passages above threshold but not answering);
+  monitoring needs both; the second needs answer classification.
+
 ## 2026-11-11 R3b: HARD SET (identifiers, typos, English, colloquial, short) + confidence intervals
 Why: base set saturated (dense R@5 = 1.00) -> couldn't discriminate techniques. 14 product + 12 KB hard queries,
 predictions written before running. Sanity check found a bug first: SKU not in product search text -> exact-ID

@@ -248,11 +248,12 @@ async def main() -> None:
 
     ok = sum(r["pass_all"] for r in report)
     lat = sorted(t.ms for t in all_turns)
-    print(f"\npass^{args.n}: {ok}/{len(report)} cases")
+    print(f"\nthinking={os.getenv('THINKING_LEVEL_ADVISOR', 'default')}  pass^{args.n}: {ok}/{len(report)} cases")
     if lat:
         print(f"turn latency p50 {lat[len(lat) // 2] / 1000:.1f} s, max {lat[-1] / 1000:.1f} s; "
               f"tokens/turn avg in {sum(t.tokens_in for t in all_turns) // len(all_turns)}, "
-              f"out {sum(t.tokens_out for t in all_turns) // len(all_turns)}")
+              f"out {sum(t.tokens_out for t in all_turns) // len(all_turns)}; "
+              f"model-only p50 by case type: see JSON")
     leaks = sum(1 for r in report for run in r["runs"] for e in run["errors"] if "LEAK" in e)
     print(f"security: {leaks} leak(s) across all runs")
     OUT.mkdir(exist_ok=True)

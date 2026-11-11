@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assistant beauté</title>
+<style>
+  :root { --bg:#f6f5f2; --panel:#fff; --ink:#1d1d1b; --muted:#6b6b66; --line:#e4e2dc; --brand:#2d6a4f;
+          --brand-soft:#e7f1ec; --user:#e8efe0; --promo:#c1121f; --warn:#8a5a00; --warn-bg:#fff4dc; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+  .app { max-width:760px; margin:0 auto; height:100vh; display:flex; flex-direction:column; background:var(--panel);
+         border-left:1px solid var(--line); border-right:1px solid var(--line); }
+  header { padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
+  header .dot { width:30px; height:30px; border-radius:50%; background:var(--brand); color:#fff; display:grid;
+                place-items:center; font-weight:700; }
+  header h1 { font-size:16px; margin:0; flex:1; }
+  header select, header button { font:inherit; font-size:13px; padding:4px 8px; border:1px solid var(--line);
+                                 border-radius:6px; background:#fff; }
+  #log { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .msg { max-width:88%; }
+  .user { align-self:flex-end; background:var(--user); padding:9px 14px; border-radius:16px 16px 4px 16px; }
+  .bot { align-self:flex-start; }
+  .bubble { padding:2px 0; }
+  .bubble p { margin:0 0 8px; } .bubble ul { margin:4px 0 8px 18px; padding:0; }
+  .cite { font-size:11px; color:var(--brand); background:var(--brand-soft); padding:1px 6px; border-radius:8px;
+          white-space:nowrap; }
+  .progress { font-size:13px; color:var(--muted); font-style:italic; }
+  .progress::before { content:"⏳ "; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin:8px 0; }
+  .card { border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; display:flex; flex-direction:column; }
+  .card .img { height:86px; display:grid; place-items:center; font-size:12px; letter-spacing:.06em;
+               text-transform:uppercase; color:#fff; font-weight:600; }
+  .card .body { padding:8px 10px 10px; display:flex; flex-direction:column; gap:3px; flex:1; }
+  .card .name { font-weight:600; font-size:13.5px; line-height:1.3; }
+  .card .brand, .card .ppu { font-size:12px; color:var(--muted); }
+  .price { font-size:18px; font-weight:700; margin-top:auto; }
+  .price.promo { color:var(--promo); } .old { font-size:12px; color:var(--muted); text-decoration:line-through; margin-right:6px; }
+  .badges { display:flex; flex-wrap:wrap; gap:4px; } .badge { font-size:10.5px; background:var(--bg); padding:1px 6px; border-radius:6px; }
+  .box { border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:8px 0; font-size:14px; background:#fcfcfa; }
+  .box.warn { background:var(--warn-bg); border-color:#f0d9a8; color:var(--warn); }
+  .box h4 { margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  table { border-collapse:collapse; width:100%; font-size:13px; } td, th { border-bottom:1px solid var(--line); padding:5px 6px; text-align:left; vertical-align:top; }
+  .sources { font-size:12px; color:var(--muted); margin-top:4px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip { border:1px solid var(--ink); background:#fff; border-radius:8px; padding:6px 12px; font:inherit; font-size:13.5px; cursor:pointer; }
+  .chip:hover { background:var(--bg); }
+  .meta { display:flex; align-items:center; gap:10px; margin-top:6px; font-size:11.5px; color:var(--muted); }
+  .meta button { border:none; background:none; cursor:pointer; font-size:15px; padding:0 2px; opacity:.7; }
+  .meta button.on { opacity:1; } .meta button:disabled { cursor:default; }
+  form { display:flex; gap:8px; padding:12px 14px; border-top:1px solid var(--line); }
+  #q { flex:1; font:inherit; padding:11px 14px; border:1px solid var(--line); border-radius:10px; }
+  #send { font:inherit; padding:0 18px; border:none; border-radius:10px; background:var(--brand); color:#fff; cursor:pointer; }
+  #send:disabled { opacity:.5; }
+  @media (max-width:520px) { #log { padding:12px; } .msg { max-width:100%; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="dot">L</div>
+    <h1>Léa, votre conseillère beauté</h1>
+    <select id="engine" title="Moteur d'orchestration"><option value="adk">ADK</option><option value="langgraph">LangGraph</option></select>
+    <button id="reset" title="Nouvelle conversation">Nouvelle conversation</button>
+  </header>
+  <div id="log"></div>
+  <form id="f"><input id="q" autocomplete="off" placeholder="Demander ou rechercher…" maxlength="2000"><button id="send">Envoyer</button></form>
+</div>
+<script>
+const CAT_COLORS = {"sérum":"#7c6f9b","crème":"#b07d62","nettoyant":"#5b8fa8","solaire":"#d39b2a",
+  "contour des yeux":"#8a6f8f","masque":"#6b8f71","exfoliant":"#9b7b5b"};
+const ATTR = {actives:"Actifs", price_paid_eur:"Prix payé", price_per_100ml:"Prix / 100 ml", fragrance_free:"Sans parfum",
+  skin_types:"Types de peau", concerns:"Préoccupations", routine_moment:"Moment", size_ml:"Contenance", brand:"Marque"};
+let threadId = null;
+const log = document.getElementById("log"), q = document.getElementById("q"), send = document.getElementById("send");
+const eur = v => v == null ? "" : v.toFixed(2).replace(".", ",") + " €";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function md(text) {  // tiny, safe markdown: escape first, then bold, lists, citations
+  const lines = esc(text).split("\n"); let html = "", inList = false;
+  for (let l of lines) {
+    l = l.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[([a-z0-9-]+#[^\]]+)\]/g, '<span class="cite">$1</span>');
+    const li = l.match(/^\s*[-*•]\s+(.*)/);
+    if (li) { if (!inList) { html += "<ul>"; inList = true; } html += `<li>${li[1]}</li>`; continue; }
+    if (inList) { html += "</ul>"; inList = false; }
+    if (l.trim()) html += `<p>${l}</p>`;
+  }
+  return html + (inList ? "</ul>" : "");
+}
+function el(cls, html) { const d = document.createElement("div"); d.className = cls; if (html != null) d.innerHTML = html; return d; }
+function scroll() { log.scrollTop = log.scrollHeight; }
+
+function card(p) {
+  const promo = p.promo_price_eur != null;
+  return `<div class="card"><div class="img" style="background:${CAT_COLORS[p.category] || "#888"}">${esc(p.category)}</div>
+    <div class="body"><div class="brand">${esc(p.brand)} · ${p.size_ml} ml</div><div class="name">${esc(p.name)}</div>
+    <div class="badges">${p.fragrance_free ? '<span class="badge">Sans parfum</span>' : ""}${p.actives.slice(0,2).map(a => `<span class="badge">${esc(a)}</span>`).join("")}</div>
+    <div class="price ${promo ? "promo" : ""}">${promo ? `<span class="old">${eur(p.price_eur)}</span>` : ""}${eur(promo ? p.promo_price_eur : p.price_eur)}</div>
+    <div class="ppu">${eur(p.price_per_100ml)} / 100 ml</div></div></div>`;
+}
+const fmt = v => Array.isArray(v) ? v.join(", ") : typeof v === "boolean" ? (v ? "oui" : "non") : typeof v === "number" ? String(v).replace(".", ",") : v;
+
+const render = {
+  cards: d => `<div class="cards">${d.products.map(card).join("")}</div>`,
+  comparison: d => { const names = Object.fromEntries(d.products.map(p => [p.sku, p.name]));
+    const skus = d.products.map(p => p.sku);
+    return `<div class="box"><h4>Ce qui les différencie</h4><table><tr><th></th>${skus.map(s => `<th>${esc(names[s])}</th>`).join("")}</tr>
+      ${d.differences.map(r => `<tr><td>${ATTR[r.attribute] || r.attribute}</td>${skus.map(s => `<td>${esc(r.attribute.startsWith("price") ? eur(r.values[s]) : r.attribute === "size_ml" ? r.values[s] + " ml" : fmt(r.values[s]))}</td>`).join("")}</tr>`).join("")}</table></div>`; },
+  estimate: d => `<div class="box"><h4>Estimation</h4>${esc(d.name)} · ${d.days} jours (${String(d.usage_ml_per_day).replace(".", ",")} ml/jour)<br>
+      <b>${d.units} flacon${d.units > 1 ? "s" : ""}</b> de ${d.size_ml} ml · total <b>${eur(d.total_eur)}</b>${d.savings_eur > 0 ? ` · économie ${eur(d.savings_eur)}` : ""}</div>`,
+  availability: d => d.status !== "ok" ? `<div class="box warn">⚠️ Stock en magasin indisponible pour le moment</div>` :
+      `<div class="box"><h4>${esc(d.store_name)}</h4>${d.in_stock ? `✅ En stock (${d.quantity}) · retrait ${esc(d.click_and_collect)}` : `❌ Rupture en magasin · retrait sous ${esc(d.click_and_collect)}`}</div>`,
+  delivery: d => d.status !== "ok" ? `<div class="box warn">⚠️ Service de livraison indisponible pour le moment</div>` :
+      !d.deliverable ? `<div class="box warn">Livraison non disponible pour ${esc(d.postcode)}</div>` :
+      `<div class="box"><h4>Livraison ${esc(d.postcode)}</h4>${d.options.map(o => o.type === "express"
+        ? `Express : le ${esc(o.eta)} · ${eur(o.fee_eur)} (commande avant ${esc(o.order_before)})`
+        : `Standard : du ${esc(o.eta_from)} au ${esc(o.eta_to)} · ${eur(o.fee_eur)}, offerte dès ${eur(o.free_from_eur)}`).join("<br>")}</div>`,
+  sources: d => d.passages.length ? `<div class="sources">Sources : ${d.passages.map(p => esc(p.title + " › " + p.section)).join(" · ")}</div>` : "",
+  handoff: d => `<div class="box"><h4>Conseiller</h4>Demande transmise · ticket <b>${esc(d.ticket_id)}</b></div>`,
+};
+
+async function ask(text) {
+  if (!text.trim()) return;
+  log.appendChild(el("msg user", esc(text)));
+  const bot = el("msg bot"), bubble = el("bubble"), extras = el(""), progress = el("progress");
+  bot.append(progress, bubble, extras); log.appendChild(bot); progress.textContent = "Léa réfléchit"; scroll();
+  send.disabled = true; let buf = "", turnId = null;
+  const resp = await fetch("/chat", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({message:text, thread_id:threadId, engine:document.getElementById("engine").value})});
+  const reader = resp.body.getReader(), dec = new TextDecoder(); let pending = "";
+  while (true) {
+    const {value, done} = await reader.read(); if (done) break;
+    pending += dec.decode(value, {stream:true}); let i;
+    while ((i = pending.indexOf("\n\n")) >= 0) {
+      const raw = pending.slice(0, i); pending = pending.slice(i + 2);
+      const ev = (raw.match(/^event: (.*)$/m) || [])[1], data = JSON.parse((raw.match(/^data: (.*)$/m) || [, "{}"])[1]);
+      if (ev === "meta") { threadId = data.thread_id; turnId = data.turn_id; }
+      else if (ev === "progress") { progress.style.display = ""; progress.textContent = data.label; }
+      else if (ev === "text") { progress.style.display = "none"; buf += data.delta; bubble.innerHTML = md(buf); }
+      else if (render[ev]) { extras.insertAdjacentHTML("beforeend", render[ev](data)); }
+      else if (ev === "suggestions") {
+        const c = el("chips"); data.chips.forEach(t => { const b = document.createElement("button"); b.className = "chip";
+          b.textContent = t; b.onclick = () => { c.remove(); ask(t); }; c.appendChild(b); }); extras.appendChild(c);
+      } else if (ev === "done") {
+        progress.style.display = "none";
+        const m = el("meta", `<button title="Utile">👍</button><button title="Pas utile">👎</button>
+          <span>${(data.latency_ms/1000).toFixed(1)} s · 1er mot ${data.ttft_ms ? (data.ttft_ms/1000).toFixed(1) + " s" : "-"} · modèle ${(data.model_ms/1000).toFixed(1)} s / outils ${(data.tools_ms/1000).toFixed(1)} s · ${data.tokens_in}+${data.tokens_out} tokens (+${data.tokens_thinking} réflexion)${data.tools.length ? " · " + data.tools.join(", ") : ""}</span>`);
+        m.querySelectorAll("button").forEach((b, k) => b.onclick = async () => {
+          m.querySelectorAll("button").forEach(x => x.disabled = true); b.classList.add("on");
+          await fetch("/feedback", {method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({thread_id:threadId, turn_id:data.turn_id, rating: k ? "down" : "up"})}); });
+        bot.appendChild(m);
+      } else if (ev === "error") { bubble.textContent = data.message; }
+      scroll();
+    }
+  }
+  send.disabled = false; q.focus();
+}
+document.getElementById("f").onsubmit = e => { e.preventDefault(); const t = q.value; q.value = ""; ask(t); };
+document.getElementById("reset").onclick = () => { threadId = null; log.innerHTML = ""; greet(); };
+function greet() { const b = el("msg bot", md("Bonjour ! Je suis Léa. Je peux vous conseiller des soins, comparer des produits, estimer un budget et vérifier la disponibilité. Que cherchez-vous ?")); log.appendChild(b); }
+greet(); q.focus();
+</script>
+</body>
+</html>

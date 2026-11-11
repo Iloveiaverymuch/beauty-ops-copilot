@@ -105,3 +105,27 @@ def test_hard_set_labels_are_real():
     sections = {f"{c.doc_id}#{c.section}" for c in load_kb(data / "kb") if c.visibility == "public" and c.doc_type != "avis"}
     assert all(e in skus for g in PRODUCT_HARD for e in g["expect"])
     assert all(e in sections for g in KB_HARD for e in g["expect"])
+
+
+def test_compact_history_shrinks_old_tool_results_only_and_never_mutates_session():
+    from google.adk.models.llm_request import LlmRequest
+    from google.genai import types
+
+    import beauty_advisor.agent as ag
+
+    big = {"status": "ok", "products": [{"sku": f"S{i}", "name": f"P{i}", "description": "x" * 300} for i in range(3)]}
+    old_fr = types.Part(function_response=types.FunctionResponse(id="1", name="search_products", response=big))
+    new_fr = types.Part(function_response=types.FunctionResponse(id="2", name="search_products", response=big))
+    req = LlmRequest(contents=[
+        types.Content(role="user", parts=[types.Part(text="sérum")]),
+        types.Content(role="user", parts=[old_fr]),
+        types.Content(role="model", parts=[types.Part(text="voici")]),
+        types.Content(role="user", parts=[types.Part(text="et le deuxième ?")]),
+        types.Content(role="user", parts=[new_fr]),
+    ])
+    saved = ag.compact_history(req)
+    assert saved > 800
+    assert req.contents[1].parts[0].function_response.response == {
+        "status": "ok", "products": [{"sku": "S0", "name": "P0"}, {"sku": "S1", "name": "P1"}, {"sku": "S2", "name": "P2"}]}
+    assert req.contents[4].parts[0].function_response.response == big          # current turn: full result
+    assert old_fr.function_response.response == big                            # stored event object untouched

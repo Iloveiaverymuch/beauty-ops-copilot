@@ -14,11 +14,14 @@ Design rules
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import os
 import re
 import time
 from typing import Literal
+
+from opentelemetry import trace
 
 from advisor.embeddings import embed_query
 from advisor.retrieval import store
@@ -33,6 +36,7 @@ SkinType = Literal["", "grasse", "mixte", "sèche", "sensible", "normale"]
 Concern = Literal["", "imperfections", "pores", "rides", "taches", "éclat", "déshydratation", "rougeurs", "cernes"]
 Category = Literal["", "sérum", "crème", "nettoyant", "solaire", "contour des yeux", "masque", "exfoliant"]
 SKU_RE = re.compile(r"\b[A-Za-z]{3}-[A-Za-z]{3}-\d{3}\b")
+_tracer = trace.get_tracer("advisor.rag")
 KNOWLEDGE_MODE = os.getenv("KNOWLEDGE_MODE", "rerank")
 MIN_RELEVANCE = float(os.getenv("RANK_MIN_SCORE", "0.30"))   # no-answer threshold; calibrated in the eval (R3)
 
@@ -68,11 +72,18 @@ def search_knowledge(question: str) -> dict:
             earlier messages (e.g. "Peut-on utiliser le rétinol avec la vitamine C ?").
     Returns: {"status": "ok"|"no_answer", "passages": [{"citation", "title", "section", "source_text", "relevance"}]}
     """
-    t0 = time.perf_counter()
-    results = get_retriever(KNOWLEDGE_MODE).search(question, k=4)
-    ms = round((time.perf_counter() - t0) * 1000)
-    best = results[0].score if results else 0.0
-    if KNOWLEDGE_MODE == "rerank" and best < MIN_RELEVANCE:
+    with _tracer.start_as_current_span("rag.search_knowledge") as span:
+        t0 = time.perf_counter()
+        results = get_retriever(KNOWLEDGE_MODE).search(question, k=4)
+        ms = round((time.perf_counter() - t0) * 1000)
+        best = results[0].score if results else 0.0
+        stage_ms = results[0].meta.get("ms", {}) if results else {}
+        abstain = KNOWLEDGE_MODE == "rerank" and best < MIN_RELEVANCE
+        # Attributes = what you filter on in Cloud Trace when a bad answer is reported. No question text (PII).
+        span.set_attributes({"rag.mode": KNOWLEDGE_MODE, "rag.top_score": best, "rag.abstained": abstain,
+                             "rag.top_citation": results[0].citation if results else "",
+                             **{f"rag.ms.{k}": float(v) for k, v in stage_ms.items()}})
+    if abstain:
         return {"status": "no_answer", "best_relevance": best, "passages": [], "latency_ms": ms}
     keep = [r for r in results if KNOWLEDGE_MODE != "rerank" or r.score >= MIN_RELEVANCE]
     return {"status": "ok", "latency_ms": ms, "mode": KNOWLEDGE_MODE,
@@ -192,3 +203,87 @@ def estimate_quantity(sku: str, days: int = 0, months: int = 0) -> dict:
     if d <= 0 or d > 730:
         return {"status": "error", "message": "Give a duration between 1 day and 24 months."}
     return {"status": "ok", **estimate(p, d)}
+
+
+# ------------------------------------------------------------------------------------ external API (stock, delivery)
+# The retail API is a dependency we don't control: every call has a TIMEOUT (a slow API must not freeze the chat),
+# a bounded RETRY with backoff on transient failures only (timeouts, 5xx), and a FALLBACK the model can say
+# ("je ne peux pas vérifier le stock pour le moment") instead of an exception or an invented answer.
+import httpx  # noqa: E402
+
+RETAIL_API = os.getenv("RETAIL_API_URL", "http://127.0.0.1:8090")
+API_TIMEOUT_S = float(os.getenv("RETAIL_API_TIMEOUT_S", "1.5"))
+API_RETRIES = int(os.getenv("RETAIL_API_RETRIES", "2"))
+Store = Literal["paris-rivoli", "lyon-part-dieu", "nanterre", "lille-centre", "marseille-prado"]
+_http = httpx.Client(timeout=API_TIMEOUT_S)
+
+
+def _api_get(path: str, params: dict) -> tuple[dict | None, str]:
+    """GET with timeout + retry on transient errors. Returns (json, "") or (None, reason). 4xx are NOT retried
+    (a wrong SKU won't become right on the 2nd try)."""
+    last = ""
+    for attempt in range(API_RETRIES + 1):
+        try:
+            r = _http.get(f"{RETAIL_API}{path}", params=params)
+            if r.status_code < 500:
+                return (r.json(), "") if r.status_code == 200 else (None, f"http {r.status_code}")
+            last = f"http {r.status_code}"
+        except httpx.TimeoutException:
+            last = "timeout"
+        except httpx.HTTPError as e:
+            last = type(e).__name__
+        if attempt < API_RETRIES:
+            time.sleep(0.2 * 2 ** attempt)            # 0.2 s, 0.4 s: short, a customer is waiting
+    return None, last
+
+
+UNAVAILABLE = ("The stock/delivery service is temporarily unavailable. Tell the customer you can't check it right "
+               "now, suggest trying again in a few minutes or checking the product page; do NOT guess availability.")
+
+
+def check_availability(sku: str, store: Store) -> dict:
+    """Check in-store stock of a product and the click-and-collect delay.
+
+    Use when the customer asks if a product is available in a store ("dispo à Lyon ?").
+    Args:
+        sku: Product SKU (e.g. "LUM-SER-001").
+        store: One of: paris-rivoli, lyon-part-dieu, nanterre, lille-centre, marseille-prado.
+    Returns: {"status": "ok", "store_name", "quantity", "click_and_collect"} or {"status": "unavailable", "message"}
+    """
+    data, err = _api_get(f"/stock/{sku}", {"store": store})
+    if data is None:
+        return {"status": "unavailable", "reason": err, "message": UNAVAILABLE}
+    return {"status": "ok", **data, "in_stock": data["quantity"] > 0}
+
+
+def delivery_options(sku: str, postcode: str) -> dict:
+    """Get home-delivery options (standard / express), dates and fees for a product to a French postcode.
+
+    Use when the customer asks "livré quand ?" or about delivery to their address.
+    Args:
+        sku: Product SKU.
+        postcode: 5-digit French postcode (e.g. "92000"). Ask the customer for it if unknown.
+    Returns: {"status": "ok", "deliverable", "options": [{"type", "eta"/"eta_from"/"eta_to", "fee_eur", ...}]}
+        or {"status": "unavailable", "message"}
+    """
+    if not re.fullmatch(r"\d{5}", postcode or ""):
+        return {"status": "error", "message": "postcode must be 5 digits; ask the customer."}
+    data, err = _api_get("/delivery", {"sku": sku, "postcode": postcode})
+    if data is None:
+        return {"status": "unavailable", "reason": err, "message": UNAVAILABLE}
+    return {"status": "ok", **data}
+
+
+def request_human_advisor(reason: str, summary: str) -> dict:
+    """Hand the conversation over to a human advisor (escalation).
+
+    Use when the customer asks for a human, or accepts your offer after you couldn't answer, or for a skin
+    reaction / complaint. Never use it for a question you can answer with your tools.
+    Args:
+        reason: One of: customer_request, no_answer, skin_reaction, complaint.
+        summary: 1-2 sentences in French summarising the request for the advisor (no personal data beyond the request).
+    Returns: {"status": "ok", "ticket_id", "message"}
+    """
+    ticket = "HD-" + hashlib.sha256(f"{reason}|{summary}|{time.time()}".encode()).hexdigest()[:6].upper()
+    return {"status": "ok", "ticket_id": ticket, "reason": reason,
+            "message": "A human advisor will reply in this chat within 2 hours (Monday-Saturday, 9:00-19:00)."}
