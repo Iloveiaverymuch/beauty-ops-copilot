@@ -104,6 +104,9 @@ def product_text(p: dict) -> str:
     they cannot leak through search results even if the model is tricked into "showing everything it found".
     """
     actives = ", ".join(f"{a['name']} {a['pct']}%" if a["pct"] is not None else a["name"] for a in p["actives"])
-    return (f"{p['name']} ({p['brand']}). Catégorie : {p['category']}. Préoccupations : {', '.join(p['concerns']) or 'toutes'}. "
+    # The SKU MUST be in the searchable text: customers and the agent search by reference ("LUM-SER-011").
+    # Missing it = exact-identifier queries return nothing (found by the hard-set sanity check; same bug the
+    # internal copilot's catalog had on day 1).
+    return (f"{p['sku']} - {p['name']} ({p['brand']}). Catégorie : {p['category']}. Préoccupations : {', '.join(p['concerns']) or 'toutes'}. "
             f"Types de peau : {', '.join(p['skin_types'])}. Actifs : {actives or 'aucun'}. "
             f"{'Sans parfum' if p['fragrance_free'] else 'Parfumé'}. Moment : {p['routine_moment']}. {p['description']}")

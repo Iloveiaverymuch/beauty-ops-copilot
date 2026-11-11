@@ -84,3 +84,24 @@ def test_tool_removed_from_model_request_once_budget_spent():
     req2 = LlmRequest(); req2.append_tools([FunctionTool(ag.search_knowledge)])
     ag.drop_exhausted_tools(ctx, req2)
     assert "search_knowledge" in req2.tools_dict          # under budget: untouched
+
+
+def test_wilson_and_mcnemar():
+    from evals.advisor.stats import mcnemar, wilson
+    lo, hi = wilson(24, 25)
+    assert 0.79 < lo < 0.81 and 0.99 < hi <= 1.0
+    assert mcnemar([True] * 6 + [False] * 4, [False] * 6 + [False] * 4)[:2] == (6, 0)
+    assert round(mcnemar([True] * 6 + [False] * 4, [False] * 10)[2], 3) == 0.031
+
+
+def test_hard_set_labels_are_real():
+    import json
+    from pathlib import Path
+
+    from advisor.chunking import load_kb
+    from evals.advisor.golden_hard import KB_HARD, PRODUCT_HARD
+    data = Path(__file__).resolve().parent.parent / "advisor" / "data"
+    skus = {p["sku"] for p in json.loads((data / "products.json").read_text())}
+    sections = {f"{c.doc_id}#{c.section}" for c in load_kb(data / "kb") if c.visibility == "public" and c.doc_type != "avis"}
+    assert all(e in skus for g in PRODUCT_HARD for e in g["expect"])
+    assert all(e in sections for g in KB_HARD for e in g["expect"])

@@ -1,6 +1,35 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-11 R3b: HARD SET (identifiers, typos, English, colloquial, short) + confidence intervals
+Why: base set saturated (dense R@5 = 1.00) -> couldn't discriminate techniques. 14 product + 12 KB hard queries,
+predictions written before running. Sanity check found a bug first: SKU not in product search text -> exact-ID
+queries returned nothing (same bug as the copilot catalog on day 1). Fixed + regression test, 40 products re-embedded.
+| top-1 | products hard (14) | KB hard (12) | KB base (25) | ALL (51), 95% CI |
+|---|---|---|---|---|
+| dense | 14 | 12 | 24 | 50 [0.90, 1.00] |
+| bm25 | 10 | 7 | 13 | 30 [0.45, 0.71] |
+| hybrid RRF | 13 | 11 | 18 | 42 [0.70, 0.90] |
+| rerank (hybrid top-20 -> cross-encoder) | 14 | 12 | 24 | 50 [0.90, 1.00] |
+Paired (McNemar, all 51): dense > bm25 21/1 p<0.001; dense > hybrid 8/0 p=0.008; rerank > hybrid 8/0 p=0.008;
+dense vs rerank 1/1 p=1.
+Prediction scorecard:
+- identifiers/numbers/jargon: BM25 >= dense -> only TIED (both perfect). No case where BM25 beat a modern embedder here.
+- typos: dense degrades less -> CONFIRMED (dense 4/4, BM25 1/4).
+- English on French docs: dense >> BM25 -> CONFIRMED (4/4 vs 0/4).
+- short queries: rerank improves top-1 -> NOT TESTABLE (dense already 4/4).
+Reading (coherent with the literature AND with the earlier English-papers RAG lab):
+- Reranking significantly improves its candidate generator (hybrid -> rerank +8, p=0.008): the classic two-stage
+  result. What differs from the papers lab: here dense ALONE already matches the reranked result.
+- BM25 wins when the lexical signal beats the dense model (papers lab: lite embedder, 512-token chunks, rare
+  acronyms). Here: strong multilingual embedder, ~30-word title-prefixed chunks, 40 products -> dense dominates.
+  Equal-weight RRF with a much weaker list adds noise (Cormack's gains assume comparably good lists).
+- Still near ceiling (dense 50/51): this corpus can't reproduce catalog-scale conditions (millions of refs, size
+  variants, near-identical products across brands), where identifier and lexical matching matter more.
+Decisions: product search = exact-SKU path (regex, deterministic) + dense order in the SQL-filtered set (RRF
+removed). Advice = rerank (= dense on ranking, plus the only calibrated score for 'je ne sais pas'). At scale:
+weighted fusion or query routing (identifier-shaped -> lexical/exact), re-evaluated on real query logs.
+
 ## 2026-11-11 R3 DONE: advisor evals (30 golden retrieval questions x 4 modes; 11 agent cases, pass^2)
 Retrieval, section-level (the passage that answers), k=5, 25 answerable + 5 no-answer:
 | mode | R@5 | MRR | top1 | p50 ms | poisoned review in top5 |

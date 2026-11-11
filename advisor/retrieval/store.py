@@ -27,6 +27,8 @@ _bq: bigquery.Client | None = None
 _chunks: list[dict] | None = None
 _products: dict[str, dict] | None = None
 _vectors: list[tuple[str, list[float]]] | None = None
+_pvectors: list[tuple[str, list[float]]] | None = None
+_pvec_lock = threading.Lock()
 
 T_CHUNKS = f"`{config.PROJECT}.{config.BQ_DATASET}.chunks_public`"
 T_PRODUCTS = f"`{config.PROJECT}.{config.BQ_DATASET}.products_public`"
@@ -75,6 +77,17 @@ def public_chunk_vectors() -> list[tuple[str, list[float]]]:
                 rows = bq().query(f"SELECT chunk_id, embedding FROM {T_CHUNKS}").result()
                 _vectors = [(r["chunk_id"], list(r["embedding"])) for r in rows]
     return _vectors
+
+
+def public_product_vectors() -> list[tuple[str, list[float]]]:
+    """Product embeddings (from products_public), loaded once; used by the retrieval evals and in-memory search."""
+    global _pvectors
+    if _pvectors is None:
+        with _pvec_lock:
+            if _pvectors is None:
+                rows = bq().query(f"SELECT sku, embedding FROM {T_PRODUCTS}").result()
+                _pvectors = [(r["sku"], list(r["embedding"])) for r in rows]
+    return _pvectors
 
 
 def memory_search_chunks(qvec: list[float], k: int = 50) -> list[tuple[str, float]]:

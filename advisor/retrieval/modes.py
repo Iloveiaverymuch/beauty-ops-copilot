@@ -134,18 +134,23 @@ class RerankRetriever:
         ms = dict(candidates[0].meta["ms"]) if candidates else {}
         by_id = {c["chunk_id"]: c for c in store.public_chunks()}
         t0 = time.perf_counter()
-        url = (f"https://discoveryengine.googleapis.com/v1/projects/{config.PROJECT}/locations/{config.RANK_LOCATION}"
-               f"/rankingConfigs/default_ranking_config:rank")
-        body = {"model": config.RANK_MODEL, "query": query, "topN": k,
-                "records": [{"id": r.chunk_id, "title": f"{r.title} > {r.section}", "content": r.text} for r in candidates]}
-        resp = self.session().post(url, json=body, headers={"x-goog-user-project": config.PROJECT}, timeout=10)
-        resp.raise_for_status()
+        ranked = rerank_records(query, [(r.chunk_id, f"{r.title} > {r.section}", r.text) for r in candidates], k)
         ms["rerank"] = round((time.perf_counter() - t0) * 1000)
-        out = []
-        for rec in resp.json().get("records", []):
-            c = by_id[rec["id"]]
-            out.append(Result(rec["id"], c["doc_id"], c["section"], c["title"], c["text"], round(rec["score"], 4), {"ms": ms}))
-        return out
+        return [Result(cid, by_id[cid]["doc_id"], by_id[cid]["section"], by_id[cid]["title"], by_id[cid]["text"],
+                       round(score, 4), {"ms": ms}) for cid, score in ranked]
+
+
+def rerank_records(query: str, records: list[tuple[str, str, str]], top_n: int) -> list[tuple[str, float]]:
+    """Vertex AI ranking API (cross-encoder). records = [(id, title, text)] -> [(id, relevance 0..1)] best first."""
+    if not records:
+        return []
+    url = (f"https://discoveryengine.googleapis.com/v1/projects/{config.PROJECT}/locations/{config.RANK_LOCATION}"
+           f"/rankingConfigs/default_ranking_config:rank")
+    body = {"model": config.RANK_MODEL, "query": query, "topN": top_n,
+            "records": [{"id": i, "title": title, "content": text} for i, title, text in records]}
+    resp = RerankRetriever.session().post(url, json=body, headers={"x-goog-user-project": config.PROJECT}, timeout=10)
+    resp.raise_for_status()
+    return [(r["id"], r["score"]) for r in resp.json().get("records", [])]
 
 
 MODES = {"dense_bq": lambda: DenseRetriever("bq"), "dense": DenseRetriever, "bm25": BM25Retriever,

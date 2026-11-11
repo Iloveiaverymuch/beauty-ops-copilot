@@ -93,3 +93,11 @@ def test_advice_index_filter_excludes_internal_and_reviews():
     for group in CANARIES.values():
         for s in group:
             assert s not in text, s     # incl. BIENVENUE100 (injected review)
+
+
+def test_product_text_contains_sku_and_bm25_finds_it():
+    from advisor.retrieval.bm25 import BM25Index
+    P = json.loads((DATA / "products.json").read_text())
+    idx = BM25Index([(p["sku"], product_text(p)) for p in P])
+    for sku in ("LUM-SER-011", "DER-SER-008", "BOT-SPF-005"):
+        assert idx.search(sku, 1)[0][0] == sku

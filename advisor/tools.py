@@ -16,13 +16,13 @@ from __future__ import annotations
 
 import math
 import os
+import re
 import time
 from typing import Literal
 
 from advisor.embeddings import embed_query
 from advisor.retrieval import store
-from advisor.retrieval.bm25 import BM25Index
-from advisor.retrieval.modes import get_retriever, rrf
+from advisor.retrieval.modes import get_retriever
 
 SKIN_TYPES = ("grasse", "mixte", "sèche", "sensible", "normale")
 CONCERNS = ("imperfections", "pores", "rides", "taches", "éclat", "déshydratation", "rougeurs", "cernes")
@@ -32,6 +32,7 @@ CATEGORIES = ("sérum", "crème", "nettoyant", "solaire", "contour des yeux", "m
 SkinType = Literal["", "grasse", "mixte", "sèche", "sensible", "normale"]
 Concern = Literal["", "imperfections", "pores", "rides", "taches", "éclat", "déshydratation", "rougeurs", "cernes"]
 Category = Literal["", "sérum", "crème", "nettoyant", "solaire", "contour des yeux", "masque", "exfoliant"]
+SKU_RE = re.compile(r"\b[A-Za-z]{3}-[A-Za-z]{3}-\d{3}\b")
 KNOWLEDGE_MODE = os.getenv("KNOWLEDGE_MODE", "rerank")
 MIN_RELEVANCE = float(os.getenv("RANK_MIN_SCORE", "0.30"))   # no-answer threshold; calibrated in the eval (R3)
 
@@ -108,12 +109,11 @@ def search_products(query: str = "", skin_type: SkinType = "", concern: Concern 
     hits = store.filtered_product_search(qvec, skin_type or None, concern or None, category or None,
                                          max_price_eur or None, True if fragrance_free else None)
     catalog = store.public_products()
-    if qvec is not None and hits:
-        # hybrid inside the filtered set: dense order (from BigQuery) fused with BM25 over the same candidates
-        bm = BM25Index([(sku, catalog[sku]["search_text"]) for sku, _ in hits]).search(query, len(hits))
-        order = [sku for sku, _ in rrf([[s for s, _ in hits], [s for s, _ in bm]])]
-    else:
-        order = [s for s, _ in hits]
+    # Exact reference typed by the customer ("LUM-SER-011"): deterministic lookup, no ranking involved.
+    ids = [m.upper() for m in SKU_RE.findall(query or "") if m.upper() in catalog]
+    # Otherwise dense order inside the SQL-filtered set. Measured (hard set): equal-weight RRF with BM25 LOWERED
+    # top-1 vs dense alone (products 13/14 vs 14/14; all sets 42/51 vs 50/51, p=0.008), so no fusion here.
+    order = ids + [s for s, _ in hits if s not in ids]
     return {"status": "ok", "total_matches": len(hits), "latency_ms": round((time.perf_counter() - t0) * 1000),
             "products": [card(catalog[s]) for s in order[:limit]]}
 

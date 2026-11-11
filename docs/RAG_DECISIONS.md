@@ -1,7 +1,7 @@
 # RAG decisions: Beauty Advisor (customer-facing chatbot)
 
-Status: R1 (ingestion) built; R2 (retrieval) and R3 (evals) next. Every number below that is not yet measured is
-marked *to measure*; the eval (R3) replaces assumptions with results.
+Status: R1-R3 done. Measured results are in section 6 and evals/FINDINGS.md; the table below keeps the original
+reasoning, section 6 says what the data confirmed or overturned.
 
 ## 1. The pipeline at a glance
 
@@ -77,3 +77,14 @@ query + candidate snippets are sent for scoring, not stored).
 recall@5 and MRR per mode (dense / BM25 / hybrid / hybrid + rerank), per question category (direct,
 paraphrase, near-duplicate, exact detail, multi-doc, no-answer), retrieval latency per mode, canary leaks = 0,
 citation correctness, groundedness.
+
+## 6. What the measurements said (R3, 30 base + 26 hard questions)
+| Assumption at design time | Measured | Decision |
+|---|---|---|
+| Hybrid (BM25 + dense, RRF) beats dense | **Overturned here**: top-1 42/51 vs 50/51 (p=0.008). BM25 fails typos (1/4), English (0/4), paraphrase (2/6); ties dense on SKUs/numbers once the SKU is in the text | Product search: exact-SKU regex path + dense order. No equal-weight RRF. At scale: weighted fusion or query routing, re-measured on real logs |
+| Reranker improves ranking | **Confirmed vs its first stage** (hybrid -> rerank +8/0, p=0.008); **tied with dense alone** (1/1) | Advice uses rerank: same ranking as dense, plus the only calibrated score |
+| A threshold can decide "je ne sais pas" | **Only on reranker scores** (no-answer 0.03-0.13 vs answerable >= 0.54); dense cosine distributions overlap | Threshold 0.30 (sweep plateau 0.15-0.45) |
+| Better ranking = safer | **Overturned**: the cross-encoder put the injected review #1 for all promo-code questions | Reviews out of the advice index (poison 8/30 -> 0/30) |
+| BigQuery VECTOR_SEARCH can serve the chatbot | **No**: ~0.8-1 s/query (job overhead) vs 3-5 ms in memory, identical results | BigQuery = source of truth; serving copy in memory (Vector Search / AlloyDB at scale) |
+Limits: one author for corpus and questions; n = 51 (95% CI on 50/51 = [0.90, 1.00]); corpus far smaller than a
+retail catalog. Directional evidence, not a benchmark.

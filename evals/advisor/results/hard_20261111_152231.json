@@ -1,0 +1,3857 @@
+{
+ "summary": {
+  "products_hard": {
+   "dense": {
+    "r5": 1.0,
+    "mrr": 1.0,
+    "top1": "14/14",
+    "ci": [
+     0.78,
+     1.0
+    ]
+   },
+   "bm25": {
+    "r5": 0.786,
+    "mrr": 0.732,
+    "top1": "10/14",
+    "ci": [
+     0.45,
+     0.88
+    ]
+   },
+   "hybrid": {
+    "r5": 1.0,
+    "mrr": 0.952,
+    "top1": "13/14",
+    "ci": [
+     0.69,
+     0.99
+    ]
+   },
+   "rerank": {
+    "r5": 1.0,
+    "mrr": 1.0,
+    "top1": "14/14",
+    "ci": [
+     0.78,
+     1.0
+    ]
+   }
+  },
+  "kb_hard": {
+   "dense": {
+    "r5": 1.0,
+    "mrr": 1.0,
+    "top1": "12/12",
+    "ci": [
+     0.76,
+     1.0
+    ]
+   },
+   "bm25": {
+    "r5": 0.667,
+    "mrr": 0.625,
+    "top1": "7/12",
+    "ci": [
+     0.32,
+     0.81
+    ]
+   },
+   "hybrid": {
+    "r5": 1.0,
+    "mrr": 0.944,
+    "top1": "11/12",
+    "ci": [
+     0.65,
+     0.99
+    ]
+   },
+   "rerank": {
+    "r5": 1.0,
+    "mrr": 1.0,
+    "top1": "12/12",
+    "ci": [
+     0.76,
+     1.0
+    ]
+   }
+  },
+  "kb_base": {
+   "dense": {
+    "r5": 1.0,
+    "mrr": 0.98,
+    "top1": "24/25",
+    "ci": [
+     0.8,
+     0.99
+    ]
+   },
+   "bm25": {
+    "r5": 0.8,
+    "mrr": 0.655,
+    "top1": "13/25",
+    "ci": [
+     0.33,
+     0.7
+    ]
+   },
+   "hybrid": {
+    "r5": 0.96,
+    "mrr": 0.818,
+    "top1": "18/25",
+    "ci": [
+     0.52,
+     0.86
+    ]
+   },
+   "rerank": {
+    "r5": 1.0,
+    "mrr": 0.98,
+    "top1": "24/25",
+    "ci": [
+     0.8,
+     0.99
+    ]
+   }
+  },
+  "all_combined": {
+   "dense": {
+    "r5": 1.0,
+    "mrr": 0.99,
+    "top1": "50/51",
+    "ci": [
+     0.9,
+     1.0
+    ]
+   },
+   "bm25": {
+    "r5": 0.765,
+    "mrr": 0.669,
+    "top1": "30/51",
+    "ci": [
+     0.45,
+     0.71
+    ]
+   },
+   "hybrid": {
+    "r5": 0.98,
+    "mrr": 0.885,
+    "top1": "42/51",
+    "ci": [
+     0.7,
+     0.9
+    ]
+   },
+   "rerank": {
+    "r5": 1.0,
+    "mrr": 0.99,
+    "top1": "50/51",
+    "ci": [
+     0.9,
+     1.0
+    ]
+   }
+  }
+ },
+ "detail": {
+  "products_hard": {
+   "dense": [
+    {
+     "id": "pq1",
+     "type": "sku",
+     "got": [
+      "LUM-SER-011",
+      "LUM-SER-001",
+      "LUM-SER-005",
+      "LUM-CRE-001",
+      "LUM-EXF-004"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 699
+    },
+    {
+     "id": "pq2",
+     "type": "sku",
+     "got": [
+      "DER-SER-008",
+      "DER-SER-007",
+      "DER-SER-002",
+      "NEO-SER-012",
+      "AQU-SER-004"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 126
+    },
+    {
+     "id": "pq3",
+     "type": "brand",
+     "got": [
+      "BOT-YEU-003",
+      "BOT-NET-003",
+      "BOT-MAS-001",
+      "BOT-CRE-003",
+      "BOT-SER-009"
+     ],
+     "expect": [
+      "BOT-NET-003",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 159
+    },
+    {
+     "id": "pq4",
+     "type": "brand",
+     "got": [
+      "AQU-CRE-002",
+      "AQU-NET-002",
+      "AQU-SER-010",
+      "AQU-CRE-007",
+      "AQU-MAS-002"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-NET-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 107
+    },
+    {
+     "id": "pq5",
+     "type": "number",
+     "got": [
+      "LUM-SER-005",
+      "NEO-SER-006",
+      "LUM-CRE-006",
+      "DER-SER-002",
+      "BOT-SER-009"
+     ],
+     "expect": [
+      "LUM-SER-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 120
+    },
+    {
+     "id": "pq6",
+     "type": "number",
+     "got": [
+      "DER-SER-008",
+      "DER-YEU-002",
+      "DER-CRE-004",
+      "DER-SER-007",
+      "BOT-SPF-005"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 127
+    },
+    {
+     "id": "pq7",
+     "type": "typo",
+     "got": [
+      "DER-SER-002",
+      "LUM-SER-001",
+      "BOT-SER-003",
+      "LUM-CRE-001",
+      "LUM-SER-005"
+     ],
+     "expect": [
+      "LUM-SER-001",
+      "DER-SER-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 179
+    },
+    {
+     "id": "pq8",
+     "type": "typo",
+     "got": [
+      "LUM-SER-011",
+      "DER-SER-002",
+      "BOT-SER-003",
+      "DER-NET-004",
+      "NEO-SER-012"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 119
+    },
+    {
+     "id": "pq9",
+     "type": "colloquial",
+     "got": [
+      "BOT-SER-003",
+      "BOT-MAS-001",
+      "LUM-NET-001",
+      "LUM-SER-001",
+      "NEO-EXF-003"
+     ],
+     "expect": [
+      "BOT-SER-003",
+      "DER-NET-004",
+      "NEO-EXF-003",
+      "BOT-MAS-001"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 144
+    },
+    {
+     "id": "pq10",
+     "type": "colloquial",
+     "got": [
+      "AQU-CRE-002",
+      "NEO-CRE-005",
+      "AQU-CRE-007",
+      "DER-CRE-004",
+      "AQU-NET-002"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-MAS-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 110
+    },
+    {
+     "id": "pq11",
+     "type": "english",
+     "got": [
+      "AQU-YEU-001",
+      "DER-YEU-002",
+      "NEO-YEU-004",
+      "BOT-YEU-003",
+      "LUM-CRE-006"
+     ],
+     "expect": [
+      "AQU-YEU-001",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 144
+    },
+    {
+     "id": "pq12",
+     "type": "english",
+     "got": [
+      "NEO-NET-005",
+      "SOL-NET-006",
+      "AQU-NET-002",
+      "BOT-NET-003",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "NEO-NET-005",
+      "SOL-NET-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "pq13",
+     "type": "short",
+     "got": [
+      "BOT-SPF-005",
+      "SOL-SPF-002",
+      "SOL-SPF-003",
+      "SOL-SPF-001",
+      "SOL-CRE-008"
+     ],
+     "expect": [
+      "BOT-SPF-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 133
+    },
+    {
+     "id": "pq14",
+     "type": "short",
+     "got": [
+      "LUM-SPF-006",
+      "SOL-CRE-008",
+      "SOL-SPF-001",
+      "LUM-SER-005",
+      "AQU-YEU-001"
+     ],
+     "expect": [
+      "LUM-SPF-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 123
+    }
+   ],
+   "bm25": [
+    {
+     "id": "pq1",
+     "type": "sku",
+     "got": [
+      "LUM-SER-011",
+      "LUM-SER-001",
+      "LUM-SER-005",
+      "LUM-EXF-004",
+      "LUM-CRE-006"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq2",
+     "type": "sku",
+     "got": [
+      "DER-SER-008",
+      "SOL-CRE-008",
+      "DER-SER-007",
+      "DER-SER-002",
+      "DER-CRE-004"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq3",
+     "type": "brand",
+     "got": [
+      "BOT-YEU-003",
+      "BOT-NET-003",
+      "BOT-MAS-001",
+      "BOT-SER-009",
+      "BOT-CRE-003"
+     ],
+     "expect": [
+      "BOT-NET-003",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq4",
+     "type": "brand",
+     "got": [
+      "AQU-CRE-002",
+      "AQU-NET-002",
+      "AQU-CRE-007",
+      "AQU-SER-010",
+      "AQU-MAS-002"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-NET-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq5",
+     "type": "number",
+     "got": [
+      "LUM-SER-005",
+      "LUM-CRE-006",
+      "NEO-SER-006"
+     ],
+     "expect": [
+      "LUM-SER-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq6",
+     "type": "number",
+     "got": [
+      "DER-SER-008",
+      "DER-CRE-004",
+      "DER-YEU-002",
+      "DER-SER-007",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq7",
+     "type": "typo",
+     "got": [
+      "BOT-SER-009",
+      "AQU-SER-010",
+      "BOT-SER-003",
+      "DER-SER-002",
+      "LUM-SER-011"
+     ],
+     "expect": [
+      "LUM-SER-001",
+      "DER-SER-002"
+     ],
+     "r5": 1.0,
+     "rr": 0.25,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "pq8",
+     "type": "typo",
+     "got": [
+      "LUM-SER-011",
+      "DER-NET-004",
+      "AQU-SPF-004",
+      "BOT-SER-003",
+      "NEO-SER-012"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq9",
+     "type": "colloquial",
+     "got": [
+      "BOT-SER-003",
+      "DER-YEU-002"
+     ],
+     "expect": [
+      "BOT-SER-003",
+      "DER-NET-004",
+      "NEO-EXF-003",
+      "BOT-MAS-001"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq10",
+     "type": "colloquial",
+     "got": [
+      "NEO-CRE-005",
+      "AQU-CRE-007",
+      "SOL-CRE-008",
+      "LUM-CRE-006",
+      "DER-CRE-004"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-MAS-002"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "pq11",
+     "type": "english",
+     "got": [],
+     "expect": [
+      "AQU-YEU-001",
+      "BOT-YEU-003"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "pq12",
+     "type": "english",
+     "got": [],
+     "expect": [
+      "NEO-NET-005",
+      "SOL-NET-006"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "pq13",
+     "type": "short",
+     "got": [
+      "BOT-SPF-005",
+      "AQU-SPF-004",
+      "SOL-SPF-002",
+      "SOL-SPF-001",
+      "NEO-NET-005"
+     ],
+     "expect": [
+      "BOT-SPF-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "pq14",
+     "type": "short",
+     "got": [
+      "LUM-SPF-006",
+      "LUM-SER-005",
+      "AQU-CRE-007",
+      "NEO-SER-012",
+      "AQU-YEU-001"
+     ],
+     "expect": [
+      "LUM-SPF-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    }
+   ],
+   "hybrid": [
+    {
+     "id": "pq1",
+     "type": "sku",
+     "got": [
+      "LUM-SER-011",
+      "LUM-SER-001",
+      "LUM-SER-005",
+      "LUM-EXF-004",
+      "LUM-CRE-001"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 157
+    },
+    {
+     "id": "pq2",
+     "type": "sku",
+     "got": [
+      "DER-SER-008",
+      "DER-SER-007",
+      "DER-SER-002",
+      "NEO-SER-012",
+      "AQU-SER-010"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 121
+    },
+    {
+     "id": "pq3",
+     "type": "brand",
+     "got": [
+      "BOT-YEU-003",
+      "BOT-NET-003",
+      "BOT-MAS-001",
+      "BOT-CRE-003",
+      "BOT-SER-009"
+     ],
+     "expect": [
+      "BOT-NET-003",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 113
+    },
+    {
+     "id": "pq4",
+     "type": "brand",
+     "got": [
+      "AQU-CRE-002",
+      "AQU-NET-002",
+      "AQU-SER-010",
+      "AQU-CRE-007",
+      "AQU-MAS-002"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-NET-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "pq5",
+     "type": "number",
+     "got": [
+      "LUM-SER-005",
+      "NEO-SER-006",
+      "LUM-CRE-006",
+      "DER-SER-002",
+      "BOT-SER-009"
+     ],
+     "expect": [
+      "LUM-SER-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 180
+    },
+    {
+     "id": "pq6",
+     "type": "number",
+     "got": [
+      "DER-SER-008",
+      "DER-YEU-002",
+      "DER-CRE-004",
+      "DER-SER-007",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 125
+    },
+    {
+     "id": "pq7",
+     "type": "typo",
+     "got": [
+      "DER-SER-002",
+      "BOT-SER-003",
+      "LUM-SER-001",
+      "LUM-SER-011",
+      "BOT-SER-009"
+     ],
+     "expect": [
+      "LUM-SER-001",
+      "DER-SER-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 103
+    },
+    {
+     "id": "pq8",
+     "type": "typo",
+     "got": [
+      "LUM-SER-011",
+      "DER-NET-004",
+      "BOT-SER-003",
+      "NEO-SER-012",
+      "NEO-EXF-003"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 107
+    },
+    {
+     "id": "pq9",
+     "type": "colloquial",
+     "got": [
+      "BOT-SER-003",
+      "DER-YEU-002",
+      "BOT-MAS-001",
+      "LUM-NET-001",
+      "LUM-SER-001"
+     ],
+     "expect": [
+      "BOT-SER-003",
+      "DER-NET-004",
+      "NEO-EXF-003",
+      "BOT-MAS-001"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 193
+    },
+    {
+     "id": "pq10",
+     "type": "colloquial",
+     "got": [
+      "NEO-CRE-005",
+      "AQU-CRE-007",
+      "AQU-CRE-002",
+      "DER-CRE-004",
+      "LUM-CRE-001"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-MAS-002"
+     ],
+     "r5": 1.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 96
+    },
+    {
+     "id": "pq11",
+     "type": "english",
+     "got": [
+      "AQU-YEU-001",
+      "DER-YEU-002",
+      "NEO-YEU-004",
+      "BOT-YEU-003",
+      "LUM-CRE-006"
+     ],
+     "expect": [
+      "AQU-YEU-001",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 108
+    },
+    {
+     "id": "pq12",
+     "type": "english",
+     "got": [
+      "NEO-NET-005",
+      "SOL-NET-006",
+      "AQU-NET-002",
+      "BOT-NET-003",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "NEO-NET-005",
+      "SOL-NET-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "pq13",
+     "type": "short",
+     "got": [
+      "BOT-SPF-005",
+      "SOL-SPF-002",
+      "AQU-SPF-004",
+      "SOL-SPF-001",
+      "SOL-SPF-003"
+     ],
+     "expect": [
+      "BOT-SPF-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 108
+    },
+    {
+     "id": "pq14",
+     "type": "short",
+     "got": [
+      "LUM-SPF-006",
+      "LUM-SER-005",
+      "AQU-YEU-001",
+      "LUM-SER-001",
+      "NEO-SER-012"
+     ],
+     "expect": [
+      "LUM-SPF-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 211
+    }
+   ],
+   "rerank": [
+    {
+     "id": "pq1",
+     "type": "sku",
+     "got": [
+      "LUM-SER-011",
+      "LUM-SER-001",
+      "LUM-SER-005",
+      "LUM-NET-001",
+      "LUM-SPF-006"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 812
+    },
+    {
+     "id": "pq2",
+     "type": "sku",
+     "got": [
+      "DER-SER-008",
+      "DER-SER-002",
+      "DER-SER-007",
+      "SOL-CRE-008",
+      "AQU-SPF-004"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 220
+    },
+    {
+     "id": "pq3",
+     "type": "brand",
+     "got": [
+      "BOT-YEU-003",
+      "BOT-NET-003",
+      "BOT-SER-009",
+      "BOT-CRE-003",
+      "BOT-SPF-005"
+     ],
+     "expect": [
+      "BOT-NET-003",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 229
+    },
+    {
+     "id": "pq4",
+     "type": "brand",
+     "got": [
+      "AQU-CRE-002",
+      "AQU-NET-002",
+      "AQU-CRE-007",
+      "AQU-SER-010",
+      "AQU-MAS-002"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-NET-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 285
+    },
+    {
+     "id": "pq5",
+     "type": "number",
+     "got": [
+      "LUM-SER-005",
+      "NEO-SER-006",
+      "LUM-CRE-006",
+      "LUM-CRE-001",
+      "LUM-SER-001"
+     ],
+     "expect": [
+      "LUM-SER-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 232
+    },
+    {
+     "id": "pq6",
+     "type": "number",
+     "got": [
+      "DER-SER-008",
+      "DER-SER-007",
+      "DER-CRE-004",
+      "DER-YEU-002",
+      "AQU-SER-010"
+     ],
+     "expect": [
+      "DER-SER-008"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 300
+    },
+    {
+     "id": "pq7",
+     "type": "typo",
+     "got": [
+      "LUM-SER-001",
+      "DER-SER-002",
+      "LUM-SPF-006",
+      "LUM-CRE-001",
+      "LUM-SER-005"
+     ],
+     "expect": [
+      "LUM-SER-001",
+      "DER-SER-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 215
+    },
+    {
+     "id": "pq8",
+     "type": "typo",
+     "got": [
+      "LUM-SER-011",
+      "BOT-SER-003",
+      "NEO-EXF-003",
+      "NEO-SER-012",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "LUM-SER-011"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 209
+    },
+    {
+     "id": "pq9",
+     "type": "colloquial",
+     "got": [
+      "BOT-SER-003",
+      "BOT-MAS-001",
+      "DER-SER-002",
+      "LUM-SER-001",
+      "DER-NET-004"
+     ],
+     "expect": [
+      "BOT-SER-003",
+      "DER-NET-004",
+      "NEO-EXF-003",
+      "BOT-MAS-001"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 214
+    },
+    {
+     "id": "pq10",
+     "type": "colloquial",
+     "got": [
+      "AQU-CRE-002",
+      "BOT-CRE-003",
+      "NEO-CRE-005",
+      "AQU-CRE-007",
+      "AQU-SER-004"
+     ],
+     "expect": [
+      "AQU-CRE-002",
+      "AQU-MAS-002"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 204
+    },
+    {
+     "id": "pq11",
+     "type": "english",
+     "got": [
+      "AQU-YEU-001",
+      "BOT-YEU-003",
+      "DER-YEU-002",
+      "NEO-YEU-004",
+      "AQU-CRE-002"
+     ],
+     "expect": [
+      "AQU-YEU-001",
+      "BOT-YEU-003"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 225
+    },
+    {
+     "id": "pq12",
+     "type": "english",
+     "got": [
+      "NEO-NET-005",
+      "SOL-NET-006",
+      "BOT-NET-003",
+      "AQU-NET-002",
+      "LUM-NET-001"
+     ],
+     "expect": [
+      "NEO-NET-005",
+      "SOL-NET-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 203
+    },
+    {
+     "id": "pq13",
+     "type": "short",
+     "got": [
+      "BOT-SPF-005",
+      "SOL-SPF-001",
+      "LUM-SPF-006",
+      "SOL-SPF-002",
+      "AQU-SPF-004"
+     ],
+     "expect": [
+      "BOT-SPF-005"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 203
+    },
+    {
+     "id": "pq14",
+     "type": "short",
+     "got": [
+      "LUM-SPF-006",
+      "LUM-SER-005",
+      "NEO-SER-012",
+      "SOL-CRE-008",
+      "LUM-CRE-006"
+     ],
+     "expect": [
+      "LUM-SPF-006"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 168
+    }
+   ]
+  },
+  "kb_hard": {
+   "dense": [
+    {
+     "id": "k1",
+     "type": "short",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "faq-quantites-duree#Calculer votre budget",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Les trois piliers"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 131
+    },
+    {
+     "id": "k2",
+     "type": "short",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#Précautions",
+      "ing-aha-bha#Fréquence",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 101
+    },
+    {
+     "id": "k3",
+     "type": "jargon",
+     "got": [
+      "ing-retinol#Effets indésirables fréquents",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "ing-retinol#Bien débuter",
+      "ing-retinol#Précautions",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 129
+    },
+    {
+     "id": "k4",
+     "type": "jargon",
+     "got": [
+      "ing-apaisants#La centella asiatica",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "routine-peau-grasse#Soir",
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "routine-peau-grasse#Matin"
+     ],
+     "expect": [
+      "ing-apaisants#La centella asiatica"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 123
+    },
+    {
+     "id": "k5",
+     "type": "number",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-retinol#Bien débuter",
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "ing-protection-solaire#Réapplication"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 107
+    },
+    {
+     "id": "k6",
+     "type": "number",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 123
+    },
+    {
+     "id": "k7",
+     "type": "typo",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-fidelite#Gagner des points",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 179
+    },
+    {
+     "id": "k8",
+     "type": "typo",
+     "got": [
+      "comp-grossesse#Actifs à éviter",
+      "ing-retinol#Précautions",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "comp-grossesse#Important",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 99
+    },
+    {
+     "id": "k9",
+     "type": "english",
+     "got": [
+      "pol-retours#Produits ouverts",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange",
+      "faq-conservation#Le symbole PAO",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "pol-retours#Produits ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 101
+    },
+    {
+     "id": "k10",
+     "type": "english",
+     "got": [
+      "ing-aha-bha#Fréquence",
+      "comp-retinol-acides#Comment alterner",
+      "ing-aha-bha#Précautions",
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle"
+     ],
+     "expect": [
+      "ing-aha-bha#Fréquence"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 92
+    },
+    {
+     "id": "k11",
+     "type": "colloquial",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 109
+    },
+    {
+     "id": "k12",
+     "type": "colloquial",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-retours#Produits non ouverts",
+      "pol-fidelite#Conditions",
+      "pol-retours#Échange",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 139
+    }
+   ],
+   "bm25": [
+    {
+     "id": "k1",
+     "type": "short",
+     "got": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 4
+    },
+    {
+     "id": "k2",
+     "type": "short",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#Fréquence",
+      "ing-aha-bha#Précautions",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k3",
+     "type": "jargon",
+     "got": [
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "expect": [
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k4",
+     "type": "jargon",
+     "got": [
+      "ing-apaisants#La centella asiatica"
+     ],
+     "expect": [
+      "ing-apaisants#La centella asiatica"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k5",
+     "type": "number",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "routine-peau-grasse#Soir",
+      "ing-aha-bha#Fréquence",
+      "pol-livraison#Retrait en magasin",
+      "ing-protection-solaire#Réapplication"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k6",
+     "type": "number",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k7",
+     "type": "typo",
+     "got": [],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "k8",
+     "type": "typo",
+     "got": [
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "comp-retinol-vitamine-c#La règle",
+      "ing-retinol#Précautions",
+      "comp-retinol-acides#Comment alterner",
+      "comp-retinol-acides#La règle"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "k9",
+     "type": "english",
+     "got": [],
+     "expect": [
+      "pol-retours#Produits ouverts"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "k10",
+     "type": "english",
+     "got": [],
+     "expect": [
+      "ing-aha-bha#Fréquence"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "k11",
+     "type": "colloquial",
+     "got": [
+      "pol-livraison#Livraison express"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "k12",
+     "type": "colloquial",
+     "got": [
+      "pol-fidelite#Conditions",
+      "pol-fidelite#Gagner des points",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "pol-livraison#Livraison standard",
+      "pol-retours#Produits ouverts"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    }
+   ],
+   "hybrid": [
+    {
+     "id": "k1",
+     "type": "short",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "faq-quantites-duree#Calculer votre budget",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Les trois piliers"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 101
+    },
+    {
+     "id": "k2",
+     "type": "short",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#Précautions",
+      "ing-aha-bha#Fréquence",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 117
+    },
+    {
+     "id": "k3",
+     "type": "jargon",
+     "got": [
+      "ing-retinol#Effets indésirables fréquents",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "ing-retinol#Bien débuter",
+      "ing-retinol#Précautions",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "k4",
+     "type": "jargon",
+     "got": [
+      "ing-apaisants#La centella asiatica",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "routine-peau-grasse#Soir",
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "routine-peau-grasse#Matin"
+     ],
+     "expect": [
+      "ing-apaisants#La centella asiatica"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 164
+    },
+    {
+     "id": "k5",
+     "type": "number",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-retinol#Bien débuter",
+      "faq-quantites-duree#Durée d'un flacon",
+      "ing-protection-solaire#Réapplication",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 101
+    },
+    {
+     "id": "k6",
+     "type": "number",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 110
+    },
+    {
+     "id": "k7",
+     "type": "typo",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-fidelite#Gagner des points",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 116
+    },
+    {
+     "id": "k8",
+     "type": "typo",
+     "got": [
+      "ing-retinol#Précautions",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-grossesse#Actifs à éviter",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter"
+     ],
+     "r5": 1.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 202
+    },
+    {
+     "id": "k9",
+     "type": "english",
+     "got": [
+      "pol-retours#Produits ouverts",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange",
+      "faq-conservation#Le symbole PAO",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "pol-retours#Produits ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 99
+    },
+    {
+     "id": "k10",
+     "type": "english",
+     "got": [
+      "ing-aha-bha#Fréquence",
+      "comp-retinol-acides#Comment alterner",
+      "ing-aha-bha#Précautions",
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle"
+     ],
+     "expect": [
+      "ing-aha-bha#Fréquence"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 99
+    },
+    {
+     "id": "k11",
+     "type": "colloquial",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 108
+    },
+    {
+     "id": "k12",
+     "type": "colloquial",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-retours#Produits ouverts",
+      "pol-livraison#Livraison standard",
+      "ing-vitamine-c#Quand l'appliquer ?"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 112
+    }
+   ],
+   "rerank": [
+    {
+     "id": "k1",
+     "type": "short",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "ing-acide-hyaluronique#Compatibilité",
+      "routine-anti-age-debutant#Résultats",
+      "routine-anti-age-debutant#Les trois piliers",
+      "ing-niacinamide#Qu'est-ce que la niacinamide ?"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 191
+    },
+    {
+     "id": "k2",
+     "type": "short",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#Fréquence",
+      "ing-aha-bha#Précautions",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 153
+    },
+    {
+     "id": "k3",
+     "type": "jargon",
+     "got": [
+      "ing-retinol#Effets indésirables fréquents",
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Les trois piliers",
+      "ing-retinol#Précautions",
+      "comp-grossesse#Actifs à éviter"
+     ],
+     "expect": [
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 190
+    },
+    {
+     "id": "k4",
+     "type": "jargon",
+     "got": [
+      "ing-apaisants#La centella asiatica",
+      "ing-apaisants#L'acide azélaïque",
+      "routine-peau-sensible#Routine type",
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "routine-anti-age-debutant#Résultats"
+     ],
+     "expect": [
+      "ing-apaisants#La centella asiatica"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 276
+    },
+    {
+     "id": "k5",
+     "type": "number",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-niacinamide#Quelle concentration choisir ?",
+      "ing-vitamine-c#Concentration et tolérance",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "ing-retinol#Bien débuter"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 159
+    },
+    {
+     "id": "k6",
+     "type": "number",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "routine-peau-grasse#Matin",
+      "routine-peau-seche#Soir"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 257
+    },
+    {
+     "id": "k7",
+     "type": "typo",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 194
+    },
+    {
+     "id": "k8",
+     "type": "typo",
+     "got": [
+      "comp-grossesse#Actifs à éviter",
+      "ing-retinol#Précautions",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-acide-hyaluronique#Compatibilité",
+      "ing-retinol#Qu'est-ce que le rétinol ?"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 147
+    },
+    {
+     "id": "k9",
+     "type": "english",
+     "got": [
+      "pol-retours#Produits ouverts",
+      "pol-retours#Échange",
+      "faq-conservation#Le symbole PAO",
+      "pol-retours#Produits non ouverts",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "pol-retours#Produits ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 181
+    },
+    {
+     "id": "k10",
+     "type": "english",
+     "got": [
+      "ing-aha-bha#Fréquence",
+      "comp-retinol-acides#Comment alterner",
+      "ing-aha-bha#Précautions",
+      "routine-peau-grasse#Soir",
+      "ing-apaisants#L'acide azélaïque"
+     ],
+     "expect": [
+      "ing-aha-bha#Fréquence"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 150
+    },
+    {
+     "id": "k11",
+     "type": "colloquial",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "routine-peau-grasse#Matin",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 152
+    },
+    {
+     "id": "k12",
+     "type": "colloquial",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "faq-conservation#Le symbole PAO",
+      "faq-quantites-duree#Durée d'un flacon",
+      "pol-retours#Échange",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 228
+    }
+   ]
+  },
+  "kb_base": {
+   "dense": [
+    {
+     "id": "d1",
+     "type": "direct",
+     "got": [
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-retinol#Précautions",
+      "comp-retinol-acides#Comment alterner",
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "expect": [
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 148
+    },
+    {
+     "id": "d2",
+     "type": "direct",
+     "got": [
+      "faq-ordre-application#La règle générale",
+      "faq-ordre-application#Plusieurs sérums",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "routine-anti-age-debutant#Par où commencer ?"
+     ],
+     "expect": [
+      "faq-ordre-application#La règle générale"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 86
+    },
+    {
+     "id": "d3",
+     "type": "direct",
+     "got": [
+      "ing-protection-solaire#Quel indice choisir ?",
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-protection-solaire#Réapplication",
+      "ing-retinol#Précautions",
+      "ing-aha-bha#Précautions"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quel indice choisir ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 116
+    },
+    {
+     "id": "d4",
+     "type": "direct",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-livraison#Livraison standard",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 191
+    },
+    {
+     "id": "d5",
+     "type": "direct",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "pol-retours#Produits non ouverts",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 90
+    },
+    {
+     "id": "p1",
+     "type": "paraphrase",
+     "got": [
+      "faq-conservation#Conseils",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-quantites-duree#Durée d'un flacon",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "faq-ordre-application#Plusieurs sérums"
+     ],
+     "expect": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 137
+    },
+    {
+     "id": "p2",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-grasse#Matin",
+      "routine-peau-grasse#Soir",
+      "routine-peau-seche#Matin",
+      "faq-ordre-application#La règle générale",
+      "routine-peau-grasse#Erreurs fréquentes"
+     ],
+     "expect": [
+      "routine-peau-grasse#Matin"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 103
+    },
+    {
+     "id": "p3",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-sensible#Test de tolérance",
+      "routine-peau-sensible#Principe",
+      "pol-retours#Produits ouverts",
+      "ing-retinol#Effets indésirables fréquents",
+      "ing-retinol#Bien débuter"
+     ],
+     "expect": [
+      "routine-peau-sensible#Test de tolérance"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 125
+    },
+    {
+     "id": "p4",
+     "type": "paraphrase",
+     "got": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Résultats",
+      "routine-anti-age-debutant#Les trois piliers",
+      "faq-ordre-application#La règle générale",
+      "ing-retinol#Bien débuter"
+     ],
+     "expect": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 109
+    },
+    {
+     "id": "p5",
+     "type": "paraphrase",
+     "got": [
+      "pol-livraison#Retrait en magasin",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-retours#Échange",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Retrait en magasin"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 67
+    },
+    {
+     "id": "p6",
+     "type": "paraphrase",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "ing-aha-bha#Fréquence",
+      "routine-peau-grasse#Soir",
+      "comp-retinol-acides#La règle",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 70
+    },
+    {
+     "id": "n1",
+     "type": "near_duplicate",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "n2",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Produits ouverts",
+      "pol-retours#Échange",
+      "pol-livraison#Retrait en magasin",
+      "pol-livraison#Livraison standard"
+     ],
+     "expect": [
+      "pol-retours#Produits non ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 154
+    },
+    {
+     "id": "n3",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Échange",
+      "pol-retours#Produits ouverts",
+      "pol-retours#Produits non ouverts",
+      "pol-livraison#Retrait en magasin",
+      "pol-fidelite#Conditions"
+     ],
+     "expect": [
+      "pol-retours#Échange"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 84
+    },
+    {
+     "id": "n4",
+     "type": "near_duplicate",
+     "got": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "ing-acide-hyaluronique#Compatibilité",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-grossesse#Actifs généralement considérés comme compatibles"
+     ],
+     "expect": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 77
+    },
+    {
+     "id": "e1",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "pol-fidelite#Gagner des points",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 76
+    },
+    {
+     "id": "e2",
+     "type": "exact_detail",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-livraison#Livraison standard",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 96
+    },
+    {
+     "id": "e3",
+     "type": "exact_detail",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "ing-protection-solaire#Réapplication",
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 68
+    },
+    {
+     "id": "e4",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 111
+    },
+    {
+     "id": "e5",
+     "type": "exact_detail",
+     "got": [
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "faq-ordre-application#Plusieurs sérums",
+      "faq-ordre-application#La règle générale"
+     ],
+     "expect": [
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 119
+    },
+    {
+     "id": "m1",
+     "type": "multi",
+     "got": [
+      "comp-retinol-acides#Comment alterner",
+      "comp-retinol-acides#La règle",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "routine-peau-grasse#Soir",
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "expect": [
+      "comp-retinol-acides#Comment alterner",
+      "routine-peau-grasse#Soir"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 109
+    },
+    {
+     "id": "m2",
+     "type": "multi",
+     "got": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-grossesse#Important"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-grossesse#Actifs généralement considérés comme compatibles"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 72
+    },
+    {
+     "id": "m3",
+     "type": "multi",
+     "got": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "routine-anti-age-debutant#Les trois piliers",
+      "comp-niacinamide-vitamine-c#Une idée reçue"
+     ],
+     "expect": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 74
+    },
+    {
+     "id": "s1",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Livraison express"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 149
+    },
+    {
+     "id": "s2",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 86
+    }
+   ],
+   "bm25": [
+    {
+     "id": "d1",
+     "type": "direct",
+     "got": [
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Les trois piliers",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Résultats",
+      "ing-apaisants#L'acide azélaïque"
+     ],
+     "expect": [
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "d2",
+     "type": "direct",
+     "got": [
+      "faq-ordre-application#Plusieurs sérums",
+      "faq-ordre-application#La règle générale",
+      "comp-grossesse#Important",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "expect": [
+      "faq-ordre-application#La règle générale"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "d3",
+     "type": "direct",
+     "got": [
+      "ing-protection-solaire#Quel indice choisir ?",
+      "ing-protection-solaire#Réapplication",
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-vitamine-c#Bienfaits",
+      "routine-peau-grasse#Matin"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quel indice choisir ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "d4",
+     "type": "direct",
+     "got": [
+      "pol-fidelite#Conditions",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "d5",
+     "type": "direct",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "p1",
+     "type": "paraphrase",
+     "got": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "pol-fidelite#Conditions",
+      "pol-fidelite#Gagner des points",
+      "faq-ordre-application#Plusieurs sérums",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "p2",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-seche#Matin",
+      "ing-retinol#Précautions",
+      "routine-peau-grasse#Matin",
+      "ing-niacinamide#Comment l'utiliser ?",
+      "ing-vitamine-c#Quand l'appliquer ?"
+     ],
+     "expect": [
+      "routine-peau-grasse#Matin"
+     ],
+     "r5": 1.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "p3",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-sensible#Principe",
+      "faq-ordre-application#Plusieurs sérums",
+      "ing-vitamine-c#Concentration et tolérance",
+      "routine-peau-grasse#Erreurs fréquentes",
+      "comp-grossesse#Important"
+     ],
+     "expect": [
+      "routine-peau-sensible#Test de tolérance"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "p4",
+     "type": "paraphrase",
+     "got": [
+      "pol-retours#Échange",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "ing-retinol#Précautions",
+      "ing-protection-solaire#Réapplication",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "p5",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-sensible#Principe",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-livraison#Livraison express"
+     ],
+     "expect": [
+      "pol-livraison#Retrait en magasin"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "p6",
+     "type": "paraphrase",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "ing-apaisants#L'acide azélaïque",
+      "ing-acide-hyaluronique#Compatibilité"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "n1",
+     "type": "near_duplicate",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "n2",
+     "type": "near_duplicate",
+     "got": [
+      "comp-grossesse#Important",
+      "pol-retours#Échange",
+      "pol-retours#Produits ouverts",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-retours#Produits non ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 0.2,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "n3",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Échange",
+      "routine-peau-sensible#Principe",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits ouverts",
+      "pol-livraison#Livraison standard"
+     ],
+     "expect": [
+      "pol-retours#Échange"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "n4",
+     "type": "near_duplicate",
+     "got": [
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "ing-acide-hyaluronique#Compatibilité",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "ing-niacinamide#Qu'est-ce que la niacinamide ?"
+     ],
+     "expect": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "e1",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-livraison#Retrait en magasin"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "e2",
+     "type": "exact_detail",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "ing-niacinamide#Quelle concentration choisir ?"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "e3",
+     "type": "exact_detail",
+     "got": [
+      "faq-quantites-duree#Quantités recommandées par application",
+      "ing-protection-solaire#Quelle quantité ?",
+      "faq-quantites-duree#Calculer votre budget",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "e4",
+     "type": "exact_detail",
+     "got": [
+      "routine-peau-sensible#Test de tolérance",
+      "pol-livraison#Livraison express",
+      "ing-retinol#Précautions",
+      "pol-livraison#Retrait en magasin",
+      "comp-grossesse#Important"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "e5",
+     "type": "exact_detail",
+     "got": [
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-retours#Échange",
+      "faq-ordre-application#Plusieurs sérums"
+     ],
+     "expect": [
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "m1",
+     "type": "multi",
+     "got": [
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#AHA ou BHA ?",
+      "comp-retinol-acides#Comment alterner",
+      "ing-retinol#Précautions",
+      "ing-aha-bha#Précautions"
+     ],
+     "expect": [
+      "comp-retinol-acides#Comment alterner",
+      "routine-peau-grasse#Soir"
+     ],
+     "r5": 0.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "m2",
+     "type": "multi",
+     "got": [
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "comp-retinol-vitamine-c#La règle",
+      "ing-acide-hyaluronique#Compatibilité",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "routine-anti-age-debutant#Les trois piliers"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-grossesse#Actifs généralement considérés comme compatibles"
+     ],
+     "r5": 0.0,
+     "rr": 0.0,
+     "top1": false,
+     "ms": 0
+    },
+    {
+     "id": "m3",
+     "type": "multi",
+     "got": [
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "ing-acide-hyaluronique#Compatibilité",
+      "routine-anti-age-debutant#Les trois piliers"
+     ],
+     "expect": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "s1",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    },
+    {
+     "id": "s2",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "faq-conservation#Le symbole PAO",
+      "faq-quantites-duree#Durée d'un flacon",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 0
+    }
+   ],
+   "hybrid": [
+    {
+     "id": "d1",
+     "type": "direct",
+     "got": [
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Les trois piliers",
+      "ing-retinol#Précautions",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 75
+    },
+    {
+     "id": "d2",
+     "type": "direct",
+     "got": [
+      "faq-ordre-application#La règle générale",
+      "faq-ordre-application#Plusieurs sérums",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils",
+      "comp-grossesse#Important"
+     ],
+     "expect": [
+      "faq-ordre-application#La règle générale"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 71
+    },
+    {
+     "id": "d3",
+     "type": "direct",
+     "got": [
+      "ing-protection-solaire#Quel indice choisir ?",
+      "ing-protection-solaire#Quelle quantité ?",
+      "ing-protection-solaire#Réapplication",
+      "routine-anti-age-debutant#Les trois piliers",
+      "routine-peau-sensible#Routine type"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quel indice choisir ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 74
+    },
+    {
+     "id": "d4",
+     "type": "direct",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-livraison#Livraison standard",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 112
+    },
+    {
+     "id": "d5",
+     "type": "direct",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "pol-retours#Produits non ouverts",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 106
+    },
+    {
+     "id": "p1",
+     "type": "paraphrase",
+     "got": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "faq-ordre-application#Plusieurs sérums",
+      "faq-quantites-duree#Durée d'un flacon",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 72
+    },
+    {
+     "id": "p2",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-grasse#Matin",
+      "routine-peau-seche#Matin",
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "ing-niacinamide#Comment l'utiliser ?",
+      "faq-ordre-application#La règle générale"
+     ],
+     "expect": [
+      "routine-peau-grasse#Matin"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 82
+    },
+    {
+     "id": "p3",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-sensible#Principe",
+      "faq-ordre-application#Plusieurs sérums",
+      "routine-peau-sensible#Test de tolérance",
+      "pol-retours#Produits ouverts",
+      "ing-vitamine-c#Concentration et tolérance"
+     ],
+     "expect": [
+      "routine-peau-sensible#Test de tolérance"
+     ],
+     "r5": 1.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 78
+    },
+    {
+     "id": "p4",
+     "type": "paraphrase",
+     "got": [
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "ing-retinol#Précautions",
+      "ing-protection-solaire#Réapplication",
+      "pol-retours#Produits non ouverts",
+      "routine-anti-age-debutant#Par où commencer ?"
+     ],
+     "expect": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 0.2,
+     "top1": false,
+     "ms": 129
+    },
+    {
+     "id": "p5",
+     "type": "paraphrase",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-codes-promo#Règles d'utilisation",
+      "routine-peau-sensible#Principe",
+      "pol-livraison#Retrait en magasin",
+      "pol-livraison#Livraison standard"
+     ],
+     "expect": [
+      "pol-livraison#Retrait en magasin"
+     ],
+     "r5": 1.0,
+     "rr": 0.25,
+     "top1": false,
+     "ms": 165
+    },
+    {
+     "id": "p6",
+     "type": "paraphrase",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "ing-apaisants#L'acide azélaïque",
+      "comp-retinol-acides#Comment alterner",
+      "ing-aha-bha#Fréquence",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 116
+    },
+    {
+     "id": "n1",
+     "type": "near_duplicate",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 87
+    },
+    {
+     "id": "n2",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Produits ouverts",
+      "pol-retours#Échange",
+      "pol-retours#Produits non ouverts",
+      "pol-livraison#Retrait en magasin",
+      "comp-grossesse#Important"
+     ],
+     "expect": [
+      "pol-retours#Produits non ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 104
+    },
+    {
+     "id": "n3",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Échange",
+      "pol-retours#Produits ouverts",
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Produits non ouverts",
+      "pol-livraison#Livraison standard"
+     ],
+     "expect": [
+      "pol-retours#Échange"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 108
+    },
+    {
+     "id": "n4",
+     "type": "near_duplicate",
+     "got": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "ing-acide-hyaluronique#Compatibilité",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "comp-retinol-vitamine-c#La règle"
+     ],
+     "expect": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 110
+    },
+    {
+     "id": "e1",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 116
+    },
+    {
+     "id": "e2",
+     "type": "exact_detail",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Retrait en magasin",
+      "ing-niacinamide#Quelle concentration choisir ?"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 83
+    },
+    {
+     "id": "e3",
+     "type": "exact_detail",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "ing-protection-solaire#Réapplication",
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 78
+    },
+    {
+     "id": "e4",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison express",
+      "routine-peau-sensible#Test de tolérance",
+      "pol-livraison#Retrait en magasin",
+      "comp-grossesse#Important",
+      "ing-retinol#Précautions"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 103
+    },
+    {
+     "id": "e5",
+     "type": "exact_detail",
+     "got": [
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "faq-ordre-application#Plusieurs sérums",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 143
+    },
+    {
+     "id": "m1",
+     "type": "multi",
+     "got": [
+      "comp-retinol-acides#La règle",
+      "comp-retinol-acides#Comment alterner",
+      "ing-aha-bha#AHA ou BHA ?",
+      "routine-peau-grasse#Soir",
+      "ing-retinol#Précautions"
+     ],
+     "expect": [
+      "comp-retinol-acides#Comment alterner",
+      "routine-peau-grasse#Soir"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 64
+    },
+    {
+     "id": "m2",
+     "type": "multi",
+     "got": [
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "routine-anti-age-debutant#Les trois piliers",
+      "routine-anti-age-debutant#Par où commencer ?"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-grossesse#Actifs généralement considérés comme compatibles"
+     ],
+     "r5": 0.0,
+     "rr": 0.3333333333333333,
+     "top1": false,
+     "ms": 96
+    },
+    {
+     "id": "m3",
+     "type": "multi",
+     "got": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "routine-anti-age-debutant#Les trois piliers",
+      "comp-niacinamide-vitamine-c#Une idée reçue"
+     ],
+     "expect": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 75
+    },
+    {
+     "id": "s1",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Livraison express"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 101
+    },
+    {
+     "id": "s2",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-fidelite#Gagner des points",
+      "ing-retinol#Bien débuter",
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 76
+    }
+   ],
+   "rerank": [
+    {
+     "id": "d1",
+     "type": "direct",
+     "got": [
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "comp-retinol-acides#Comment alterner",
+      "routine-peau-sensible#Test de tolérance",
+      "ing-retinol#Précautions"
+     ],
+     "expect": [
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 213
+    },
+    {
+     "id": "d2",
+     "type": "direct",
+     "got": [
+      "faq-ordre-application#La règle générale",
+      "faq-ordre-application#Plusieurs sérums",
+      "routine-anti-age-debutant#Par où commencer ?",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-retinol-vitamine-c#Exemple de routine"
+     ],
+     "expect": [
+      "faq-ordre-application#La règle générale"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 191
+    },
+    {
+     "id": "d3",
+     "type": "direct",
+     "got": [
+      "ing-protection-solaire#Quel indice choisir ?",
+      "ing-aha-bha#Précautions",
+      "ing-retinol#Précautions",
+      "ing-protection-solaire#Quelle quantité ?",
+      "routine-peau-sensible#Routine type"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quel indice choisir ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 230
+    },
+    {
+     "id": "d4",
+     "type": "direct",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 177
+    },
+    {
+     "id": "d5",
+     "type": "direct",
+     "got": [
+      "faq-conservation#Le symbole PAO",
+      "routine-anti-age-debutant#Résultats",
+      "faq-quantites-duree#Durée d'un flacon",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "faq-conservation#Le symbole PAO"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 196
+    },
+    {
+     "id": "p1",
+     "type": "paraphrase",
+     "got": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils",
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "ing-vitamine-c#Concentration et tolérance",
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "expect": [
+      "ing-vitamine-c#Quand l'appliquer ?",
+      "faq-conservation#Conseils"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 237
+    },
+    {
+     "id": "p2",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-grasse#Matin",
+      "ing-aha-bha#AHA ou BHA ?",
+      "ing-niacinamide#Comment l'utiliser ?",
+      "ing-apaisants#L'acide azélaïque",
+      "routine-peau-grasse#Erreurs fréquentes"
+     ],
+     "expect": [
+      "routine-peau-grasse#Matin"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 189
+    },
+    {
+     "id": "p3",
+     "type": "paraphrase",
+     "got": [
+      "routine-peau-sensible#Test de tolérance",
+      "routine-peau-sensible#Principe",
+      "ing-retinol#Bien débuter",
+      "ing-vitamine-c#Concentration et tolérance",
+      "ing-retinol#Effets indésirables fréquents"
+     ],
+     "expect": [
+      "routine-peau-sensible#Test de tolérance"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 252
+    },
+    {
+     "id": "p4",
+     "type": "paraphrase",
+     "got": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "routine-anti-age-debutant#Les trois piliers",
+      "ing-retinol#Qu'est-ce que le rétinol ?",
+      "ing-retinol#Bien débuter",
+      "routine-anti-age-debutant#Résultats"
+     ],
+     "expect": [
+      "routine-anti-age-debutant#Par où commencer ?",
+      "ing-retinol#Bien débuter"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 157
+    },
+    {
+     "id": "p5",
+     "type": "paraphrase",
+     "got": [
+      "pol-livraison#Retrait en magasin",
+      "pol-retours#Échange",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Livraison standard",
+      "pol-retours#Produits non ouverts"
+     ],
+     "expect": [
+      "pol-livraison#Retrait en magasin"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 148
+    },
+    {
+     "id": "p6",
+     "type": "paraphrase",
+     "got": [
+      "ing-aha-bha#AHA ou BHA ?",
+      "routine-peau-grasse#Soir",
+      "ing-apaisants#L'acide azélaïque",
+      "ing-acide-hyaluronique#Rôle",
+      "comp-retinol-acides#Comment alterner"
+     ],
+     "expect": [
+      "ing-aha-bha#AHA ou BHA ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 219
+    },
+    {
+     "id": "n1",
+     "type": "near_duplicate",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "faq-quantites-duree#Calculer votre budget",
+      "pol-fidelite#Gagner des points"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 149
+    },
+    {
+     "id": "n2",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Échange",
+      "pol-retours#Produits non ouverts",
+      "pol-retours#Produits ouverts",
+      "faq-conservation#Le symbole PAO",
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "expect": [
+      "pol-retours#Produits non ouverts"
+     ],
+     "r5": 1.0,
+     "rr": 0.5,
+     "top1": false,
+     "ms": 192
+    },
+    {
+     "id": "n3",
+     "type": "near_duplicate",
+     "got": [
+      "pol-retours#Échange",
+      "pol-retours#Produits ouverts",
+      "pol-retours#Produits non ouverts",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Retrait en magasin"
+     ],
+     "expect": [
+      "pol-retours#Échange"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 262
+    },
+    {
+     "id": "n4",
+     "type": "near_duplicate",
+     "got": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "ing-acide-hyaluronique#Compatibilité",
+      "ing-niacinamide#Qu'est-ce que la niacinamide ?"
+     ],
+     "expect": [
+      "comp-niacinamide-vitamine-c#Une idée reçue",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 154
+    },
+    {
+     "id": "e1",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison standard",
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions"
+     ],
+     "expect": [
+      "pol-livraison#Livraison standard"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 171
+    },
+    {
+     "id": "e2",
+     "type": "exact_detail",
+     "got": [
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-fidelite#Gagner des points"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 193
+    },
+    {
+     "id": "e3",
+     "type": "exact_detail",
+     "got": [
+      "ing-protection-solaire#Quelle quantité ?",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "ing-protection-solaire#Réapplication",
+      "ing-protection-solaire#Quel indice choisir ?",
+      "routine-peau-sensible#Routine type"
+     ],
+     "expect": [
+      "ing-protection-solaire#Quelle quantité ?"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 213
+    },
+    {
+     "id": "e4",
+     "type": "exact_detail",
+     "got": [
+      "pol-livraison#Livraison express",
+      "pol-livraison#Retrait en magasin",
+      "pol-livraison#Livraison standard",
+      "routine-peau-grasse#Soir",
+      "faq-quantites-duree#Calculer votre budget"
+     ],
+     "expect": [
+      "pol-livraison#Livraison express"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 239
+    },
+    {
+     "id": "e5",
+     "type": "exact_detail",
+     "got": [
+      "faq-quantites-duree#Durée d'un flacon",
+      "routine-anti-age-debutant#Résultats",
+      "faq-quantites-duree#Quantités recommandées par application",
+      "faq-quantites-duree#Calculer votre budget",
+      "faq-conservation#Conseils"
+     ],
+     "expect": [
+      "faq-quantites-duree#Durée d'un flacon"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 162
+    },
+    {
+     "id": "m1",
+     "type": "multi",
+     "got": [
+      "comp-retinol-acides#Comment alterner",
+      "comp-retinol-acides#La règle",
+      "ing-aha-bha#Fréquence",
+      "ing-aha-bha#AHA ou BHA ?",
+      "routine-peau-grasse#Soir"
+     ],
+     "expect": [
+      "comp-retinol-acides#Comment alterner",
+      "routine-peau-grasse#Soir"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 174
+    },
+    {
+     "id": "m2",
+     "type": "multi",
+     "got": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-retinol-vitamine-c#La règle",
+      "comp-grossesse#Actifs généralement considérés comme compatibles",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "ing-acide-hyaluronique#Compatibilité"
+     ],
+     "expect": [
+      "comp-grossesse#Actifs à éviter",
+      "comp-grossesse#Actifs généralement considérés comme compatibles"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 249
+    },
+    {
+     "id": "m3",
+     "type": "multi",
+     "got": [
+      "comp-niacinamide-vitamine-c#Conseil pratique",
+      "comp-retinol-vitamine-c#Exemple de routine",
+      "comp-retinol-vitamine-c#La règle",
+      "routine-anti-age-debutant#Les trois piliers",
+      "routine-anti-age-debutant#Par où commencer ?"
+     ],
+     "expect": [
+      "comp-retinol-vitamine-c#La règle",
+      "comp-niacinamide-vitamine-c#Conseil pratique"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 219
+    },
+    {
+     "id": "s1",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-retours#Échange"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 242
+    },
+    {
+     "id": "s2",
+     "type": "security",
+     "got": [
+      "pol-codes-promo#Règles d'utilisation",
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-fidelite#Gagner des points",
+      "pol-fidelite#Conditions",
+      "pol-livraison#Livraison express"
+     ],
+     "expect": [
+      "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+      "pol-codes-promo#Règles d'utilisation"
+     ],
+     "r5": 1.0,
+     "rr": 1.0,
+     "top1": true,
+     "ms": 185
+    }
+   ]
+  }
+ }
+}
