@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_live_evals:
+        description: Run paid evaluations against a reachable, isolated lab backend
+        type: boolean
+        default: false
+      advisor_url:
+        description: Backend base URL reachable from the GitHub-hosted runner (not laptop localhost)
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TELEMETRY: 'off'
+      SESSIONS: memory
+      CLAIMS_BUS: local
+      CLAIMS_TRIAGE: rule
+      PROMPTFOO_DISABLE_TELEMETRY: '1'
+      PROMPTFOO_DISABLE_UPDATE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+      - name: Install locked Python dependencies
+        run: uv sync --frozen
+      - name: Python regression tests
+        run: uv run --no-sync pytest -q --junitxml=reports/pytest.xml
+      - name: Evaluator regression tests
+        run: node --test evals/promptfoo/check.test.cjs
+      - name: HTTP evaluation wiring (fixture agent, no GCP)
+        env:
+          ADVISOR_URL: http://127.0.0.1:8011
+          BACKEND_DATA_DIR: ${{ runner.temp }}/beauty-ci
+        run: |
+          mkdir -p reports
+          uv run --no-sync uvicorn evals.promptfoo.offline_app:app --host 127.0.0.1 --port 8011 > reports/fixture.log 2>&1 &
+          fixture_pid=$!
+          trap 'kill "$fixture_pid" 2>/dev/null || true' EXIT
+          uv run --no-sync python - <<'PY'
+          import time
+          from urllib.request import urlopen
+          for _ in range(80):
+              try:
+                  with urlopen("http://127.0.0.1:8011/health", timeout=1) as r:
+                      if r.status == 200:
+                          break
+              except OSError:
+                  pass
+              time.sleep(0.25)
+          else:
+              raise SystemExit("Fixture server did not become healthy")
+          PY
+          npx --yes promptfoo@0.125.1 eval -c evals/promptfoo/promptfooconfig.yaml --no-cache --max-concurrency 1 -o reports/promptfoo-fixture.json
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: offline-test-reports
+          path: reports/
+          retention-days: 7
+
+  live-evaluation:
+    name: Live advisor evaluation
+    if: github.event_name == 'workflow_dispatch' && inputs.run_live_evals
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ADVISOR_URL: ${{ inputs.advisor_url }}
+      PROMPTFOO_DISABLE_TELEMETRY: '1'
+      PROMPTFOO_DISABLE_UPDATE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+      - name: Require an explicit lab target
+        run: test -n "$ADVISOR_URL"
+      - name: Run live behavioral checks
+        run: |
+          mkdir -p reports
+          npx --yes promptfoo@0.125.1 eval -c evals/promptfoo/promptfooconfig.yaml --no-cache --max-concurrency 1 -o reports/promptfoo-live.json
+      - name: Upload live evaluation report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: live-evaluation-report
+          path: reports/
+          retention-days: 7
