@@ -13,8 +13,7 @@ confidential and must not be added to the repository or used for outreach.
 - Use **GitHub Actions**, matching the GitHub repository. This replaces the GitLab CI named in the original
   schedule. The automatic CI gate is offline; live model checks are explicit manual runs.
 - Continue step by step with explanations, one bounded milestone at a time. Retain a working demo.
-- Prioritize role-relevant evidence: ADK tool calling, FastAPI/chat sessions, measured RAG choices, LangGraph
-  checkpoints/human review, Pub/Sub retries/idempotency, evaluation and Google observability.
+- Prioritize role-relevant evidence: ADK tool calling, FastAPI/chat sessions, measured RAG choices, ADK Guardrail Callbacks & native HITL confirmation, evaluation and Google observability.
 - Keep lab results distinct from professional production experience; this repository does not independently
   establish claims in the CV. “Zero leaks” means no planted canary/prompt leaks observed in specified runs,
   not a guarantee of security.
