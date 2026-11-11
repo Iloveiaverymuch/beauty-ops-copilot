@@ -1,51 +1,123 @@
-# Interview lab: remaining plan
+# Interview Lab: Master Execution Plan
 
-Authority: the user supplied the agreed plan and previous assistant's handoff on 2026-11-11. Interview is Friday
-2026-11-13, with one preparation day remaining. Purpose: understand, demonstrate and defend working backend/agent
-designs. This is an interview lab, not a production-hardening project. The opportunity's client identity is
-confidential and must not be added to the repository or used for outreach.
+Authority: Job interview preparation for Friday 2026-11-13 (one preparation day remaining).
+Purpose: Understand, demonstrate, and defend a working multi-agent backend on **Google ADK 2.13** and **Google Cloud Vertex AI**.
+Key Requirement: The final result must be **100% coherent, explainable, and demonstrable** during a 15-minute live executive presentation.
 
-## Decisions already made
+---
 
-- Neutralize the former company branding into a fictional retail demo. Do this in the cleanup block; preserve
-  fixture/test consistency and don't blindly rewrite historical evaluation evidence.
-- Use GCP tracing/Cloud Trace; no new Langfuse integration (the user already has another Langfuse lab).
-- Use **GitHub Actions**, matching the GitHub repository. This replaces the GitLab CI named in the original
-  schedule. The automatic CI gate is offline; live model checks are explicit manual runs.
-- Continue step by step with explanations, one bounded milestone at a time. Retain a working demo.
-- Prioritize role-relevant evidence: ADK tool calling, FastAPI/chat sessions, measured RAG choices, ADK Guardrail Callbacks & native HITL confirmation, evaluation and Google observability.
-- Keep lab results distinct from professional production experience; this repository does not independently
-  establish claims in the CV. “Zero leaks” means no planted canary/prompt leaks observed in specified runs,
-  not a guarantee of security.
+## Decisions & Architecture Principles
 
-## Agreed sequence and current position
+- **Pure Google ADK Architecture**: Unify all agents and workflows onto Google ADK 2.13 and Gemini on Vertex AI. Eliminate auxiliary orchestration frameworks (LangGraph) to present a clean, unified mental model.
+- **Callbacks Give You Guardrail Control**: Enforce security and business policies deterministically in code via ADK lifecycle hooks (`before_tool_callback`, `after_tool_callback`, `before_model_callback`) rather than relying on probabilistic system prompts.
+- **Native Human-in-the-Loop (HITL)**: Use ADK's native `require_confirmation=True` for high-stakes actions (M365 drafts, claim refund approvals).
+- **Two-Tier Verification**: Sub-25s offline CI gate (106 unit tests + 7 deterministic ADK evaluations) for PR blocking, combined with on-demand live Vertex AI evaluation (LLM-as-a-judge rubrics).
+- **Google Cloud Observability**: Cloud Trace spans with content elision (`NO_CONTENT`) and structured governance audit logs.
+- **Confidentiality & Neutralization**: Retail demo branding is neutralized. Client identity is strictly confidential.
 
-The original 8-hour allocation below is context, not a new estimate of time already spent or still available.
+---
 
-| Block | Original allocation | Verified position / finish line |
-|---|---|---|
-| 1. Unified Claims Governance (ADK Guardrail Callbacks + HITL) | 2h | **Next Milestone (Migrating from LangGraph to 100% ADK).** Eliminate LangGraph to achieve full architectural coherence. Use ADK native Callbacks ("Callbacks Give You Guardrail Control") and Human-In-The-Loop (HITL) tool confirmation (`require_confirmation=True`) for claims validation. Deterministic return policy rules and human review routing are enforced at the ADK tool/plugin boundary without external graph orchestrator dependencies. |
-| 2. ADK Native Evaluation + Vertex AI + GitHub Actions CI Gate | 1h | **Complete & Verified Green.** Native ADK evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation (`evals/vertex/`). Pure Python stack (uv, ADK 2.13, Vertex AI), zero Node.js/npm dependencies in CI. Automatic CI gate runs 106 Python tests + 7 deterministic ADK evaluations in ~21s on PRs and pushes to `master`. Regression blocking was proven on PR via branch `test/eval-gate-regression`. Live cloud evaluation workflow verified in GitHub Actions with GCP service account auth: 7/7 cases passed against Gemini 3.8 Flash + Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0. |
-| 3. Model Armor + GCP tracing | 1h | GCP tracing verified: read-only API returned eight frontend traces with model/tool/RAG spans, correlated to KPI turn IDs. Saved `evals/tracing/advisor_20261111.summary.json`. Individual LangGraph nodes/worker continuation are not traced. Next: timebox one Model Armor experiment; distinguish sanitization from deterministic tool authorization. No Langfuse work. |
-| 4. Neutralize, cleanup, review, docs, French demo | 2h30 | Pending. Fictional branding, tighten unsupported claim-status wording, rehearse architecture and failure recovery in French, concise commands and evidence. Avoid broad rewrites. |
-| 5. Buffer | 1h | Preserve time for broken integration or interview rehearsal; don't consume it with optional production infrastructure. |
+## Master Roadmap & Current Position
 
-## Claims governance and HITL design (ADK Guardrail Callbacks)
+```
+[COMPLETED] Block 2: ADK Native & Vertex AI Evals (106 tests, 7/7 live green, 5.0/5.0 judge)
+     │
+     ▼
+[PHASE 1] Pure ADK Architecture & Claims Modernization (LangGraph Elimination)   <-- NEXT
+     │
+     ▼
+[PHASE 2] Dual-Agent Web UI (Showcase Beauty Advisor + Internal Copilot)
+     │
+     ▼
+[PHASE 3] Model Armor Guardrails & Cloud Trace Observability
+     │
+     ▼
+[PHASE 4] 15-Minute Live Interview Demo Script & Rehearsal
+     │
+     ▼
+[PHASE 5] Project Architecture Dossier PDF Generation (Max 5 Pages)
+     │
+     ▼
+[PHASE 6] Final Markdown Coherence Sweep & Presentation Polish
+```
 
-- **Architecture Unification**: The previous prototype used a hybrid LangGraph state machine alongside the ADK agent for claims. To make the architecture 100% coherent, explainable, and interview-ready, LangGraph is being replaced entirely by **ADK Native Guardrail Callbacks** ("Callbacks Give You Guardrail Control") and native Human-In-The-Loop (HITL) approval (`require_confirmation=True`).
-- **Guardrails at the Callback Level**:
-  - Deterministic checks (30 days unopened, photo provided for reactions) run inside ADK `before_tool_callback` / policy plugins before any state mutation.
-  - Claims requiring human intervention (e.g. skin reaction reports or edge cases) trigger ADK's native confirmation workflow (`require_confirmation=True`), pausing execution until a human advisor reviews and authorizes the refund.
-  - Eliminates external graph checkpointers, duplicate state engines, and dual-stack orchestration complexity.
+---
 
-## Next practical step
+## Execution Phases Detail
 
-Execute the **Claims Modernization** milestone:
-1. Replace the LangGraph claims state machine with ADK Native Tool Callbacks (`before_tool_callback`) and `require_confirmation=True` on `open_return_claim`.
-2. Remove LangGraph dependencies (`langgraph`, `langgraph-checkpoint-sqlite`) from `pyproject.toml` and `backend/`.
-3. Verify that the 106 tests and 7 ADK evaluation benchmarks remain 100% green under pure ADK.
-4. Follow with Model Armor guardrail integration, fictional branding cleanup, and French interview rehearsal.
+### Completed Milestones
+- **ADK Native Evaluation & Vertex AI Evaluation Architecture**:
+  - Implemented `evals/adk/` with 7 benchmark cases, custom evaluators (canaries, citations, refunds, filters), and `<1s` offline fixture runner.
+  - Implemented `evals/vertex/` with 4 Pointwise rubrics (Groundedness, Persona Quality, Safety Refusal, Claim Compliance) and BigQuery trace monitoring.
+  - Cleaned up CI/CD: removed all Node.js/npm dependencies; verified CI gate PR blocking on `test/eval-gate-regression`.
+  - Ran live evaluation in GitHub Actions with GCP SA authentication: **7/7 PASSED + 5.0/5.0 Vertex LLM Judge**.
+  - Documented in `docs/ADR-002.md`, `evals/FINDINGS.md`, and updated `README.md`.
 
-Production gaps (auth/ownership, robust index metadata updates, cache freshness, persistent refund idempotency,
-retention, deployment scaling) remain documented in `PROJECT_HANDOVER.md` as discussion material. Fix only what
-blocks the selected demo or invalidates an interview claim within the remaining preparation time.
+---
+
+### Phase 1: Pure ADK Architecture & Claims Modernization (LangGraph Elimination)
+- **Goal**: Remove LangGraph completely and port claims validation into native ADK Guardrail Callbacks and HITL.
+- **Core Mechanism**:
+  1. *Deterministic Policy Callback*: ADK `before_tool_callback` intercepts `open_return_claim`, checking order validity, 30-day return policy, unopened status, or skin reaction criteria before any execution.
+  2. *Native HITL Approval*: Claims requiring human intervention (e.g. skin reactions, damage, refund > threshold) leverage ADK's native `require_confirmation=True`, pausing execution until human review confirms the action.
+  3. *Clean Deprecation*: Remove `langgraph` and `langgraph-checkpoint-sqlite` from `pyproject.toml` and lockfile. Remove the dual-engine toggle from `backend/app.py`.
+  4. *Test Verification*: Port `tests/test_claims.py` to test ADK callbacks and confirmation; ensure all 106 tests stay green.
+
+---
+
+### Phase 2: Dual-Agent Web UI (Beauty Advisor + Internal Copilot)
+- **Goal**: Build a unified, sleek web UI that showcases both agents in the live presentation without relying on raw developer CLI tools (`adk web`).
+- **Deliverables**:
+  1. *Internal Copilot Frontend*: A dedicated view or tab matching Beauty Advisor's aesthetic (`backend/static/copilot.html` or integrated switcher) that displays:
+     - M365 email triage and calendar summary cards.
+     - Catalog lookup with hero SKUs and campaign details.
+     - Interactive **Human Approval Modal** when `create_draft` requests confirmation.
+     - Visual **Policy Blocked Badges** (e.g. external recipient blocked before approval).
+  2. *Live Mode Switcher*: Seamlessly switch between "Léa (Customer Skincare Advisor)" and "Copilot (Internal Operations & M365 Assistant)".
+
+---
+
+### Phase 3: Model Armor Guardrails & Cloud Trace Observability
+- **Goal**: Timebox Model Armor prompt filtering and demonstrate defense-in-depth with Cloud Trace.
+- **Deliverables**:
+  1. Experiment with Google Cloud Model Armor as an input/output prompt sanitization layer.
+  2. Articulate the interview distinction: Model Armor handles prompt sanitization/injection filtering; ADK Guardrail Callbacks enforce hard, deterministic tool authorization and write budgets.
+  3. Verify end-to-end trace spans in Cloud Trace / OTLP for both agents.
+
+---
+
+### Phase 4: 15-Minute Live Interview Demo Plan
+- **Goal**: Script the exact 15-minute walkthrough for the Friday interview.
+- **Minute-by-Minute Breakdown**:
+  - `00:00 - 02:00`: Problem Statement, Architectural Vision, and Tech Stack (Google ADK 2.13, Gemini on Vertex AI, MCP).
+  - `02:00 - 06:00`: **Demo 1 — Beauty Advisor (Agentic RAG + HITL Claims)**:
+    - Clarification without retrieval -> SQL-filtered product search + comparison -> 30-day policy citation.
+    - Return claim opening with deterministic policy check and human review pause.
+  - `06:00 - 10:00`: **Demo 2 — Internal Operations Copilot (M365 MCP + Governance)**:
+    - Mixed request: M365 draft with authoritative catalog budget.
+    - Governance in action: external exfil attempt blocked by code *before* human approval.
+    - Cloud Trace waterfall & audit logs.
+  - `10:00 - 12:30`: **Engineering Rigor & Evaluation**:
+    - Show `evals/adk/` offline CI gate (<25s) and PR regression blocking.
+    - Show live Vertex AI Gen AI Evaluation Service results (5.0/5.0 rubrics).
+  - `12:30 - 15:00`: Key Architectural Decisions (ADR-001, ADR-002) & Q&A Defense.
+
+---
+
+### Phase 5: Technical Dossier PDF Generation (Max 5 Pages)
+- **Goal**: Produce an executive PDF document (max 5 pages) to share with interviewers, summarizing the entire engineering scope.
+- **Page Layout**:
+  - **Page 1**: Executive Summary, Problem Context & Architecture Scope (Beauty Advisor & Operations Copilot).
+  - **Page 2**: End-to-End System Architecture & Data Pipelines (Mermaid diagrams, RAG hybrid search + Discovery Engine cross-encoder reranking, MCP connector).
+  - **Page 3**: Deterministic Governance, Guardrail Callbacks & Human-in-the-Loop ("Callbacks Give You Guardrail Control", `require_confirmation=True`).
+  - **Page 4**: Evaluation Architecture & Quality Gates (ADK native evalset, Vertex AI EvalTask rubrics, CI/CD PR gate).
+  - **Page 5**: Production Readiness, Cloud Run Deployment & Key Decisions (ADR-001, ADR-002, cost & latency trade-offs).
+- **Execution**: Generated via headless Chrome from styled HTML/CSS with print-optimized pagination and SVG diagrams.
+
+---
+
+### Phase 6: Final Markdown Coherence Sweep & Presentation Polish
+- **Goal**: Complete sweep of all repository documentation.
+- **Tasks**:
+  1. Ensure consistent naming, zero broken links, and identical test/latency numbers across `README.md`, `PROJECT_HANDOVER.md`, `DEMO.md`, and `ADR` files.
+  2. Final verification of offline pytest (106 tests) and offline ADK evaluation runner.

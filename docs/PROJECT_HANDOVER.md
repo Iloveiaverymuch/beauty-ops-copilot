@@ -273,7 +273,14 @@ deterministic correctness checks.
 
 **Immediate lab continuation:** Modernized ADK and Vertex AI evaluation suites are complete and green.
 See [`evals/adk/README.md`](../evals/adk/README.md) for local offline and CI commands, and [`evals/vertex/README.md`](../evals/vertex/README.md)
-for Vertex AI EvalTask benchmarks and BigQuery production monitoring. Proceed to the claims modernization (ADK callbacks & HITL) and Model Armor experiments in `LAB_PLAN.md`.
+for Vertex AI EvalTask benchmarks and BigQuery production monitoring.
+Proceed according to [`docs/LAB_PLAN.md`](LAB_PLAN.md):
+1. Phase 1: Pure ADK Architecture & Claims Modernization (eliminate LangGraph, use ADK Callbacks + HITL confirmation).
+2. Phase 2: Dual-Agent Web UI (Beauty Advisor + Internal Operations Copilot).
+3. Phase 3: Model Armor Guardrails & Cloud Trace Observability.
+4. Phase 4: 15-Minute Live Interview Demo Plan & Rehearsal.
+5. Phase 5: Technical Dossier PDF Generation (max 5 pages).
+6. Phase 6: Final Markdown Coherence & Presentation Sweep.
 The production-oriented items below are deferred unless they block that demo. Metadata-safe ingestion remains a useful future engineering milestone, not the current plan.
 
 | Priority / work | Evidence and benefit | Concrete acceptance criterion |
