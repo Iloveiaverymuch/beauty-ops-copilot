@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-11",
+  "verification": "Read-only Cloud Trace API returned HTTP 200 and eight recent traces containing chat.turn.",
+  "service": "advisor-api",
+  "environment": "local",
+  "span_export_verified": true,
+  "sample_content_check": "On the sampled RAG trace, the content-related attribute-name scan found only an invocation identifier; prompt/response values were not printed.",
+  "traces": [
+    {
+      "turn_id": "5d04f9cbeec3",
+      "trace_id": "88c2af064726e5791eb87d2ec40a7c7f",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=88c2af064726e5791eb87d2ec40a7c7f",
+      "total_ms": 3529,
+      "model_spans_ms": 3366,
+      "tool_spans_ms": 8,
+      "model_calls": 2,
+      "tools": [
+        "get_claim_status"
+      ]
+    },
+    {
+      "turn_id": "7e87880e6052",
+      "trace_id": "26f1213b1e0eb97edd4550fc842a8f2a",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=26f1213b1e0eb97edd4550fc842a8f2a",
+      "total_ms": 29672,
+      "model_spans_ms": 27100,
+      "tool_spans_ms": 2419,
+      "model_calls": 2,
+      "tools": [
+        "open_return_claim"
+      ]
+    },
+    {
+      "turn_id": "6ecbb3d10164",
+      "trace_id": "d054f615fdab8485ad749a8792b8571b",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=d054f615fdab8485ad749a8792b8571b",
+      "total_ms": 13753,
+      "model_spans_ms": 9729,
+      "tool_spans_ms": 3918,
+      "model_calls": 3,
+      "tools": [
+        "search_knowledge",
+        "search_knowledge"
+      ]
+    },
+    {
+      "turn_id": "630ee4b9be91",
+      "trace_id": "805d6373c066d96fd44c99a4437d711f",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=805d6373c066d96fd44c99a4437d711f",
+      "total_ms": 6747,
+      "model_spans_ms": 6630,
+      "tool_spans_ms": 31,
+      "model_calls": 2,
+      "tools": [
+        "check_availability"
+      ]
+    },
+    {
+      "turn_id": "b021827dd39c",
+      "trace_id": "133fb8b569a403d791095b4660ef501d",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=133fb8b569a403d791095b4660ef501d",
+      "total_ms": 25365,
+      "model_spans_ms": 25295,
+      "tool_spans_ms": 1,
+      "model_calls": 2,
+      "tools": [
+        "estimate_quantity"
+      ]
+    },
+    {
+      "turn_id": "41668e8a0fae",
+      "trace_id": "6b592f8f90f5ad05be1926cac396e228",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=6b592f8f90f5ad05be1926cac396e228",
+      "total_ms": 7061,
+      "model_spans_ms": 6990,
+      "tool_spans_ms": 1,
+      "model_calls": 2,
+      "tools": [
+        "compare_products"
+      ]
+    },
+    {
+      "turn_id": "28f43e094e76",
+      "trace_id": "776aaead99d36c08997053276c8d3d6c",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=776aaead99d36c08997053276c8d3d6c",
+      "total_ms": 11882,
+      "model_spans_ms": 9593,
+      "tool_spans_ms": 2223,
+      "model_calls": 2,
+      "tools": [
+        "search_products"
+      ]
+    },
+    {
+      "turn_id": "62171d2bfe18",
+      "trace_id": "a18f47bea20304d3b110ebebe654d1da",
+      "url": "https://console.cloud.google.com/traces/list?project=rk-adk-poc-1104&tid=a18f47bea20304d3b110ebebe654d1da",
+      "total_ms": 5977,
+      "model_spans_ms": 5815,
+      "tool_spans_ms": 0,
+      "model_calls": 1,
+      "tools": []
+    }
+  ],
+  "limits": [
+    "This is an eight-turn demo session, not a latency benchmark.",
+    "Model span sums are measured provider-call durations; model_ms in KPI is residual turn time and includes other overhead.",
+    "First RAG retrieval includes lazy BigQuery loading; second retrieval is warm.",
+    "RAG score >= threshold does not establish that evidence answers the question.",
+    "ADK tool boundary is traced, but individual LangGraph nodes and Pub/Sub worker continuation were not present in these spans."
+  ],
+  "verified_rag_turn": {
+    "trace_id": "d054f615fdab8485ad749a8792b8571b",
+    "turn_id": "6ecbb3d10164",
+    "source": "Exact turn inspected read-only in the local SQLite session after user supplied the conversation identifier.",
+    "question_type": "Niacinamide and retinol compatibility in the same evening",
+    "retrieval_abstained": false,
+    "top_scores": [
+      0.3338,
+      0.4613
+    ],
+    "retrieved_subject": "Hyaluronic acid compatibility; does not establish the requested pairwise compatibility.",
+    "model_acknowledged_missing_evidence": true,
+    "offered_human_advisor": true,
+    "search_calls": 2,
+    "knowledge_tool_absent_in_final_model_tool_definitions": true,
+    "token_accounting_verified_in_installed_adk": "Final model output_tokens=166 includes reasoning_output_tokens=112, leaving 54 candidate output tokens. Backend tokens_out reports candidates separately from thinking."
+  }
+}

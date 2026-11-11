@@ -1,5 +1,9 @@
 # Beauty Ops Copilot: ADK + Vertex AI + MCP agent POC
 
+Current interview-lab continuation (advisor, claims workflow and HTTP evaluations):
+[`docs/LAB_PLAN.md`](docs/LAB_PLAN.md), [`docs/PROJECT_HANDOVER.md`](docs/PROJECT_HANDOVER.md),
+and [`evals/promptfoo/README.md`](evals/promptfoo/README.md). The original copilot notes below are retained.
+
 A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI**. One agent reaches
 Microsoft 365 through an **MCP server**. A **governance plugin** enforces tool policy in code, and every claim
 is backed by a measured trial in [`evals/FINDINGS.md`](evals/FINDINGS.md).
