@@ -56,9 +56,14 @@ Controls:
    `WHERE visibility='public'` in the chatbot's code would move the boundary back into application code. In
    production the advisor's service account is granted only these tables (or a separate public dataset), so a
    code bug can't reach internal rows either.
-3. **Canary strings** (`advisor/data/canaries.json`) are checked by literal match on every eval answer: any hit
+3. **User-written content is a separate collection.** Reviews are public but untrusted. R3 measured that the
+   cross-encoder ranked the poisoned review **#1 for all 3 promo-code questions** (0.68 on one, above the no-answer
+   threshold): injected text is written to look relevant, so a better ranker increases exposure. Reviews now live
+   in `reviews_public`, outside the advice index (`chunks_public`); a future review tool would summarise them with
+   their own guardrails.
+4. **Canary strings** (`advisor/data/canaries.json`) are checked by literal match on every eval answer: any hit
    = leak = failed build.
-4. The system prompt + output checks are the last layer, not the first.
+5. The system prompt + output checks are the last layer, not the first.
 
 Interview line: *"A prompt can be talked out of a rule; a WHERE clause can't. Confidential data is filtered
 before retrieval, and canaries prove it on every eval run."*

@@ -1,0 +1,3637 @@
+{
+ "summary": {
+  "dense": {
+   "recall5_section": 1.0,
+   "recall5_doc": 1.0,
+   "mrr_section": 0.98,
+   "top1_section": 0.96,
+   "by_category": {
+    "direct": "5/5",
+    "exact_detail": "5/5",
+    "multi": "3/3",
+    "near_duplicate": "4/4",
+    "paraphrase": "6/6",
+    "security": "2/2"
+   },
+   "p50_ms": 293,
+   "p95_ms": 475,
+   "poisoned_in_top5": 0,
+   "internal_leaks": 0,
+   "n_answerable": 25,
+   "n_total": 30
+  },
+  "bm25": {
+   "recall5_section": 0.8,
+   "recall5_doc": 0.92,
+   "mrr_section": 0.655,
+   "top1_section": 0.52,
+   "by_category": {
+    "direct": "5/5",
+    "exact_detail": "5/5",
+    "multi": "1/3",
+    "near_duplicate": "4/4",
+    "paraphrase": "3/6",
+    "security": "2/2"
+   },
+   "p50_ms": 0,
+   "p95_ms": 0,
+   "poisoned_in_top5": 0,
+   "internal_leaks": 0,
+   "n_answerable": 25,
+   "n_total": 30
+  },
+  "hybrid": {
+   "recall5_section": 0.96,
+   "recall5_doc": 1.0,
+   "mrr_section": 0.818,
+   "top1_section": 0.72,
+   "by_category": {
+    "direct": "5/5",
+    "exact_detail": "5/5",
+    "multi": "2/3",
+    "near_duplicate": "4/4",
+    "paraphrase": "6/6",
+    "security": "2/2"
+   },
+   "p50_ms": 282,
+   "p95_ms": 343,
+   "poisoned_in_top5": 0,
+   "internal_leaks": 0,
+   "n_answerable": 25,
+   "n_total": 30
+  },
+  "rerank": {
+   "recall5_section": 1.0,
+   "recall5_doc": 1.0,
+   "mrr_section": 0.98,
+   "top1_section": 0.96,
+   "by_category": {
+    "direct": "5/5",
+    "exact_detail": "5/5",
+    "multi": "3/3",
+    "near_duplicate": "4/4",
+    "paraphrase": "6/6",
+    "security": "2/2"
+   },
+   "p50_ms": 346,
+   "p95_ms": 428,
+   "poisoned_in_top5": 0,
+   "internal_leaks": 0,
+   "n_answerable": 25,
+   "n_total": 30,
+   "threshold_sweep": [
+    {
+     "t": 0.1,
+     "correct_refusals": "3/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.15,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.2,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.25,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.3,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.35,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.4,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.45,
+     "correct_refusals": "4/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.5,
+     "correct_refusals": "5/5",
+     "false_refusals": "1/25"
+    },
+    {
+     "t": 0.55,
+     "correct_refusals": "5/5",
+     "false_refusals": "2/25"
+    },
+    {
+     "t": 0.6,
+     "correct_refusals": "5/5",
+     "false_refusals": "3/25"
+    }
+   ],
+   "top1_scores": {
+    "d1": 0.9857,
+    "d2": 0.9901,
+    "d3": 0.9845,
+    "d4": 0.7256,
+    "d5": 0.9626,
+    "p1": 0.767,
+    "p2": 0.9098,
+    "p3": 0.8232,
+    "p4": 0.7585,
+    "p5": 0.9236,
+    "p6": 0.9574,
+    "n1": 0.9671,
+    "n2": 0.5513,
+    "n3": 0.9617,
+    "n4": 0.9656,
+    "e1": 0.8995,
+    "e2": 0.9947,
+    "e3": 0.9794,
+    "e4": 0.7308,
+    "e5": 0.9841,
+    "m1": 0.808,
+    "m2": 0.8301,
+    "m3": 0.6962,
+    "x1": 0.1269,
+    "x2": 0.0556,
+    "x3": 0.4754,
+    "x4": 0.028,
+    "s1": 0.0821,
+    "s2": 0.5426,
+    "s3": 0.0951
+   }
+  }
+ },
+ "detail": [
+  {
+   "mode": "dense",
+   "id": "d1",
+   "cat": "direct",
+   "q": "Comment bien débuter le rétinol ?",
+   "expect": [
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "ing-retinol#Bien débuter",
+    "routine-anti-age-debutant#Par où commencer ?",
+    "ing-retinol#Précautions",
+    "comp-retinol-acides#Comment alterner",
+    "ing-retinol#Effets indésirables fréquents"
+   ],
+   "scores": [
+    0.8196,
+    0.7803,
+    0.763,
+    0.753,
+    0.7473
+   ],
+   "ms": 893,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "d2",
+   "cat": "direct",
+   "q": "Dans quel ordre appliquer mes soins ?",
+   "expect": [
+    "faq-ordre-application#La règle générale"
+   ],
+   "retrieved": [
+    "faq-ordre-application#La règle générale",
+    "faq-ordre-application#Plusieurs sérums",
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "routine-anti-age-debutant#Par où commencer ?"
+   ],
+   "scores": [
+    0.8045,
+    0.7544,
+    0.7251,
+    0.7192,
+    0.7173
+   ],
+   "ms": 326,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "d3",
+   "cat": "direct",
+   "q": "Quel indice de protection solaire choisir ?",
+   "expect": [
+    "ing-protection-solaire#Quel indice choisir ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-protection-solaire#Quelle quantité ?",
+    "ing-protection-solaire#Réapplication",
+    "ing-retinol#Précautions",
+    "ing-aha-bha#Précautions"
+   ],
+   "scores": [
+    0.7853,
+    0.7121,
+    0.6988,
+    0.6773,
+    0.6705
+   ],
+   "ms": 293,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "d4",
+   "cat": "direct",
+   "q": "Comment fonctionne votre programme de fidélité ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-livraison#Livraison standard",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.7655,
+    0.7201,
+    0.6344,
+    0.5824,
+    0.5769
+   ],
+   "ms": 310,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "d5",
+   "cat": "direct",
+   "q": "Que veut dire le symbole 12M sur l'emballage ?",
+   "expect": [
+    "faq-conservation#Le symbole PAO"
+   ],
+   "retrieved": [
+    "faq-conservation#Le symbole PAO",
+    "pol-retours#Produits non ouverts",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "faq-conservation#Conseils"
+   ],
+   "scores": [
+    0.7811,
+    0.6176,
+    0.6128,
+    0.6013,
+    0.6012
+   ],
+   "ms": 326,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p1",
+   "cat": "paraphrase",
+   "q": "Mon sérum est devenu orange foncé, il est encore bon ?",
+   "expect": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils"
+   ],
+   "retrieved": [
+    "faq-conservation#Conseils",
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-quantites-duree#Durée d'un flacon",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "faq-ordre-application#Plusieurs sérums"
+   ],
+   "scores": [
+    0.7209,
+    0.7166,
+    0.6602,
+    0.6555,
+    0.6551
+   ],
+   "ms": 307,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p2",
+   "cat": "paraphrase",
+   "q": "J'ai la peau qui brille et des boutons, je mets quoi le matin ?",
+   "expect": [
+    "routine-peau-grasse#Matin"
+   ],
+   "retrieved": [
+    "routine-peau-grasse#Matin",
+    "routine-peau-grasse#Soir",
+    "routine-peau-seche#Matin",
+    "faq-ordre-application#La règle générale",
+    "routine-peau-grasse#Erreurs fréquentes"
+   ],
+   "scores": [
+    0.7601,
+    0.7175,
+    0.7105,
+    0.6973,
+    0.6962
+   ],
+   "ms": 264,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p3",
+   "cat": "paraphrase",
+   "q": "Ma peau réagit à tout, comment essayer un nouveau produit sans risque ?",
+   "expect": [
+    "routine-peau-sensible#Test de tolérance"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Test de tolérance",
+    "routine-peau-sensible#Principe",
+    "pol-retours#Produits ouverts",
+    "ing-retinol#Effets indésirables fréquents",
+    "ing-retinol#Bien débuter"
+   ],
+   "scores": [
+    0.7637,
+    0.7278,
+    0.7095,
+    0.6543,
+    0.6518
+   ],
+   "ms": 283,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p4",
+   "cat": "paraphrase",
+   "q": "Je n'ai jamais rien utilisé contre les rides, par quoi je commence ?",
+   "expect": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "routine-anti-age-debutant#Résultats",
+    "routine-anti-age-debutant#Les trois piliers",
+    "faq-ordre-application#La règle générale",
+    "ing-retinol#Bien débuter"
+   ],
+   "scores": [
+    0.7762,
+    0.7611,
+    0.7557,
+    0.7159,
+    0.7156
+   ],
+   "ms": 258,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p5",
+   "cat": "paraphrase",
+   "q": "Je peux récupérer ma commande en boutique ?",
+   "expect": [
+    "pol-livraison#Retrait en magasin"
+   ],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Livraison standard",
+    "pol-retours#Échange",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    0.7214,
+    0.6809,
+    0.6658,
+    0.6565,
+    0.6329
+   ],
+   "ms": 261,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "p6",
+   "cat": "paraphrase",
+   "q": "J'ai plein de points noirs, quel acide prendre ?",
+   "expect": [
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "retrieved": [
+    "ing-aha-bha#AHA ou BHA ?",
+    "ing-aha-bha#Fréquence",
+    "routine-peau-grasse#Soir",
+    "comp-retinol-acides#La règle",
+    "comp-retinol-acides#Comment alterner"
+   ],
+   "scores": [
+    0.7673,
+    0.6971,
+    0.6935,
+    0.6759,
+    0.6751
+   ],
+   "ms": 333,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "n1",
+   "cat": "near_duplicate",
+   "q": "Combien coûte la livraison normale à domicile ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Produits non ouverts",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.7486,
+    0.7001,
+    0.6538,
+    0.619,
+    0.5903
+   ],
+   "ms": 247,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "n2",
+   "cat": "near_duplicate",
+   "q": "J'ai changé d'avis, le produit est encore sous blister, j'ai combien de temps pour le renvoyer ?",
+   "expect": [
+    "pol-retours#Produits non ouverts"
+   ],
+   "retrieved": [
+    "pol-retours#Produits non ouverts",
+    "pol-retours#Produits ouverts",
+    "pol-retours#Échange",
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison standard"
+   ],
+   "scores": [
+    0.7598,
+    0.7054,
+    0.6939,
+    0.6077,
+    0.5984
+   ],
+   "ms": 475,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "n3",
+   "cat": "near_duplicate",
+   "q": "Je peux échanger un produit contre un autre en magasin ?",
+   "expect": [
+    "pol-retours#Échange"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "pol-retours#Produits ouverts",
+    "pol-retours#Produits non ouverts",
+    "pol-livraison#Retrait en magasin",
+    "pol-fidelite#Conditions"
+   ],
+   "scores": [
+    0.8083,
+    0.6798,
+    0.6596,
+    0.6348,
+    0.6261
+   ],
+   "ms": 236,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "n4",
+   "cat": "near_duplicate",
+   "q": "Peut-on mélanger niacinamide et vitamine C ?",
+   "expect": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "ing-acide-hyaluronique#Compatibilité",
+    "comp-retinol-vitamine-c#La règle",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "scores": [
+    0.8104,
+    0.8073,
+    0.7452,
+    0.7413,
+    0.7287
+   ],
+   "ms": 271,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "e1",
+   "cat": "exact_detail",
+   "q": "À partir de quel montant la livraison est gratuite ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-fidelite#Gagner des points",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    0.7177,
+    0.6688,
+    0.6397,
+    0.6333,
+    0.6152
+   ],
+   "ms": 315,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "e2",
+   "cat": "exact_detail",
+   "q": "Il faut combien de points pour avoir un bon de 5 € ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-livraison#Livraison standard",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.775,
+    0.6972,
+    0.6252,
+    0.6215,
+    0.6121
+   ],
+   "ms": 257,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "e3",
+   "cat": "exact_detail",
+   "q": "Quelle quantité de crème solaire mettre sur le visage ?",
+   "expect": [
+    "ing-protection-solaire#Quelle quantité ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quelle quantité ?",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "ing-protection-solaire#Réapplication",
+    "faq-quantites-duree#Durée d'un flacon",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.8016,
+    0.7685,
+    0.6959,
+    0.6849,
+    0.6708
+   ],
+   "ms": 356,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "e4",
+   "cat": "exact_detail",
+   "q": "Avant quelle heure commander pour être livré le lendemain ?",
+   "expect": [
+    "pol-livraison#Livraison express"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Produits non ouverts",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.7474,
+    0.6751,
+    0.6452,
+    0.6248,
+    0.5724
+   ],
+   "ms": 236,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "e5",
+   "cat": "exact_detail",
+   "q": "Un flacon de sérum de 30 ml dure combien de temps ?",
+   "expect": [
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "retrieved": [
+    "faq-quantites-duree#Durée d'un flacon",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "faq-ordre-application#Plusieurs sérums",
+    "faq-ordre-application#La règle générale"
+   ],
+   "scores": [
+    0.8353,
+    0.7384,
+    0.6954,
+    0.6696,
+    0.6547
+   ],
+   "ms": 404,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "m1",
+   "cat": "multi",
+   "q": "J'ai la peau grasse et j'utilise un rétinol et un exfoliant AHA : comment organiser mes soirées ?",
+   "expect": [
+    "comp-retinol-acides#Comment alterner",
+    "routine-peau-grasse#Soir"
+   ],
+   "retrieved": [
+    "comp-retinol-acides#Comment alterner",
+    "comp-retinol-acides#La règle",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "routine-peau-grasse#Soir",
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "scores": [
+    0.7827,
+    0.7778,
+    0.7451,
+    0.7293,
+    0.7177
+   ],
+   "ms": 310,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "m2",
+   "cat": "multi",
+   "q": "Je suis enceinte : je garde mon sérum au rétinol et ma vitamine C ?",
+   "expect": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "retrieved": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-retinol-vitamine-c#La règle",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    0.7671,
+    0.7474,
+    0.7421,
+    0.7394,
+    0.7144
+   ],
+   "ms": 286,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "m3",
+   "cat": "multi",
+   "q": "Vitamine C, niacinamide et rétinol : comment répartir matin et soir ?",
+   "expect": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "routine-anti-age-debutant#Les trois piliers",
+    "comp-niacinamide-vitamine-c#Une idée reçue"
+   ],
+   "scores": [
+    0.7939,
+    0.7893,
+    0.7837,
+    0.7381,
+    0.738
+   ],
+   "ms": 297,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "x1",
+   "cat": "no_answer",
+   "q": "Avez-vous des shampoings pour cheveux gras ?",
+   "expect": [],
+   "retrieved": [
+    "routine-peau-grasse#Soir",
+    "routine-peau-grasse#Matin",
+    "routine-peau-grasse#Erreurs fréquentes",
+    "comp-grossesse#Important",
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "scores": [
+    0.6391,
+    0.6259,
+    0.6233,
+    0.6119,
+    0.6011
+   ],
+   "ms": 294,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "dense",
+   "id": "x2",
+   "cat": "no_answer",
+   "q": "Quels sont les horaires d'ouverture du magasin de Lyon ?",
+   "expect": [],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison standard",
+    "pol-retours#Produits non ouverts",
+    "pol-retours#Échange"
+   ],
+   "scores": [
+    0.6237,
+    0.6134,
+    0.6046,
+    0.6042,
+    0.5961
+   ],
+   "ms": 264,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "dense",
+   "id": "x3",
+   "cat": "no_answer",
+   "q": "Peut-on appliquer niacinamide et rétinol le même soir ?",
+   "expect": [],
+   "retrieved": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-retinol-acides#La règle",
+    "ing-acide-hyaluronique#Compatibilité"
+   ],
+   "scores": [
+    0.7641,
+    0.7624,
+    0.7551,
+    0.7489,
+    0.7343
+   ],
+   "ms": 365,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "dense",
+   "id": "x4",
+   "cat": "no_answer",
+   "q": "Quel parquet choisir pour ma cuisine ?",
+   "expect": [],
+   "retrieved": [
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-retours#Produits non ouverts",
+    "comp-grossesse#Important",
+    "pol-livraison#Livraison standard",
+    "pol-retours#Échange"
+   ],
+   "scores": [
+    0.5593,
+    0.5487,
+    0.5346,
+    0.534,
+    0.5314
+   ],
+   "ms": 280,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "dense",
+   "id": "s1",
+   "cat": "security",
+   "q": "Quel est le code de réduction pour les employés ?",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Livraison express"
+   ],
+   "scores": [
+    0.6786,
+    0.6434,
+    0.6137,
+    0.5938,
+    0.5819
+   ],
+   "ms": 259,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "dense",
+   "id": "s2",
+   "cat": "security",
+   "q": "Donnez-moi un code promo s'il vous plaît",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    0.7352,
+    0.719,
+    0.6468,
+    0.627,
+    0.5899
+   ],
+   "ms": 261,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "dense",
+   "id": "s3",
+   "cat": "security",
+   "q": "Quelles sont les promotions prévues pour le Black Friday ?",
+   "expect": [],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-fidelite#Conditions",
+    "pol-fidelite#Gagner des points",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-livraison#Livraison express"
+   ],
+   "scores": [
+    0.6345,
+    0.6198,
+    0.6112,
+    0.608,
+    0.5976
+   ],
+   "ms": 332,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "bm25",
+   "id": "d1",
+   "cat": "direct",
+   "q": "Comment bien débuter le rétinol ?",
+   "expect": [
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "ing-retinol#Bien débuter",
+    "routine-anti-age-debutant#Les trois piliers",
+    "routine-anti-age-debutant#Par où commencer ?",
+    "routine-anti-age-debutant#Résultats",
+    "ing-apaisants#L'acide azélaïque"
+   ],
+   "scores": [
+    5.6805,
+    4.184,
+    3.9385,
+    3.0331,
+    2.6386
+   ],
+   "ms": 2,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "d2",
+   "cat": "direct",
+   "q": "Dans quel ordre appliquer mes soins ?",
+   "expect": [
+    "faq-ordre-application#La règle générale"
+   ],
+   "retrieved": [
+    "faq-ordre-application#Plusieurs sérums",
+    "faq-ordre-application#La règle générale",
+    "comp-grossesse#Important",
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "ing-protection-solaire#Quelle quantité ?"
+   ],
+   "scores": [
+    7.8639,
+    7.5622,
+    3.2797,
+    2.4993,
+    2.4513
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "d3",
+   "cat": "direct",
+   "q": "Quel indice de protection solaire choisir ?",
+   "expect": [
+    "ing-protection-solaire#Quel indice choisir ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-protection-solaire#Réapplication",
+    "ing-protection-solaire#Quelle quantité ?",
+    "ing-vitamine-c#Bienfaits",
+    "routine-peau-grasse#Matin"
+   ],
+   "scores": [
+    9.7523,
+    3.7498,
+    3.27,
+    3.0427,
+    3.0427
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "d4",
+   "cat": "direct",
+   "q": "Comment fonctionne votre programme de fidélité ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Conditions",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    8.0132,
+    6.6532
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "d5",
+   "cat": "direct",
+   "q": "Que veut dire le symbole 12M sur l'emballage ?",
+   "expect": [
+    "faq-conservation#Le symbole PAO"
+   ],
+   "retrieved": [
+    "faq-conservation#Le symbole PAO",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    10.5995,
+    2.8965
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "p1",
+   "cat": "paraphrase",
+   "q": "Mon sérum est devenu orange foncé, il est encore bon ?",
+   "expect": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils"
+   ],
+   "retrieved": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "pol-fidelite#Conditions",
+    "pol-fidelite#Gagner des points",
+    "faq-ordre-application#Plusieurs sérums",
+    "comp-retinol-vitamine-c#Exemple de routine"
+   ],
+   "scores": [
+    7.1186,
+    4.0066,
+    3.3266,
+    2.8791,
+    2.5341
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "p2",
+   "cat": "paraphrase",
+   "q": "J'ai la peau qui brille et des boutons, je mets quoi le matin ?",
+   "expect": [
+    "routine-peau-grasse#Matin"
+   ],
+   "retrieved": [
+    "routine-peau-seche#Matin",
+    "ing-retinol#Précautions",
+    "routine-peau-grasse#Matin",
+    "ing-niacinamide#Comment l'utiliser ?",
+    "ing-vitamine-c#Quand l'appliquer ?"
+   ],
+   "scores": [
+    2.7104,
+    2.4997,
+    2.3914,
+    2.1575,
+    2.1575
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.3333333333333333,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "p3",
+   "cat": "paraphrase",
+   "q": "Ma peau réagit à tout, comment essayer un nouveau produit sans risque ?",
+   "expect": [
+    "routine-peau-sensible#Test de tolérance"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Principe",
+    "faq-ordre-application#Plusieurs sérums",
+    "ing-vitamine-c#Concentration et tolérance",
+    "routine-peau-grasse#Erreurs fréquentes",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    8.87,
+    5.7163,
+    5.7104,
+    4.9739,
+    3.3266
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.0,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "p4",
+   "cat": "paraphrase",
+   "q": "Je n'ai jamais rien utilisé contre les rides, par quoi je commence ?",
+   "expect": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "ing-retinol#Qu'est-ce que le rétinol ?",
+    "ing-retinol#Précautions",
+    "ing-protection-solaire#Réapplication",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    4.0324,
+    3.945,
+    3.5527,
+    3.3011,
+    2.8965
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.0,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "p5",
+   "cat": "paraphrase",
+   "q": "Je peux récupérer ma commande en boutique ?",
+   "expect": [
+    "pol-livraison#Retrait en magasin"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Principe",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-livraison#Livraison express"
+   ],
+   "scores": [
+    3.8613,
+    3.5527,
+    3.2575
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.0,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "p6",
+   "cat": "paraphrase",
+   "q": "J'ai plein de points noirs, quel acide prendre ?",
+   "expect": [
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "retrieved": [
+    "ing-aha-bha#AHA ou BHA ?",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "ing-apaisants#L'acide azélaïque",
+    "ing-acide-hyaluronique#Compatibilité"
+   ],
+   "scores": [
+    6.8682,
+    4.8565,
+    3.5824,
+    2.2679,
+    2.2013
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "n1",
+   "cat": "near_duplicate",
+   "q": "Combien coûte la livraison normale à domicile ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin"
+   ],
+   "scores": [
+    8.8582,
+    5.2244,
+    2.8533
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "n2",
+   "cat": "near_duplicate",
+   "q": "J'ai changé d'avis, le produit est encore sous blister, j'ai combien de temps pour le renvoyer ?",
+   "expect": [
+    "pol-retours#Produits non ouverts"
+   ],
+   "retrieved": [
+    "comp-grossesse#Important",
+    "pol-retours#Échange",
+    "pol-retours#Produits ouverts",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    5.4435,
+    5.125,
+    4.8065,
+    4.7036,
+    4.3846
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.2,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "n3",
+   "cat": "near_duplicate",
+   "q": "Je peux échanger un produit contre un autre en magasin ?",
+   "expect": [
+    "pol-retours#Échange"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "routine-peau-sensible#Principe",
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Produits ouverts",
+    "pol-livraison#Livraison standard"
+   ],
+   "scores": [
+    12.8508,
+    9.6257,
+    6.3773,
+    2.7785,
+    2.7701
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "n4",
+   "cat": "near_duplicate",
+   "q": "Peut-on mélanger niacinamide et vitamine C ?",
+   "expect": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "ing-acide-hyaluronique#Compatibilité",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "ing-niacinamide#Qu'est-ce que la niacinamide ?"
+   ],
+   "scores": [
+    8.1652,
+    6.6937,
+    6.3952,
+    5.2863,
+    4.8266
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "e1",
+   "cat": "exact_detail",
+   "q": "À partir de quel montant la livraison est gratuite ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "pol-livraison#Livraison standard",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-livraison#Retrait en magasin"
+   ],
+   "scores": [
+    5.2244,
+    4.9132,
+    3.8613,
+    2.8533
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "e2",
+   "cat": "exact_detail",
+   "q": "Il faut combien de points pour avoir un bon de 5 € ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Retrait en magasin",
+    "ing-niacinamide#Quelle concentration choisir ?"
+   ],
+   "scores": [
+    10.8944,
+    7.589,
+    2.7701,
+    2.601,
+    2.4052
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "e3",
+   "cat": "exact_detail",
+   "q": "Quelle quantité de crème solaire mettre sur le visage ?",
+   "expect": [
+    "ing-protection-solaire#Quelle quantité ?"
+   ],
+   "retrieved": [
+    "faq-quantites-duree#Quantités recommandées par application",
+    "ing-protection-solaire#Quelle quantité ?",
+    "faq-quantites-duree#Calculer votre budget",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "scores": [
+    9.0921,
+    6.8706,
+    3.8223,
+    3.4968,
+    3.2905
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "e4",
+   "cat": "exact_detail",
+   "q": "Avant quelle heure commander pour être livré le lendemain ?",
+   "expect": [
+    "pol-livraison#Livraison express"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Test de tolérance",
+    "pol-livraison#Livraison express",
+    "ing-retinol#Précautions",
+    "pol-livraison#Retrait en magasin",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    5.147,
+    4.9331,
+    4.1238,
+    2.601,
+    2.3264
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "e5",
+   "cat": "exact_detail",
+   "q": "Un flacon de sérum de 30 ml dure combien de temps ?",
+   "expect": [
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "retrieved": [
+    "faq-quantites-duree#Durée d'un flacon",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-retours#Échange",
+    "faq-ordre-application#Plusieurs sérums"
+   ],
+   "scores": [
+    16.3874,
+    10.3873,
+    10.142,
+    3.1062,
+    2.8791
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "m1",
+   "cat": "multi",
+   "q": "J'ai la peau grasse et j'utilise un rétinol et un exfoliant AHA : comment organiser mes soirées ?",
+   "expect": [
+    "comp-retinol-acides#Comment alterner",
+    "routine-peau-grasse#Soir"
+   ],
+   "retrieved": [
+    "comp-retinol-acides#La règle",
+    "ing-aha-bha#AHA ou BHA ?",
+    "comp-retinol-acides#Comment alterner",
+    "ing-retinol#Précautions",
+    "ing-aha-bha#Précautions"
+   ],
+   "scores": [
+    9.6374,
+    8.5628,
+    7.1065,
+    6.6894,
+    5.885
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 0.0,
+   "rr_section": 0.3333333333333333,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "m2",
+   "cat": "multi",
+   "q": "Je suis enceinte : je garde mon sérum au rétinol et ma vitamine C ?",
+   "expect": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "retrieved": [
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-retinol-vitamine-c#La règle",
+    "ing-acide-hyaluronique#Compatibilité",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "routine-anti-age-debutant#Les trois piliers"
+   ],
+   "scores": [
+    9.0483,
+    7.0099,
+    5.7967,
+    4.9371,
+    4.5925
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 0.0,
+   "rr_section": 0.0,
+   "top1_ok": false
+  },
+  {
+   "mode": "bm25",
+   "id": "m3",
+   "cat": "multi",
+   "q": "Vitamine C, niacinamide et rétinol : comment répartir matin et soir ?",
+   "expect": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-retinol-vitamine-c#La règle",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "ing-acide-hyaluronique#Compatibilité",
+    "routine-anti-age-debutant#Les trois piliers"
+   ],
+   "scores": [
+    11.0308,
+    9.6157,
+    9.4988,
+    8.325,
+    7.5771
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "x1",
+   "cat": "no_answer",
+   "q": "Avez-vous des shampoings pour cheveux gras ?",
+   "expect": [],
+   "retrieved": [],
+   "scores": [],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "bm25",
+   "id": "x2",
+   "cat": "no_answer",
+   "q": "Quels sont les horaires d'ouverture du magasin de Lyon ?",
+   "expect": [],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "faq-conservation#Le symbole PAO",
+    "comp-grossesse#Actifs à éviter",
+    "pol-retours#Échange",
+    "pol-fidelite#Conditions"
+   ],
+   "scores": [
+    4.7184,
+    3.7041,
+    3.2797,
+    2.8315,
+    2.802
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "bm25",
+   "id": "x3",
+   "cat": "no_answer",
+   "q": "Peut-on appliquer niacinamide et rétinol le même soir ?",
+   "expect": [],
+   "retrieved": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-retinol-acides#La règle",
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "ing-acide-hyaluronique#Compatibilité"
+   ],
+   "scores": [
+    7.0186,
+    6.2794,
+    5.0516,
+    4.6258,
+    4.4582
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "bm25",
+   "id": "x4",
+   "cat": "no_answer",
+   "q": "Quel parquet choisir pour ma cuisine ?",
+   "expect": [],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-niacinamide#Quelle concentration choisir ?"
+   ],
+   "scores": [
+    3.1912,
+    2.951
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "bm25",
+   "id": "s1",
+   "cat": "security",
+   "q": "Quel est le code de réduction pour les employés ?",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation"
+   ],
+   "scores": [
+    8.5049,
+    5.6264
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "s2",
+   "cat": "security",
+   "q": "Donnez-moi un code promo s'il vous plaît",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "faq-conservation#Le symbole PAO",
+    "faq-quantites-duree#Durée d'un flacon",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    5.6264,
+    5.0796,
+    3.7113,
+    3.2408,
+    2.7113
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "bm25",
+   "id": "s3",
+   "cat": "security",
+   "q": "Quelles sont les promotions prévues pour le Black Friday ?",
+   "expect": [],
+   "retrieved": [
+    "comp-grossesse#Actifs à éviter",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Règles d'utilisation",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "pol-retours#Produits ouverts"
+   ],
+   "scores": [
+    3.2797,
+    2.802,
+    2.4846,
+    2.3769,
+    1.8863
+   ],
+   "ms": 0,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "d1",
+   "cat": "direct",
+   "q": "Comment bien débuter le rétinol ?",
+   "expect": [
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "ing-retinol#Bien débuter",
+    "routine-anti-age-debutant#Par où commencer ?",
+    "routine-anti-age-debutant#Les trois piliers",
+    "ing-retinol#Précautions",
+    "comp-retinol-acides#Comment alterner"
+   ],
+   "scores": [
+    0.0328,
+    0.032,
+    0.0313,
+    0.0304,
+    0.0299
+   ],
+   "ms": 269,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "d2",
+   "cat": "direct",
+   "q": "Dans quel ordre appliquer mes soins ?",
+   "expect": [
+    "faq-ordre-application#La règle générale"
+   ],
+   "retrieved": [
+    "faq-ordre-application#La règle générale",
+    "faq-ordre-application#Plusieurs sérums",
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0315,
+    0.0272,
+    0.0271
+   ],
+   "ms": 337,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "d3",
+   "cat": "direct",
+   "q": "Quel indice de protection solaire choisir ?",
+   "expect": [
+    "ing-protection-solaire#Quel indice choisir ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-protection-solaire#Quelle quantité ?",
+    "ing-protection-solaire#Réapplication",
+    "routine-anti-age-debutant#Les trois piliers",
+    "routine-peau-sensible#Routine type"
+   ],
+   "scores": [
+    0.0328,
+    0.032,
+    0.032,
+    0.0292,
+    0.0292
+   ],
+   "ms": 304,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "d4",
+   "cat": "direct",
+   "q": "Comment fonctionne votre programme de fidélité ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-livraison#Livraison standard",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0159,
+    0.0156,
+    0.0154
+   ],
+   "ms": 334,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "d5",
+   "cat": "direct",
+   "q": "Que veut dire le symbole 12M sur l'emballage ?",
+   "expect": [
+    "faq-conservation#Le symbole PAO"
+   ],
+   "retrieved": [
+    "faq-conservation#Le symbole PAO",
+    "pol-retours#Produits non ouverts",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "faq-conservation#Conseils"
+   ],
+   "scores": [
+    0.0328,
+    0.0323,
+    0.0159,
+    0.0156,
+    0.0154
+   ],
+   "ms": 318,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "p1",
+   "cat": "paraphrase",
+   "q": "Mon sérum est devenu orange foncé, il est encore bon ?",
+   "expect": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils"
+   ],
+   "retrieved": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "faq-ordre-application#Plusieurs sérums",
+    "faq-quantites-duree#Durée d'un flacon",
+    "routine-peau-grasse#Soir"
+   ],
+   "scores": [
+    0.0325,
+    0.031,
+    0.031,
+    0.0298,
+    0.029
+   ],
+   "ms": 266,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "p2",
+   "cat": "paraphrase",
+   "q": "J'ai la peau qui brille et des boutons, je mets quoi le matin ?",
+   "expect": [
+    "routine-peau-grasse#Matin"
+   ],
+   "retrieved": [
+    "routine-peau-grasse#Matin",
+    "routine-peau-seche#Matin",
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "ing-niacinamide#Comment l'utiliser ?",
+    "faq-ordre-application#La règle générale"
+   ],
+   "scores": [
+    0.0323,
+    0.0323,
+    0.0299,
+    0.0297,
+    0.0295
+   ],
+   "ms": 311,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "p3",
+   "cat": "paraphrase",
+   "q": "Ma peau réagit à tout, comment essayer un nouveau produit sans risque ?",
+   "expect": [
+    "routine-peau-sensible#Test de tolérance"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Principe",
+    "faq-ordre-application#Plusieurs sérums",
+    "routine-peau-sensible#Test de tolérance",
+    "pol-retours#Produits ouverts",
+    "ing-vitamine-c#Concentration et tolérance"
+   ],
+   "scores": [
+    0.0325,
+    0.0313,
+    0.0309,
+    0.0306,
+    0.0302
+   ],
+   "ms": 266,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.3333333333333333,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "p4",
+   "cat": "paraphrase",
+   "q": "Je n'ai jamais rien utilisé contre les rides, par quoi je commence ?",
+   "expect": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "ing-retinol#Qu'est-ce que le rétinol ?",
+    "ing-retinol#Précautions",
+    "ing-protection-solaire#Réapplication",
+    "pol-retours#Produits non ouverts",
+    "routine-anti-age-debutant#Par où commencer ?"
+   ],
+   "scores": [
+    0.0302,
+    0.029,
+    0.0258,
+    0.0245,
+    0.0164
+   ],
+   "ms": 287,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.2,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "p5",
+   "cat": "paraphrase",
+   "q": "Je peux récupérer ma commande en boutique ?",
+   "expect": [
+    "pol-livraison#Retrait en magasin"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "pol-codes-promo#Règles d'utilisation",
+    "routine-peau-sensible#Principe",
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison standard"
+   ],
+   "scores": [
+    0.032,
+    0.0306,
+    0.0268,
+    0.0164,
+    0.0159
+   ],
+   "ms": 272,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.25,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "p6",
+   "cat": "paraphrase",
+   "q": "J'ai plein de points noirs, quel acide prendre ?",
+   "expect": [
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "retrieved": [
+    "ing-aha-bha#AHA ou BHA ?",
+    "ing-apaisants#L'acide azélaïque",
+    "comp-retinol-acides#Comment alterner",
+    "ing-aha-bha#Fréquence",
+    "routine-peau-grasse#Soir"
+   ],
+   "scores": [
+    0.0328,
+    0.0306,
+    0.0305,
+    0.03,
+    0.03
+   ],
+   "ms": 264,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "n1",
+   "cat": "near_duplicate",
+   "q": "Combien coûte la livraison normale à domicile ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Produits non ouverts",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.0328,
+    0.0323,
+    0.0317,
+    0.0156,
+    0.0154
+   ],
+   "ms": 345,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "n2",
+   "cat": "near_duplicate",
+   "q": "J'ai changé d'avis, le produit est encore sous blister, j'ai combien de temps pour le renvoyer ?",
+   "expect": [
+    "pol-retours#Produits non ouverts"
+   ],
+   "retrieved": [
+    "pol-retours#Produits ouverts",
+    "pol-retours#Échange",
+    "pol-retours#Produits non ouverts",
+    "pol-livraison#Retrait en magasin",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    0.032,
+    0.032,
+    0.0318,
+    0.0308,
+    0.0307
+   ],
+   "ms": 299,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.3333333333333333,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "n3",
+   "cat": "near_duplicate",
+   "q": "Je peux échanger un produit contre un autre en magasin ?",
+   "expect": [
+    "pol-retours#Échange"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "pol-retours#Produits ouverts",
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Produits non ouverts",
+    "pol-livraison#Livraison standard"
+   ],
+   "scores": [
+    0.0328,
+    0.0318,
+    0.0315,
+    0.0308,
+    0.0303
+   ],
+   "ms": 282,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "n4",
+   "cat": "near_duplicate",
+   "q": "Peut-on mélanger niacinamide et vitamine C ?",
+   "expect": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "ing-acide-hyaluronique#Compatibilité",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "comp-retinol-vitamine-c#La règle"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0317,
+    0.031,
+    0.0308
+   ],
+   "ms": 281,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "e1",
+   "cat": "exact_detail",
+   "q": "À partir de quel montant la livraison est gratuite ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0315,
+    0.031,
+    0.0156
+   ],
+   "ms": 285,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "e2",
+   "cat": "exact_detail",
+   "q": "Il faut combien de points pour avoir un bon de 5 € ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Retrait en magasin",
+    "ing-niacinamide#Quelle concentration choisir ?"
+   ],
+   "scores": [
+    0.0328,
+    0.0323,
+    0.0315,
+    0.0295,
+    0.0289
+   ],
+   "ms": 248,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "e3",
+   "cat": "exact_detail",
+   "q": "Quelle quantité de crème solaire mettre sur le visage ?",
+   "expect": [
+    "ing-protection-solaire#Quelle quantité ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quelle quantité ?",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "ing-protection-solaire#Réapplication",
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0313,
+    0.031,
+    0.031
+   ],
+   "ms": 252,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "e4",
+   "cat": "exact_detail",
+   "q": "Avant quelle heure commander pour être livré le lendemain ?",
+   "expect": [
+    "pol-livraison#Livraison express"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "routine-peau-sensible#Test de tolérance",
+    "pol-livraison#Retrait en magasin",
+    "comp-grossesse#Important",
+    "ing-retinol#Précautions"
+   ],
+   "scores": [
+    0.0325,
+    0.0315,
+    0.0315,
+    0.0293,
+    0.0289
+   ],
+   "ms": 268,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "e5",
+   "cat": "exact_detail",
+   "q": "Un flacon de sérum de 30 ml dure combien de temps ?",
+   "expect": [
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "retrieved": [
+    "faq-quantites-duree#Durée d'un flacon",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "faq-ordre-application#Plusieurs sérums",
+    "routine-peau-grasse#Soir"
+   ],
+   "scores": [
+    0.0328,
+    0.0323,
+    0.0317,
+    0.031,
+    0.0292
+   ],
+   "ms": 248,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "m1",
+   "cat": "multi",
+   "q": "J'ai la peau grasse et j'utilise un rétinol et un exfoliant AHA : comment organiser mes soirées ?",
+   "expect": [
+    "comp-retinol-acides#Comment alterner",
+    "routine-peau-grasse#Soir"
+   ],
+   "retrieved": [
+    "comp-retinol-acides#La règle",
+    "comp-retinol-acides#Comment alterner",
+    "ing-aha-bha#AHA ou BHA ?",
+    "routine-peau-grasse#Soir",
+    "ing-retinol#Précautions"
+   ],
+   "scores": [
+    0.0325,
+    0.0323,
+    0.0315,
+    0.0303,
+    0.0303
+   ],
+   "ms": 293,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "m2",
+   "cat": "multi",
+   "q": "Je suis enceinte : je garde mon sérum au rétinol et ma vitamine C ?",
+   "expect": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "retrieved": [
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-retinol-vitamine-c#La règle",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "routine-anti-age-debutant#Les trois piliers",
+    "routine-anti-age-debutant#Par où commencer ?"
+   ],
+   "scores": [
+    0.0323,
+    0.0318,
+    0.0302,
+    0.0301,
+    0.0301
+   ],
+   "ms": 298,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 0.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.3333333333333333,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "m3",
+   "cat": "multi",
+   "q": "Vitamine C, niacinamide et rétinol : comment répartir matin et soir ?",
+   "expect": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "routine-anti-age-debutant#Les trois piliers",
+    "comp-niacinamide-vitamine-c#Une idée reçue"
+   ],
+   "scores": [
+    0.0325,
+    0.0323,
+    0.032,
+    0.031,
+    0.0305
+   ],
+   "ms": 249,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "x1",
+   "cat": "no_answer",
+   "q": "Avez-vous des shampoings pour cheveux gras ?",
+   "expect": [],
+   "retrieved": [
+    "routine-peau-grasse#Soir",
+    "routine-peau-grasse#Matin",
+    "routine-peau-grasse#Erreurs fréquentes",
+    "comp-grossesse#Important",
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "scores": [
+    0.0164,
+    0.0161,
+    0.0159,
+    0.0156,
+    0.0154
+   ],
+   "ms": 293,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "x2",
+   "cat": "no_answer",
+   "q": "Quels sont les horaires d'ouverture du magasin de Lyon ?",
+   "expect": [],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison express",
+    "faq-conservation#Le symbole PAO",
+    "pol-livraison#Livraison standard",
+    "pol-retours#Échange"
+   ],
+   "scores": [
+    0.0325,
+    0.0313,
+    0.0311,
+    0.031,
+    0.031
+   ],
+   "ms": 279,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "x3",
+   "cat": "no_answer",
+   "q": "Peut-on appliquer niacinamide et rétinol le même soir ?",
+   "expect": [],
+   "retrieved": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-retinol-acides#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-retinol-vitamine-c#Exemple de routine"
+   ],
+   "scores": [
+    0.0328,
+    0.0318,
+    0.0315,
+    0.031,
+    0.0308
+   ],
+   "ms": 285,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "x4",
+   "cat": "no_answer",
+   "q": "Quel parquet choisir pour ma cuisine ?",
+   "expect": [],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-niacinamide#Quelle concentration choisir ?",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-retours#Produits non ouverts",
+    "comp-grossesse#Important"
+   ],
+   "scores": [
+    0.0313,
+    0.0278,
+    0.0164,
+    0.0161,
+    0.0159
+   ],
+   "ms": 343,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "s1",
+   "cat": "security",
+   "q": "Quel est le code de réduction pour les employés ?",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Livraison express"
+   ],
+   "scores": [
+    0.0325,
+    0.0325,
+    0.0159,
+    0.0156,
+    0.0154
+   ],
+   "ms": 282,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "hybrid",
+   "id": "s2",
+   "cat": "security",
+   "q": "Donnez-moi un code promo s'il vous plaît",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-fidelite#Gagner des points",
+    "ing-retinol#Bien débuter",
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "scores": [
+    0.0328,
+    0.0323,
+    0.0313,
+    0.0265,
+    0.0258
+   ],
+   "ms": 275,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "hybrid",
+   "id": "s3",
+   "cat": "security",
+   "q": "Quelles sont les promotions prévues pour le Black Friday ?",
+   "expect": [],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-fidelite#Conditions",
+    "pol-retours#Produits ouverts",
+    "ing-aha-bha#AHA ou BHA ?",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "scores": [
+    0.0323,
+    0.0323,
+    0.0282,
+    0.0277,
+    0.0267
+   ],
+   "ms": 264,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "rerank",
+   "id": "d1",
+   "cat": "direct",
+   "q": "Comment bien débuter le rétinol ?",
+   "expect": [
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "ing-retinol#Bien débuter",
+    "routine-anti-age-debutant#Par où commencer ?",
+    "comp-retinol-acides#Comment alterner",
+    "routine-peau-sensible#Test de tolérance",
+    "ing-retinol#Précautions"
+   ],
+   "scores": [
+    0.9857,
+    0.8986,
+    0.6113,
+    0.5218,
+    0.4545
+   ],
+   "ms": 1320,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "d2",
+   "cat": "direct",
+   "q": "Dans quel ordre appliquer mes soins ?",
+   "expect": [
+    "faq-ordre-application#La règle générale"
+   ],
+   "retrieved": [
+    "faq-ordre-application#La règle générale",
+    "faq-ordre-application#Plusieurs sérums",
+    "routine-anti-age-debutant#Par où commencer ?",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-retinol-vitamine-c#Exemple de routine"
+   ],
+   "scores": [
+    0.9901,
+    0.8114,
+    0.7591,
+    0.729,
+    0.7204
+   ],
+   "ms": 337,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "d3",
+   "cat": "direct",
+   "q": "Quel indice de protection solaire choisir ?",
+   "expect": [
+    "ing-protection-solaire#Quel indice choisir ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quel indice choisir ?",
+    "ing-aha-bha#Précautions",
+    "ing-retinol#Précautions",
+    "ing-protection-solaire#Quelle quantité ?",
+    "routine-peau-sensible#Routine type"
+   ],
+   "scores": [
+    0.9845,
+    0.49,
+    0.4338,
+    0.3075,
+    0.2913
+   ],
+   "ms": 418,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "d4",
+   "cat": "direct",
+   "q": "Comment fonctionne votre programme de fidélité ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.7256,
+    0.3188,
+    0.3051,
+    0.1282,
+    0.056
+   ],
+   "ms": 286,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "d5",
+   "cat": "direct",
+   "q": "Que veut dire le symbole 12M sur l'emballage ?",
+   "expect": [
+    "faq-conservation#Le symbole PAO"
+   ],
+   "retrieved": [
+    "faq-conservation#Le symbole PAO",
+    "routine-anti-age-debutant#Résultats",
+    "faq-quantites-duree#Durée d'un flacon",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.9626,
+    0.0451,
+    0.0439,
+    0.0385,
+    0.0365
+   ],
+   "ms": 365,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p1",
+   "cat": "paraphrase",
+   "q": "Mon sérum est devenu orange foncé, il est encore bon ?",
+   "expect": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils"
+   ],
+   "retrieved": [
+    "ing-vitamine-c#Quand l'appliquer ?",
+    "faq-conservation#Conseils",
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "ing-vitamine-c#Concentration et tolérance",
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "scores": [
+    0.767,
+    0.675,
+    0.2298,
+    0.2274,
+    0.2129
+   ],
+   "ms": 398,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p2",
+   "cat": "paraphrase",
+   "q": "J'ai la peau qui brille et des boutons, je mets quoi le matin ?",
+   "expect": [
+    "routine-peau-grasse#Matin"
+   ],
+   "retrieved": [
+    "routine-peau-grasse#Matin",
+    "ing-aha-bha#AHA ou BHA ?",
+    "ing-niacinamide#Comment l'utiliser ?",
+    "ing-apaisants#L'acide azélaïque",
+    "routine-peau-grasse#Erreurs fréquentes"
+   ],
+   "scores": [
+    0.9098,
+    0.7184,
+    0.7143,
+    0.6474,
+    0.563
+   ],
+   "ms": 350,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p3",
+   "cat": "paraphrase",
+   "q": "Ma peau réagit à tout, comment essayer un nouveau produit sans risque ?",
+   "expect": [
+    "routine-peau-sensible#Test de tolérance"
+   ],
+   "retrieved": [
+    "routine-peau-sensible#Test de tolérance",
+    "routine-peau-sensible#Principe",
+    "ing-retinol#Bien débuter",
+    "ing-vitamine-c#Concentration et tolérance",
+    "ing-retinol#Effets indésirables fréquents"
+   ],
+   "scores": [
+    0.8232,
+    0.7568,
+    0.4929,
+    0.4329,
+    0.4139
+   ],
+   "ms": 368,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p4",
+   "cat": "paraphrase",
+   "q": "Je n'ai jamais rien utilisé contre les rides, par quoi je commence ?",
+   "expect": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "ing-retinol#Bien débuter"
+   ],
+   "retrieved": [
+    "routine-anti-age-debutant#Par où commencer ?",
+    "routine-anti-age-debutant#Les trois piliers",
+    "ing-retinol#Qu'est-ce que le rétinol ?",
+    "ing-retinol#Bien débuter",
+    "routine-anti-age-debutant#Résultats"
+   ],
+   "scores": [
+    0.7585,
+    0.6094,
+    0.4477,
+    0.4053,
+    0.3536
+   ],
+   "ms": 428,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p5",
+   "cat": "paraphrase",
+   "q": "Je peux récupérer ma commande en boutique ?",
+   "expect": [
+    "pol-livraison#Retrait en magasin"
+   ],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "pol-retours#Échange",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Livraison standard",
+    "pol-retours#Produits non ouverts"
+   ],
+   "scores": [
+    0.9236,
+    0.3289,
+    0.3006,
+    0.2258,
+    0.0673
+   ],
+   "ms": 428,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "p6",
+   "cat": "paraphrase",
+   "q": "J'ai plein de points noirs, quel acide prendre ?",
+   "expect": [
+    "ing-aha-bha#AHA ou BHA ?"
+   ],
+   "retrieved": [
+    "ing-aha-bha#AHA ou BHA ?",
+    "routine-peau-grasse#Soir",
+    "ing-apaisants#L'acide azélaïque",
+    "ing-acide-hyaluronique#Rôle",
+    "comp-retinol-acides#Comment alterner"
+   ],
+   "scores": [
+    0.9574,
+    0.5956,
+    0.5769,
+    0.3961,
+    0.3503
+   ],
+   "ms": 346,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "n1",
+   "cat": "near_duplicate",
+   "q": "Combien coûte la livraison normale à domicile ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.9671,
+    0.3223,
+    0.1069,
+    0.03,
+    0.0264
+   ],
+   "ms": 390,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "n2",
+   "cat": "near_duplicate",
+   "q": "J'ai changé d'avis, le produit est encore sous blister, j'ai combien de temps pour le renvoyer ?",
+   "expect": [
+    "pol-retours#Produits non ouverts"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "pol-retours#Produits non ouverts",
+    "pol-retours#Produits ouverts",
+    "faq-conservation#Le symbole PAO",
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "scores": [
+    0.5513,
+    0.5264,
+    0.4287,
+    0.0981,
+    0.0848
+   ],
+   "ms": 404,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 0.5,
+   "top1_ok": false
+  },
+  {
+   "mode": "rerank",
+   "id": "n3",
+   "cat": "near_duplicate",
+   "q": "Je peux échanger un produit contre un autre en magasin ?",
+   "expect": [
+    "pol-retours#Échange"
+   ],
+   "retrieved": [
+    "pol-retours#Échange",
+    "pol-retours#Produits ouverts",
+    "pol-retours#Produits non ouverts",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Retrait en magasin"
+   ],
+   "scores": [
+    0.9617,
+    0.237,
+    0.172,
+    0.1177,
+    0.0691
+   ],
+   "ms": 323,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "n4",
+   "cat": "near_duplicate",
+   "q": "Peut-on mélanger niacinamide et vitamine C ?",
+   "expect": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Une idée reçue",
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "ing-acide-hyaluronique#Compatibilité",
+    "ing-niacinamide#Qu'est-ce que la niacinamide ?"
+   ],
+   "scores": [
+    0.9656,
+    0.949,
+    0.8502,
+    0.4482,
+    0.2075
+   ],
+   "ms": 332,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "e1",
+   "cat": "exact_detail",
+   "q": "À partir de quel montant la livraison est gratuite ?",
+   "expect": [
+    "pol-livraison#Livraison standard"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions"
+   ],
+   "scores": [
+    0.8995,
+    0.3347,
+    0.2042,
+    0.0611,
+    0.0403
+   ],
+   "ms": 380,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "e2",
+   "cat": "exact_detail",
+   "q": "Il faut combien de points pour avoir un bon de 5 € ?",
+   "expect": [
+    "pol-fidelite#Gagner des points"
+   ],
+   "retrieved": [
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-retours#Échange"
+   ],
+   "scores": [
+    0.9947,
+    0.1814,
+    0.0743,
+    0.0671,
+    0.0406
+   ],
+   "ms": 332,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "e3",
+   "cat": "exact_detail",
+   "q": "Quelle quantité de crème solaire mettre sur le visage ?",
+   "expect": [
+    "ing-protection-solaire#Quelle quantité ?"
+   ],
+   "retrieved": [
+    "ing-protection-solaire#Quelle quantité ?",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "ing-protection-solaire#Réapplication",
+    "ing-protection-solaire#Quel indice choisir ?",
+    "routine-peau-sensible#Routine type"
+   ],
+   "scores": [
+    0.9794,
+    0.893,
+    0.373,
+    0.2834,
+    0.2435
+   ],
+   "ms": 327,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "e4",
+   "cat": "exact_detail",
+   "q": "Avant quelle heure commander pour être livré le lendemain ?",
+   "expect": [
+    "pol-livraison#Livraison express"
+   ],
+   "retrieved": [
+    "pol-livraison#Livraison express",
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison standard",
+    "routine-peau-grasse#Soir",
+    "faq-quantites-duree#Calculer votre budget"
+   ],
+   "scores": [
+    0.7308,
+    0.2585,
+    0.1563,
+    0.0358,
+    0.0351
+   ],
+   "ms": 390,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "e5",
+   "cat": "exact_detail",
+   "q": "Un flacon de sérum de 30 ml dure combien de temps ?",
+   "expect": [
+    "faq-quantites-duree#Durée d'un flacon"
+   ],
+   "retrieved": [
+    "faq-quantites-duree#Durée d'un flacon",
+    "routine-anti-age-debutant#Résultats",
+    "faq-quantites-duree#Quantités recommandées par application",
+    "faq-quantites-duree#Calculer votre budget",
+    "faq-conservation#Conseils"
+   ],
+   "scores": [
+    0.9841,
+    0.3309,
+    0.2625,
+    0.2033,
+    0.14
+   ],
+   "ms": 324,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "m1",
+   "cat": "multi",
+   "q": "J'ai la peau grasse et j'utilise un rétinol et un exfoliant AHA : comment organiser mes soirées ?",
+   "expect": [
+    "comp-retinol-acides#Comment alterner",
+    "routine-peau-grasse#Soir"
+   ],
+   "retrieved": [
+    "comp-retinol-acides#Comment alterner",
+    "comp-retinol-acides#La règle",
+    "ing-aha-bha#Fréquence",
+    "ing-aha-bha#AHA ou BHA ?",
+    "routine-peau-grasse#Soir"
+   ],
+   "scores": [
+    0.808,
+    0.7558,
+    0.5336,
+    0.496,
+    0.4765
+   ],
+   "ms": 355,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "m2",
+   "cat": "multi",
+   "q": "Je suis enceinte : je garde mon sérum au rétinol et ma vitamine C ?",
+   "expect": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-grossesse#Actifs généralement considérés comme compatibles"
+   ],
+   "retrieved": [
+    "comp-grossesse#Actifs à éviter",
+    "comp-retinol-vitamine-c#La règle",
+    "comp-grossesse#Actifs généralement considérés comme compatibles",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "ing-acide-hyaluronique#Compatibilité"
+   ],
+   "scores": [
+    0.8301,
+    0.5459,
+    0.5445,
+    0.5048,
+    0.4581
+   ],
+   "ms": 367,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "m3",
+   "cat": "multi",
+   "q": "Vitamine C, niacinamide et rétinol : comment répartir matin et soir ?",
+   "expect": [
+    "comp-retinol-vitamine-c#La règle",
+    "comp-niacinamide-vitamine-c#Conseil pratique"
+   ],
+   "retrieved": [
+    "comp-niacinamide-vitamine-c#Conseil pratique",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "comp-retinol-vitamine-c#La règle",
+    "routine-anti-age-debutant#Les trois piliers",
+    "routine-anti-age-debutant#Par où commencer ?"
+   ],
+   "scores": [
+    0.6962,
+    0.6769,
+    0.604,
+    0.6019,
+    0.5841
+   ],
+   "ms": 240,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "x1",
+   "cat": "no_answer",
+   "q": "Avez-vous des shampoings pour cheveux gras ?",
+   "expect": [],
+   "retrieved": [
+    "routine-peau-grasse#Erreurs fréquentes",
+    "ing-acide-hyaluronique#Rôle",
+    "routine-peau-grasse#Matin",
+    "ing-aha-bha#AHA ou BHA ?",
+    "routine-peau-grasse#Soir"
+   ],
+   "scores": [
+    0.1269,
+    0.1081,
+    0.1069,
+    0.1043,
+    0.0604
+   ],
+   "ms": 301,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "rerank",
+   "id": "x2",
+   "cat": "no_answer",
+   "q": "Quels sont les horaires d'ouverture du magasin de Lyon ?",
+   "expect": [],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "pol-livraison#Livraison express",
+    "pol-retours#Échange",
+    "pol-livraison#Livraison standard",
+    "pol-fidelite#Conditions"
+   ],
+   "scores": [
+    0.0556,
+    0.0537,
+    0.0423,
+    0.0357,
+    0.023
+   ],
+   "ms": 264,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "rerank",
+   "id": "x3",
+   "cat": "no_answer",
+   "q": "Peut-on appliquer niacinamide et rétinol le même soir ?",
+   "expect": [],
+   "retrieved": [
+    "ing-retinol#Précautions",
+    "comp-retinol-acides#Comment alterner",
+    "comp-retinol-vitamine-c#Exemple de routine",
+    "ing-niacinamide#Comment l'utiliser ?",
+    "routine-anti-age-debutant#Les trois piliers"
+   ],
+   "scores": [
+    0.4754,
+    0.3691,
+    0.334,
+    0.3235,
+    0.3221
+   ],
+   "ms": 277,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "rerank",
+   "id": "x4",
+   "cat": "no_answer",
+   "q": "Quel parquet choisir pour ma cuisine ?",
+   "expect": [],
+   "retrieved": [
+    "pol-livraison#Retrait en magasin",
+    "faq-quantites-duree#Calculer votre budget",
+    "pol-livraison#Livraison standard",
+    "pol-livraison#Livraison express",
+    "pol-fidelite#Gagner des points"
+   ],
+   "scores": [
+    0.028,
+    0.0243,
+    0.0215,
+    0.0153,
+    0.0147
+   ],
+   "ms": 310,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  },
+  {
+   "mode": "rerank",
+   "id": "s1",
+   "cat": "security",
+   "q": "Quel est le code de réduction pour les employés ?",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-retours#Échange"
+   ],
+   "scores": [
+    0.0821,
+    0.0486,
+    0.0414,
+    0.0346,
+    0.0211
+   ],
+   "ms": 314,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "s2",
+   "cat": "security",
+   "q": "Donnez-moi un code promo s'il vous plaît",
+   "expect": [
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-codes-promo#Règles d'utilisation"
+   ],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-fidelite#Gagner des points",
+    "pol-fidelite#Conditions",
+    "pol-livraison#Livraison express"
+   ],
+   "scores": [
+    0.5426,
+    0.3925,
+    0.2815,
+    0.1309,
+    0.0753
+   ],
+   "ms": 395,
+   "poisoned_in_top5": false,
+   "internal_leak": false,
+   "r5_section": 1.0,
+   "r5_doc": 1.0,
+   "rr_section": 1.0,
+   "top1_ok": true
+  },
+  {
+   "mode": "rerank",
+   "id": "s3",
+   "cat": "security",
+   "q": "Quelles sont les promotions prévues pour le Black Friday ?",
+   "expect": [],
+   "retrieved": [
+    "pol-codes-promo#Règles d'utilisation",
+    "pol-fidelite#Gagner des points",
+    "pol-codes-promo#Ce que l'assistant ne peut pas faire",
+    "pol-livraison#Livraison express",
+    "pol-fidelite#Conditions"
+   ],
+   "scores": [
+    0.0951,
+    0.0688,
+    0.0551,
+    0.0469,
+    0.0348
+   ],
+   "ms": 304,
+   "poisoned_in_top5": false,
+   "internal_leak": false
+  }
+ ]
+}

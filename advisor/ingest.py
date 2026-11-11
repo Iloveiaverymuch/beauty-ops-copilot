@@ -39,6 +39,8 @@ from advisor.embeddings import embed
 DATA = Path(__file__).resolve().parent / "data"
 F, S, I, B, A = "FLOAT64", "STRING", "INT64", "BOOL", "REPEATED"
 INTERNAL_PRODUCT_FIELDS = ("cost_price_eur", "supplier", "internal_note")
+# What the advice retriever may read: brand-authored, customer-visible content only (no internal docs, no reviews).
+ADVICE_INDEX_FILTER = "visibility = 'public' AND doc_type != 'avis'"
 
 PRODUCTS_SCHEMA = [
     bigquery.SchemaField("sku", S, mode="REQUIRED"), bigquery.SchemaField("name", S), bigquery.SchemaField("brand", S),
@@ -108,8 +110,14 @@ def create_public_tables(bq: bigquery.Client) -> None:
     hidden = ", ".join(INTERNAL_PRODUCT_FIELDS)
     bq.query(f"CREATE OR REPLACE TABLE {ds}.products_public AS "
              f"SELECT * EXCEPT({hidden}) FROM {ds}.products WHERE visibility = 'public'").result()
+    # Customer reviews are public but USER-WRITTEN: they stay out of the advice index (chunks_public) and go to
+    # their own table. Measured (R3): the cross-encoder ranked the review carrying an injected instruction #1 for
+    # all 3 promo-code questions (score 0.68 on one, above the no-answer threshold) -> it reached the model.
+    # Injected text is written to LOOK relevant, so a better ranker makes the exposure worse, not better.
     bq.query(f"CREATE OR REPLACE TABLE {ds}.chunks_public AS "
-             f"SELECT * FROM {ds}.chunks WHERE visibility = 'public'").result()
+             f"SELECT * FROM {ds}.chunks WHERE {ADVICE_INDEX_FILTER}").result()
+    bq.query(f"CREATE OR REPLACE TABLE {ds}.reviews_public AS "
+             f"SELECT * FROM {ds}.chunks WHERE visibility = 'public' AND doc_type = 'avis'").result()
 
 
 def main() -> None:
@@ -129,9 +137,10 @@ def main() -> None:
     create_public_tables(bq)
 
     pub = list(bq.query(f"SELECT COUNT(*) n FROM `{config.PROJECT}.{config.BQ_DATASET}.chunks_public`").result())[0].n
+    rev = list(bq.query(f"SELECT COUNT(*) n FROM `{config.PROJECT}.{config.BQ_DATASET}.reviews_public`").result())[0].n
     cols = [f.name for f in bq.get_table(f"{config.PROJECT}.{config.BQ_DATASET}.products_public").schema]
     assert not set(INTERNAL_PRODUCT_FIELDS) & set(cols), "internal columns visible in products_public"
-    print(f"INGEST_OK products={n_p} chunks={n_c} chunks_public={pub} docs={len({r['doc_id'] for r in crows})} "
+    print(f"INGEST_OK products={n_p} chunks={n_c} chunks_public={pub} reviews_public={rev} docs={len({r['doc_id'] for r in crows})} "
           f"embed_api_calls={calls} embed_s={t_embed:.1f} total_s={time.perf_counter() - t0:.1f} "
           f"dim={config.EMBED_DIM} model={config.EMBED_MODEL}")
 

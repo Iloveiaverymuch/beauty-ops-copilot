@@ -82,3 +82,14 @@ def test_golden_labels_point_to_real_public_sections():
     for g in GOLDEN:
         for e in g["expect"]:
             assert e in valid, (g["id"], e)
+
+
+def test_advice_index_filter_excludes_internal_and_reviews():
+    """Mirror of ingest.ADVICE_INDEX_FILTER applied to the local chunks: what search_knowledge can ever see."""
+    from advisor.ingest import ADVICE_INDEX_FILTER
+    assert "visibility = 'public'" in ADVICE_INDEX_FILTER and "doc_type != 'avis'" in ADVICE_INDEX_FILTER
+    advice = [c for c in load_kb(DATA / "kb") if c.visibility == "public" and c.doc_type != "avis"]
+    text = " ".join(c.text for c in advice)
+    for group in CANARIES.values():
+        for s in group:
+            assert s not in text, s     # incl. BIENVENUE100 (injected review)
