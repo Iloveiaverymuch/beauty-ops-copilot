@@ -143,6 +143,7 @@ def evaluate_production_batch(
         location = "us-central1"
 
     vertexai.init(project=project, location=location)
+    is_byor = "response" in df.columns and not df["response"].empty
     try:
         eval_task = EvalTask(
             dataset=df,
@@ -151,8 +152,8 @@ def evaluate_production_batch(
         )
         run_name = f"prod-monitor-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
         eval_result = eval_task.evaluate(
-            model="gemini-2.5-flash",
             experiment_run_name=run_name,
+            **({} if is_byor else {"model": "gemini-2.5-flash"}),
         )
     except Exception as e:
         print(f"Notice: Experiment tracking skipped ({e}); running standalone EvalTask...")
@@ -161,7 +162,7 @@ def evaluate_production_batch(
             metrics=[GROUNDEDNESS_METRIC, PERSONA_METRIC, SAFETY_REFUSAL_METRIC, CLAIM_COMPLIANCE_METRIC],
         )
         run_name = f"prod-monitor-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
-        eval_result = eval_task.evaluate(model="gemini-2.5-flash")
+        eval_result = eval_task.evaluate(**({} if is_byor else {"model": "gemini-2.5-flash"}))
     return {
         "run_name": run_name,
         "summary": dict(eval_result.summary_metrics),
