@@ -11,7 +11,9 @@ Newest first. Each entry: setup -> numbers -> interpretation -> action.
 - Bug: google-genai 2.x Client closes its httpx pool in __del__; lazy global init from 8 threads raced (several
   clients created, overwritten ones GC'd mid-request -> 'client has been closed'). Fix: double-checked lock +
   strong local reference. Same check-then-act family as the governance parallel-write race.
-- Security by data layer: products_public / chunks_public views; ingest asserts no internal column is exposed.
+- Security by data layer: first built as views; BigQuery VECTOR_SEARCH rejects logical views ("Logical views are
+  not supported yet") -> public data materialized as physical tables chunks_public / products_public at ingest
+  (boundary stays in the data layer + IAM, not in a WHERE in app code). Ingest asserts no internal column exposed.
 
 ## 2026-11-08 D2.4: traces missing on Cloud Run (5th "works locally, fails in the container")
 - Symptom: audit log carried trace/spanId, Cloud Trace said "Trace not found"; only short FastAPI spans visible;

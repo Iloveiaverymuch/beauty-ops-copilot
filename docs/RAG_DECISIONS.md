@@ -10,9 +10,9 @@ OFFLINE (advisor/ingest.py, re-run on content change)
  products.json ─ product_text() ─┐                        ┌─> BigQuery beauty_rag.products  (all columns)
  kb/*.md ─────── chunk_doc() ────┼─> Vertex embeddings ───┤
                                  │   (cached, 768-d)      └─> BigQuery beauty_rag.chunks    (all docs)
-                                 └─> views: products_public (no cost/supplier/notes), chunks_public (visibility=public)
+                                 └─> public TABLES: products_public (no cost/supplier/notes), chunks_public (visibility=public)
 
-ONLINE (R2, per question)                       reads ONLY the *_public views
+ONLINE (R2, per question)                       reads ONLY the *_public tables
  question ─┬─> embed_query (RETRIEVAL_QUERY) ─> BigQuery VECTOR_SEARCH (cosine) ─> top 50 ─┐
            ├─> analyze() ─> BM25 (in process, over chunks_public) ─────────────────> top 50 ─┼─> RRF (k=60) ─> top 20
            └─> SQL filters (skin type, price, fragrance-free) for product questions          │
@@ -51,8 +51,11 @@ Planted on purpose, to test it:
 
 Controls:
 1. Internal fields are **never in `product_text`** (what gets embedded and indexed).
-2. The advisor reads only the **`*_public` views**; in production its service account gets access to the
-   views only (BigQuery authorized views), so a code bug can't reach the base tables either.
+2. The advisor reads only the **`*_public` tables**, physical copies rebuilt by each ingest. Not views:
+   BigQuery `VECTOR_SEARCH` rejects logical views as its base table (found on the first vector query), and a
+   `WHERE visibility='public'` in the chatbot's code would move the boundary back into application code. In
+   production the advisor's service account is granted only these tables (or a separate public dataset), so a
+   code bug can't reach internal rows either.
 3. **Canary strings** (`advisor/data/canaries.json`) are checked by literal match on every eval answer: any hit
    = leak = failed build.
 4. The system prompt + output checks are the last layer, not the first.
