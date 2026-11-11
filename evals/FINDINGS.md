@@ -1,6 +1,18 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
+## 2026-11-11 R1 DONE: advisor RAG ingestion (BigQuery EU + Vertex embeddings)
+- Corpus: 40 products + 25 KB docs (22 public FR, 2 internal, 1 untrusted reviews) -> 67 chunks (62 public), median 27 words.
+- Probe: gemini-embedding-001 OK in europe-west1 (chosen); Vertex ranking API OK on `global` only probed: 292 ms for
+  3 records, correct order (0.63 / 0.11 / 0.02). Residency note: ranking sends query + candidate snippets to a global
+  endpoint (scored, not stored) -> record as a decision or rerank only public, non-personal text (true here).
+- Ingest: 107 embedding calls in 2.7 s (8 threads), 18.0 s total (BigQuery load jobs + views dominate).
+  Re-run: same counts, 0 embedding calls (content-addressed cache), 13.0 s -> idempotent by construction.
+- Bug: google-genai 2.x Client closes its httpx pool in __del__; lazy global init from 8 threads raced (several
+  clients created, overwritten ones GC'd mid-request -> 'client has been closed'). Fix: double-checked lock +
+  strong local reference. Same check-then-act family as the governance parallel-write race.
+- Security by data layer: products_public / chunks_public views; ingest asserts no internal column is exposed.
+
 ## 2026-11-08 D2.4: traces missing on Cloud Run (5th "works locally, fails in the container")
 - Symptom: audit log carried trace/spanId, Cloud Trace said "Trace not found"; only short FastAPI spans visible;
   zero exporter errors.

@@ -16,3 +16,4 @@ infra/.terraform/
 *.tfstate.*
 infra/tfplan
 .DS_Store
+advisor/.cache/

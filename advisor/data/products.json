@@ -1,0 +1,1266 @@
+[
+ {
+  "sku": "LUM-SER-001",
+  "name": "Sérum Niacinamide 10% Anti-Imperfections",
+  "brand": "Lumiderm",
+  "category": "sérum",
+  "concerns": [
+   "imperfections",
+   "pores"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "niacinamide",
+    "pct": 10
+   },
+   {
+    "name": "zinc",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 12.9,
+  "promo_price_eur": 9.9,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum léger qui réduit les imperfections et resserre visiblement les pores. Texture aqueuse, fini non gras.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.39,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": "Rupture fournisseur prévue mi-décembre, réassort fin janvier. Ne pas communiquer aux clients."
+ },
+ {
+  "sku": "DER-SER-002",
+  "name": "Sérum Niacinamide 10% + Zinc Purifiant",
+  "brand": "Dermapure",
+  "category": "sérum",
+  "concerns": [
+   "imperfections",
+   "pores"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "niacinamide",
+    "pct": 10
+   },
+   {
+    "name": "zinc",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 11.5,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum purifiant à la niacinamide et au zinc pour les peaux à imperfections. Contient un parfum léger aux notes d'agrumes.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.91,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-SER-003",
+  "name": "Sérum Acide Salicylique 2% Pores Nets",
+  "brand": "Botanéa",
+  "category": "sérum",
+  "concerns": [
+   "imperfections",
+   "pores"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "acide salicylique",
+    "pct": 2
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 14.5,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "soir",
+  "description": "Sérum exfoliant BHA qui désobstrue les pores et limite les points noirs. À utiliser le soir.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.93,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-SER-004",
+  "name": "Sérum Hyaluronique 2% Repulpant",
+  "brand": "Aqualis",
+  "category": "sérum",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte",
+   "sèche",
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "acide hyaluronique",
+    "pct": 2
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 16.9,
+  "promo_price_eur": 13.5,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum hydratant qui repulpe la peau grâce à trois poids moléculaires d'acide hyaluronique. Convient à tous les types de peau.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.75,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-SER-005",
+  "name": "Sérum Vitamine C 15% Éclat",
+  "brand": "Lumiderm",
+  "category": "sérum",
+  "concerns": [
+   "éclat",
+   "taches"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte",
+   "sèche"
+  ],
+  "actives": [
+   {
+    "name": "vitamine C",
+    "pct": 15
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 19.9,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "matin",
+  "description": "Sérum antioxydant à 15% de vitamine C pure qui ravive l'éclat et atténue les taches. À appliquer le matin avant la protection solaire.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.77,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-SER-006",
+  "name": "Sérum Vitamine C 10% Douceur",
+  "brand": "Néoderm",
+  "category": "sérum",
+  "concerns": [
+   "éclat"
+  ],
+  "skin_types": [
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "vitamine C",
+    "pct": 10
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 15.9,
+  "promo_price_eur": 12.9,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "matin",
+  "description": "Vitamine C dosée à 10% sous une forme stabilisée mieux tolérée par les peaux sensibles.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.41,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "DER-SER-007",
+  "name": "Sérum Rétinol 0,3% Débutant",
+  "brand": "Dermapure",
+  "category": "sérum",
+  "concerns": [
+   "rides",
+   "imperfections"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte",
+   "grasse"
+  ],
+  "actives": [
+   {
+    "name": "rétinol",
+    "pct": 0.3
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 18.9,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "soir",
+  "description": "Rétinol faiblement dosé pour débuter. Lisse les ridules et affine le grain de peau. Usage le soir uniquement.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.43,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "DER-SER-008",
+  "name": "Sérum Rétinol 0,5% Intensif",
+  "brand": "Dermapure",
+  "category": "sérum",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "rétinol",
+    "pct": 0.5
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 24.9,
+  "promo_price_eur": 19.9,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "soir",
+  "description": "Rétinol plus concentré pour les peaux déjà habituées au rétinol. Cible les rides installées. Usage le soir uniquement.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 8.47,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": "Marge minimale 45 % : aucun geste commercial supplémentaire autorisé."
+ },
+ {
+  "sku": "BOT-SER-009",
+  "name": "Sérum Centella Apaisant",
+  "brand": "Botanéa",
+  "category": "sérum",
+  "concerns": [
+   "rougeurs"
+  ],
+  "skin_types": [
+   "sensible"
+  ],
+  "actives": [
+   {
+    "name": "centella asiatica",
+    "pct": null
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 13.9,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum apaisant à la centella asiatica qui calme les rougeurs et les sensations d'inconfort.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.73,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-SER-010",
+  "name": "Sérum Peptides Fermeté",
+  "brand": "Aqualis",
+  "category": "sérum",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "sèche",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "peptides",
+    "pct": 5
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 27.9,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum aux peptides qui raffermit la peau et lisse les traits. Parfum floral discret.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 9.49,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-SER-011",
+  "name": "Sérum Acide Azélaïque 10% Anti-Rougeurs",
+  "brand": "Lumiderm",
+  "category": "sérum",
+  "concerns": [
+   "rougeurs",
+   "imperfections"
+  ],
+  "skin_types": [
+   "sensible",
+   "mixte",
+   "grasse"
+  ],
+  "actives": [
+   {
+    "name": "acide azélaïque",
+    "pct": 10
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 14.9,
+  "promo_price_eur": null,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin et soir",
+  "description": "Sérum à l'acide azélaïque qui réduit rougeurs et imperfections, bien toléré par les peaux réactives.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.07,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-SER-012",
+  "name": "Sérum AHA 8% Peeling Doux",
+  "brand": "Néoderm",
+  "category": "sérum",
+  "concerns": [
+   "éclat",
+   "taches"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte",
+   "grasse"
+  ],
+  "actives": [
+   {
+    "name": "acide glycolique",
+    "pct": 8
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 13.5,
+  "promo_price_eur": 10.9,
+  "size_ml": 30,
+  "usage_ml_per_day": 0.25,
+  "routine_moment": "soir",
+  "description": "Peeling doux à l'acide glycolique qui affine le grain de peau et unifie le teint. Usage le soir.",
+  "image": "/static/img/sérum.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.59,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-CRE-001",
+  "name": "Gel-Crème Matifiant Peau Grasse",
+  "brand": "Lumiderm",
+  "category": "crème",
+  "concerns": [
+   "imperfections"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "niacinamide",
+    "pct": 4
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 14.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.0,
+  "routine_moment": "matin et soir",
+  "description": "Gel-crème hydratant qui matifie durablement et limite la brillance.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.07,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-CRE-002",
+  "name": "Crème Riche Barrière Céramides",
+  "brand": "Aqualis",
+  "category": "crème",
+  "concerns": [
+   "déshydratation",
+   "rougeurs"
+  ],
+  "skin_types": [
+   "sèche",
+   "sensible"
+  ],
+  "actives": [
+   {
+    "name": "céramides",
+    "pct": 3
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 19.9,
+  "promo_price_eur": 15.9,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.0,
+  "routine_moment": "matin et soir",
+  "description": "Crème riche qui restaure la barrière cutanée grâce aux céramides. Idéale pour les peaux sèches et sensibles.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.77,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-CRE-003",
+  "name": "Crème Légère Hydratante Aloe",
+  "brand": "Botanéa",
+  "category": "crème",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "aloe vera",
+    "pct": null
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 9.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.0,
+  "routine_moment": "matin et soir",
+  "description": "Crème légère à l'aloe vera pour une hydratation quotidienne. Parfum frais.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.37,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "DER-CRE-004",
+  "name": "Crème de Nuit Rétinol 0,2%",
+  "brand": "Dermapure",
+  "category": "crème",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "normale",
+   "sèche"
+  ],
+  "actives": [
+   {
+    "name": "rétinol",
+    "pct": 0.2
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 22.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "soir",
+  "description": "Crème de nuit au rétinol doux qui lisse les rides pendant la nuit.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 7.79,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-CRE-005",
+  "name": "Crème Apaisante Centella Cica",
+  "brand": "Néoderm",
+  "category": "crème",
+  "concerns": [
+   "rougeurs"
+  ],
+  "skin_types": [
+   "sensible"
+  ],
+  "actives": [
+   {
+    "name": "centella asiatica",
+    "pct": null
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 16.5,
+  "promo_price_eur": null,
+  "size_ml": 40,
+  "usage_ml_per_day": 0.8,
+  "routine_moment": "matin et soir",
+  "description": "Crème cica réparatrice qui apaise les peaux irritées et sensibilisées.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.61,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-CRE-006",
+  "name": "Crème Éclat Vitamine C 5%",
+  "brand": "Lumiderm",
+  "category": "crème",
+  "concerns": [
+   "éclat"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "vitamine C",
+    "pct": 5
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 18.9,
+  "promo_price_eur": 14.9,
+  "size_ml": 50,
+  "usage_ml_per_day": 0.5,
+  "routine_moment": "matin",
+  "description": "Crème de jour à la vitamine C qui illumine le teint terne.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.43,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-CRE-007",
+  "name": "Crème Hydratante Peptides Anti-Âge",
+  "brand": "Aqualis",
+  "category": "crème",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "sèche",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "peptides",
+    "pct": 3
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 29.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.0,
+  "routine_moment": "matin et soir",
+  "description": "Crème anti-âge aux peptides qui nourrit et raffermit.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 10.17,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "SOL-CRE-008",
+  "name": "Crème Teintée SPF30 Unifiante",
+  "brand": "Solvéa",
+  "category": "crème",
+  "concerns": [
+   "éclat"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 30
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 21.9,
+  "promo_price_eur": null,
+  "size_ml": 40,
+  "usage_ml_per_day": 0.8,
+  "routine_moment": "matin",
+  "description": "Crème teintée qui unifie le teint et protège avec un SPF30.",
+  "image": "/static/img/crème.svg",
+  "visibility": "public",
+  "cost_price_eur": 7.45,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-NET-001",
+  "name": "Gel Nettoyant Purifiant Zinc",
+  "brand": "Lumiderm",
+  "category": "nettoyant",
+  "concerns": [
+   "imperfections"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "zinc",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 8.9,
+  "promo_price_eur": 6.9,
+  "size_ml": 200,
+  "usage_ml_per_day": 4.0,
+  "routine_moment": "matin et soir",
+  "description": "Gel nettoyant qui élimine l'excès de sébum sans dessécher.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.03,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-NET-002",
+  "name": "Lait Nettoyant Douceur Céramides",
+  "brand": "Aqualis",
+  "category": "nettoyant",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "sèche",
+   "sensible"
+  ],
+  "actives": [
+   {
+    "name": "céramides",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 10.9,
+  "promo_price_eur": null,
+  "size_ml": 200,
+  "usage_ml_per_day": 4.0,
+  "routine_moment": "matin et soir",
+  "description": "Lait nettoyant crémeux qui démaquille en douceur et préserve la barrière cutanée.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.71,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-NET-003",
+  "name": "Eau Micellaire Bleuet",
+  "brand": "Botanéa",
+  "category": "nettoyant",
+  "concerns": [],
+  "skin_types": [
+   "grasse",
+   "mixte",
+   "sèche",
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "eau de bleuet",
+    "pct": null
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 6.5,
+  "promo_price_eur": null,
+  "size_ml": 400,
+  "usage_ml_per_day": 6.0,
+  "routine_moment": "matin et soir",
+  "description": "Eau micellaire au bleuet qui démaquille visage et yeux sans rinçage.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 2.21,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "DER-NET-004",
+  "name": "Gel Moussant Acide Salicylique 0,5%",
+  "brand": "Dermapure",
+  "category": "nettoyant",
+  "concerns": [
+   "imperfections"
+  ],
+  "skin_types": [
+   "grasse"
+  ],
+  "actives": [
+   {
+    "name": "acide salicylique",
+    "pct": 0.5
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 9.5,
+  "promo_price_eur": null,
+  "size_ml": 150,
+  "usage_ml_per_day": 4.0,
+  "routine_moment": "matin et soir",
+  "description": "Gel moussant exfoliant doux pour les peaux grasses à tendance acnéique.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.23,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-NET-005",
+  "name": "Huile Démaquillante Légère",
+  "brand": "Néoderm",
+  "category": "nettoyant",
+  "concerns": [],
+  "skin_types": [
+   "normale",
+   "sèche",
+   "mixte"
+  ],
+  "actives": [],
+  "fragrance_free": false,
+  "price_eur": 13.9,
+  "promo_price_eur": 11.1,
+  "size_ml": 150,
+  "usage_ml_per_day": 3.0,
+  "routine_moment": "soir",
+  "description": "Huile qui dissout maquillage et protection solaire, puis se rince en lait.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.73,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "SOL-NET-006",
+  "name": "Baume Nettoyant Fondant",
+  "brand": "Solvéa",
+  "category": "nettoyant",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "sèche"
+  ],
+  "actives": [],
+  "fragrance_free": true,
+  "price_eur": 15.9,
+  "promo_price_eur": null,
+  "size_ml": 100,
+  "usage_ml_per_day": 2.0,
+  "routine_moment": "soir",
+  "description": "Baume qui fond en huile au contact de la peau pour un démaquillage nourrissant.",
+  "image": "/static/img/nettoyant.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.41,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "SOL-SPF-001",
+  "name": "Fluide Invisible SPF50+ Peau Grasse",
+  "brand": "Solvéa",
+  "category": "solaire",
+  "concerns": [
+   "imperfections"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 50
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 16.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.2,
+  "routine_moment": "matin",
+  "description": "Fluide solaire invisible au fini mat, très haute protection SPF50+.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.75,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "SOL-SPF-002",
+  "name": "Crème Solaire SPF50+ Peau Sensible",
+  "brand": "Solvéa",
+  "category": "solaire",
+  "concerns": [
+   "rougeurs"
+  ],
+  "skin_types": [
+   "sensible",
+   "sèche"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 50
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 18.9,
+  "promo_price_eur": 14.9,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.2,
+  "routine_moment": "matin",
+  "description": "Crème solaire très haute protection formulée pour les peaux sensibles et réactives.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.43,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "SOL-SPF-003",
+  "name": "Gel-Crème SPF30 Quotidien",
+  "brand": "Solvéa",
+  "category": "solaire",
+  "concerns": [],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 30
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 12.9,
+  "promo_price_eur": null,
+  "size_ml": 50,
+  "usage_ml_per_day": 1.2,
+  "routine_moment": "matin",
+  "description": "Gel-crème léger pour une protection quotidienne SPF30.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.39,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-SPF-004",
+  "name": "Sérum Solaire SPF50 Hydratant",
+  "brand": "Aqualis",
+  "category": "solaire",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "sèche",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 50
+   },
+   {
+    "name": "acide hyaluronique",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 22.5,
+  "promo_price_eur": null,
+  "size_ml": 40,
+  "usage_ml_per_day": 1.2,
+  "routine_moment": "matin",
+  "description": "Sérum solaire hydratant SPF50 à l'acide hyaluronique.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 7.65,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-SPF-005",
+  "name": "Stick Solaire SPF50+ Zones Sensibles",
+  "brand": "Botanéa",
+  "category": "solaire",
+  "concerns": [],
+  "skin_types": [
+   "grasse",
+   "mixte",
+   "sèche",
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 50
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 9.9,
+  "promo_price_eur": null,
+  "size_ml": 9,
+  "usage_ml_per_day": 0.3,
+  "routine_moment": "matin",
+  "description": "Stick nomade pour protéger nez, lèvres, oreilles et cicatrices.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 3.37,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-SPF-006",
+  "name": "Fluide Teinté SPF50 Anti-Taches",
+  "brand": "Lumiderm",
+  "category": "solaire",
+  "concerns": [
+   "taches"
+  ],
+  "skin_types": [
+   "normale",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "filtres UV SPF",
+    "pct": 50
+   },
+   {
+    "name": "niacinamide",
+    "pct": 2
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 19.5,
+  "promo_price_eur": null,
+  "size_ml": 40,
+  "usage_ml_per_day": 1.2,
+  "routine_moment": "matin",
+  "description": "Fluide teinté SPF50 qui prévient l'apparition des taches pigmentaires.",
+  "image": "/static/img/solaire.svg",
+  "visibility": "public",
+  "cost_price_eur": 6.63,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-YEU-001",
+  "name": "Contour des Yeux Caféine Anti-Poches",
+  "brand": "Aqualis",
+  "category": "contour des yeux",
+  "concerns": [
+   "cernes"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte",
+   "sèche",
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "caféine",
+    "pct": 5
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 14.9,
+  "promo_price_eur": null,
+  "size_ml": 15,
+  "usage_ml_per_day": 0.1,
+  "routine_moment": "matin et soir",
+  "description": "Gel-crème à la caféine qui dégonfle les poches et atténue les cernes.",
+  "image": "/static/img/contour-des-yeux.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.07,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "DER-YEU-002",
+  "name": "Contour des Yeux Rétinol 0,1%",
+  "brand": "Dermapure",
+  "category": "contour des yeux",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "normale",
+   "sèche"
+  ],
+  "actives": [
+   {
+    "name": "rétinol",
+    "pct": 0.1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 21.9,
+  "promo_price_eur": 17.5,
+  "size_ml": 15,
+  "usage_ml_per_day": 0.1,
+  "routine_moment": "soir",
+  "description": "Soin contour des yeux au rétinol doux contre les pattes d'oie.",
+  "image": "/static/img/contour-des-yeux.svg",
+  "visibility": "public",
+  "cost_price_eur": 7.45,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-YEU-003",
+  "name": "Gel Yeux Bleuet Fraîcheur",
+  "brand": "Botanéa",
+  "category": "contour des yeux",
+  "concerns": [
+   "cernes"
+  ],
+  "skin_types": [
+   "sensible"
+  ],
+  "actives": [
+   {
+    "name": "eau de bleuet",
+    "pct": null
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 11.9,
+  "promo_price_eur": null,
+  "size_ml": 15,
+  "usage_ml_per_day": 0.1,
+  "routine_moment": "matin et soir",
+  "description": "Gel frais au bleuet qui défatigue le regard.",
+  "image": "/static/img/contour-des-yeux.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.05,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-YEU-004",
+  "name": "Crème Yeux Peptides Lissante",
+  "brand": "Néoderm",
+  "category": "contour des yeux",
+  "concerns": [
+   "rides"
+  ],
+  "skin_types": [
+   "sèche"
+  ],
+  "actives": [
+   {
+    "name": "peptides",
+    "pct": 3
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 24.9,
+  "promo_price_eur": null,
+  "size_ml": 15,
+  "usage_ml_per_day": 0.1,
+  "routine_moment": "matin et soir",
+  "description": "Crème contour des yeux aux peptides qui lisse les ridules.",
+  "image": "/static/img/contour-des-yeux.svg",
+  "visibility": "public",
+  "cost_price_eur": 8.47,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "BOT-MAS-001",
+  "name": "Masque Argile Purifiant",
+  "brand": "Botanéa",
+  "category": "masque",
+  "concerns": [
+   "imperfections",
+   "pores"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte"
+  ],
+  "actives": [
+   {
+    "name": "argile kaolin",
+    "pct": null
+   }
+  ],
+  "fragrance_free": false,
+  "price_eur": 11.9,
+  "promo_price_eur": null,
+  "size_ml": 75,
+  "usage_ml_per_day": 0.6,
+  "routine_moment": "soir",
+  "description": "Masque à l'argile qui absorbe l'excès de sébum. Deux fois par semaine.",
+  "image": "/static/img/masque.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.05,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ },
+ {
+  "sku": "AQU-MAS-002",
+  "name": "Masque de Nuit Hydratant",
+  "brand": "Aqualis",
+  "category": "masque",
+  "concerns": [
+   "déshydratation"
+  ],
+  "skin_types": [
+   "sèche",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "acide hyaluronique",
+    "pct": 1
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 15.9,
+  "promo_price_eur": 12.7,
+  "size_ml": 75,
+  "usage_ml_per_day": 0.6,
+  "routine_moment": "soir",
+  "description": "Masque de nuit sans rinçage qui réhydrate intensément. Deux à trois fois par semaine.",
+  "image": "/static/img/masque.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.41,
+  "supplier": "Cosmétique Atlantique SAS",
+  "internal_note": null
+ },
+ {
+  "sku": "NEO-EXF-003",
+  "name": "Tonique Exfoliant AHA/BHA 7%",
+  "brand": "Néoderm",
+  "category": "exfoliant",
+  "concerns": [
+   "éclat",
+   "imperfections"
+  ],
+  "skin_types": [
+   "grasse",
+   "mixte",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "acide glycolique",
+    "pct": 5
+   },
+   {
+    "name": "acide salicylique",
+    "pct": 2
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 14.9,
+  "promo_price_eur": null,
+  "size_ml": 200,
+  "usage_ml_per_day": 1.0,
+  "routine_moment": "soir",
+  "description": "Tonique exfoliant qui lisse le grain de peau. Trois soirs par semaine maximum.",
+  "image": "/static/img/exfoliant.svg",
+  "visibility": "public",
+  "cost_price_eur": 5.07,
+  "supplier": "Formulab Lyon",
+  "internal_note": null
+ },
+ {
+  "sku": "LUM-EXF-004",
+  "name": "Gommage Doux Enzymatique",
+  "brand": "Lumiderm",
+  "category": "exfoliant",
+  "concerns": [
+   "éclat"
+  ],
+  "skin_types": [
+   "sensible",
+   "normale"
+  ],
+  "actives": [
+   {
+    "name": "enzymes de papaye",
+    "pct": null
+   }
+  ],
+  "fragrance_free": true,
+  "price_eur": 12.5,
+  "promo_price_eur": null,
+  "size_ml": 75,
+  "usage_ml_per_day": 0.4,
+  "routine_moment": "soir",
+  "description": "Gommage sans grains aux enzymes de papaye pour les peaux sensibles.",
+  "image": "/static/img/exfoliant.svg",
+  "visibility": "public",
+  "cost_price_eur": 4.25,
+  "supplier": "Laboratoires Vexin",
+  "internal_note": null
+ }
+]
