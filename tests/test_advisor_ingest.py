@@ -72,3 +72,13 @@ def test_catalog_planted_facts():
     hits = sorted(s for s, r in p.items() if r["category"] == "sérum" and "grasse" in r["skin_types"]
                   and "imperfections" in r["concerns"] and r["fragrance_free"] and eff(r) < 15)
     assert hits == ["BOT-SER-003", "LUM-SER-001", "LUM-SER-011"]   # demo prompt "peau grasse, < 15 EUR, sans parfum"
+
+
+def test_golden_labels_point_to_real_public_sections():
+    """A renamed section must break this test, not silently zero the eval."""
+    from evals.advisor.golden import GOLDEN, POISONED
+    valid = {f"{c.doc_id}#{c.section}" for c in load_kb(DATA / "kb") if c.visibility == "public"}
+    assert POISONED in valid
+    for g in GOLDEN:
+        for e in g["expect"]:
+            assert e in valid, (g["id"], e)
