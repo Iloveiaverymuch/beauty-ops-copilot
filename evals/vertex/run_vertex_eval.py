@@ -129,21 +129,34 @@ def run_vertex_evaluation(
     import vertexai
     from vertexai.evaluation import EvalTask
 
+    # Experiments / MetadataStore requires a regional location (e.g. europe-west1), not multi-region 'eu'
+    if location in ("eu", "europe"):
+        location = os.getenv("EMBED_LOCATION", "europe-west1")
+    elif location in ("us", "united-states"):
+        location = "us-central1"
+
     vertexai.init(project=project, location=location)
 
-    eval_task = EvalTask(
-        dataset=df,
-        metrics=ALL_RUBRIC_METRICS,
-        experiment=experiment_name,
-    )
-
-    run_name = f"eval-run-{int(time.time())}"
-    print(f"Submitting EvalTask to Vertex AI (experiment='{experiment_name}', run='{run_name}')...")
-
-    eval_result = eval_task.evaluate(
-        model=judge_model,
-        experiment_run_name=run_name,
-    )
+    try:
+        eval_task = EvalTask(
+            dataset=df,
+            metrics=ALL_RUBRIC_METRICS,
+            experiment=experiment_name,
+        )
+        run_name = f"eval-run-{int(time.time())}"
+        print(f"Submitting EvalTask to Vertex AI (experiment='{experiment_name}', run='{run_name}')...")
+        eval_result = eval_task.evaluate(
+            model=judge_model,
+            experiment_run_name=run_name,
+        )
+    except Exception as e:
+        print(f"Notice: Experiment tracking skipped ({e}); running standalone EvalTask...")
+        eval_task = EvalTask(
+            dataset=df,
+            metrics=ALL_RUBRIC_METRICS,
+        )
+        run_name = f"eval-run-{int(time.time())}"
+        eval_result = eval_task.evaluate(model=judge_model)
 
     summary_metrics = dict(eval_result.summary_metrics)
     metrics_table = eval_result.metrics_table

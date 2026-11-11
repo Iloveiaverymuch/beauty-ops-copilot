@@ -136,17 +136,32 @@ def evaluate_production_batch(
     import vertexai
     from vertexai.evaluation import EvalTask
 
+    # Experiments / MetadataStore requires a regional location (e.g. europe-west1), not multi-region 'eu'
+    if location in ("eu", "europe"):
+        location = os.getenv("EMBED_LOCATION", "europe-west1")
+    elif location in ("us", "united-states"):
+        location = "us-central1"
+
     vertexai.init(project=project, location=location)
-    eval_task = EvalTask(
-        dataset=df,
-        metrics=[GROUNDEDNESS_METRIC, PERSONA_METRIC, SAFETY_REFUSAL_METRIC, CLAIM_COMPLIANCE_METRIC],
-        experiment="beauty-advisor-prod-monitoring",
-    )
-    run_name = f"prod-monitor-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
-    eval_result = eval_task.evaluate(
-        model="gemini-2.5-flash",
-        experiment_run_name=run_name,
-    )
+    try:
+        eval_task = EvalTask(
+            dataset=df,
+            metrics=[GROUNDEDNESS_METRIC, PERSONA_METRIC, SAFETY_REFUSAL_METRIC, CLAIM_COMPLIANCE_METRIC],
+            experiment="beauty-advisor-prod-monitoring",
+        )
+        run_name = f"prod-monitor-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
+        eval_result = eval_task.evaluate(
+            model="gemini-2.5-flash",
+            experiment_run_name=run_name,
+        )
+    except Exception as e:
+        print(f"Notice: Experiment tracking skipped ({e}); running standalone EvalTask...")
+        eval_task = EvalTask(
+            dataset=df,
+            metrics=[GROUNDEDNESS_METRIC, PERSONA_METRIC, SAFETY_REFUSAL_METRIC, CLAIM_COMPLIANCE_METRIC],
+        )
+        run_name = f"prod-monitor-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
+        eval_result = eval_task.evaluate(model="gemini-2.5-flash")
     return {
         "run_name": run_name,
         "summary": dict(eval_result.summary_metrics),
