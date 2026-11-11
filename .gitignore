@@ -18,3 +18,8 @@ infra/tfplan
 .DS_Store
 advisor/.cache/
 .data/
+
+# Evaluation run outputs (keep baselines)
+evals/adk/results/adk_eval_*.json
+evals/vertex/results/vertex_eval_*.json
+evals/vertex/results/prod_monitor_*.json

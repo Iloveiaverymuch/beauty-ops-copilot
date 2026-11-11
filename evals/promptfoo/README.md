@@ -1,4 +1,15 @@
-# HTTP evaluation lab
+# HTTP evaluation lab (Archived / Superseded)
+
+> [!NOTE]
+> **Promptfoo has been replaced** by the native **ADK Built-in Evaluation Framework** (`evals/adk/`) for local CLI and CI/CD testing, and the **Vertex AI Gen AI Evaluation Service** (`evals/vertex/`) for cloud-scale benchmarking, LLM-as-a-judge rubrics, and production monitoring.
+>
+> Refer to:
+> - [`evals/adk/README.md`](../adk/README.md) for local and CI/CD evaluation (`uv run python -m evals.adk.run_adk_eval --offline`).
+> - [`evals/vertex/README.md`](../vertex/README.md) for Vertex AI EvalTask rubrics and production BigQuery monitoring.
+
+---
+
+### Historical Documentation (Promptfoo HTTP Lab)
 
 `/chat/sync` buffers the **same** execution as `/chat`: sessions, tool calls, UI events and KPIs are preserved.
 It returns `{status, thread_id, turn_id, text, events, metrics}`. Pass `thread_id` back for another turn. A technical
