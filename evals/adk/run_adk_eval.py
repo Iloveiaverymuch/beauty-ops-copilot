@@ -1,6 +1,6 @@
 """CLI runner for ADK-native evaluation of the Beauty Advisor agent.
 
-Replaces Promptfoo with pure Python ADK evaluation:
+Pure Python ADK evaluation:
 - Offline mode (--offline): Runs zero-cost, deterministic CI verification in < 1 second without network/GCP.
 - Live mode (--live): Runs against the live ADK agent with Gemini on Vertex AI.
 

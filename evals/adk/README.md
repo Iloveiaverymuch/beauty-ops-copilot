@@ -1,7 +1,7 @@
 # ADK Built-in Evaluation Framework
 
 This directory contains the ADK-native evaluation suite for the Beauty Advisor agent (`beauty_advisor/agent.py`).
-It replaces the former Promptfoo HTTP checks with pure Python, tool-aware evaluations.
+It provides pure Python, tool-aware, in-memory trajectory evaluations.
 
 ## Key Features
 

@@ -25,32 +25,27 @@ The original 8-hour allocation below is context, not a new estimate of time alre
 
 | Block | Original allocation | Verified position / finish line |
 |---|---|---|
-| 1. LangGraph claims + Pub/Sub | 2h30 | Main flow demonstrated in supplied run logs. Read-only inspection of local checkpoints independently confirmed both example claims are refunded with `next=[]`, one refund history entry each. Supplied worker logs show 503 failures, repeated retries and eventual success. Optional final evidence: observe outcome events without replaying a refund. |
-| 2. ADK Native Evaluation + Vertex AI + GitHub Actions CI Gate | 1h | **Complete & Verified Green.** Replaced Promptfoo with ADK built-in evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation (`evals/vertex/`). Pure Python stack (uv, ADK 2.13, Vertex AI), zero Node.js/npm dependencies in CI. Automatic CI gate runs 106 Python tests + 7 deterministic ADK evaluations in ~21s on PRs and pushes to `master`. Regression blocking was proven on PR via branch `test/eval-gate-regression`. Live cloud evaluation workflow verified in GitHub Actions with GCP service account auth: 7/7 cases passed against Gemini 3.8 Flash + Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0. |
+| 1. Unified Claims Governance (ADK Guardrail Callbacks + HITL) | 2h | **Next Milestone (Migrating from LangGraph to 100% ADK).** Eliminate LangGraph to achieve full architectural coherence. Use ADK native Callbacks ("Callbacks Give You Guardrail Control") and Human-In-The-Loop (HITL) tool confirmation (`require_confirmation=True`) for claims validation. Deterministic return policy rules and human review routing are enforced at the ADK tool/plugin boundary without external graph orchestrator dependencies. |
+| 2. ADK Native Evaluation + Vertex AI + GitHub Actions CI Gate | 1h | **Complete & Verified Green.** Native ADK evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation (`evals/vertex/`). Pure Python stack (uv, ADK 2.13, Vertex AI), zero Node.js/npm dependencies in CI. Automatic CI gate runs 106 Python tests + 7 deterministic ADK evaluations in ~21s on PRs and pushes to `master`. Regression blocking was proven on PR via branch `test/eval-gate-regression`. Live cloud evaluation workflow verified in GitHub Actions with GCP service account auth: 7/7 cases passed against Gemini 3.8 Flash + Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0. |
 | 3. Model Armor + GCP tracing | 1h | GCP tracing verified: read-only API returned eight frontend traces with model/tool/RAG spans, correlated to KPI turn IDs. Saved `evals/tracing/advisor_20261111.summary.json`. Individual LangGraph nodes/worker continuation are not traced. Next: timebox one Model Armor experiment; distinguish sanitization from deterministic tool authorization. No Langfuse work. |
 | 4. Neutralize, cleanup, review, docs, French demo | 2h30 | Pending. Fictional branding, tighten unsupported claim-status wording, rehearse architecture and failure recovery in French, concise commands and evidence. Avoid broad rewrites. |
 | 5. Buffer | 1h | Preserve time for broken integration or interview rehearsal; don't consume it with optional production infrastructure. |
 
-## Claims evidence and what it means
+## Claims governance and HITL design (ADK Guardrail Callbacks)
 
-- Supplied history: CLM-B730C8 paused at `human_review`, reviewer decision published to Pub/Sub, separate worker
-  resumed it, customer retrieved the refund status. Local persisted state matches refunded EUR 39.80.
-- Supplied failure drill: CLM-A85A1E hit refund API 503, then Pub/Sub redelivered after NACKs; recovery produced
-  `outcome=retried status=refunded`. Local persisted state matches refunded EUR 14.90, one refund history step.
-- No decisions were republished, messages acknowledged, or refunds replayed during the Codex assessment.
-- Defend the mechanism: at-least-once delivery + resumable checkpoint + idempotency key. The mock payment
-  service's key store is in memory; don't claim universal exactly-once payment guarantees across restarts or
-  concurrent workers. Failed node attempts aren't all retained in successful checkpoint history; the supplied
-  worker logs are the retry evidence.
-- Remaining known wording issue: the assistant added a bank-credit delay absent from the status tool result.
-  Tighten during cleanup; do not invent dates or promises from general knowledge.
+- **Architecture Unification**: The previous prototype used a hybrid LangGraph state machine alongside the ADK agent for claims. To make the architecture 100% coherent, explainable, and interview-ready, LangGraph is being replaced entirely by **ADK Native Guardrail Callbacks** ("Callbacks Give You Guardrail Control") and native Human-In-The-Loop (HITL) approval (`require_confirmation=True`).
+- **Guardrails at the Callback Level**:
+  - Deterministic checks (30 days unopened, photo provided for reactions) run inside ADK `before_tool_callback` / policy plugins before any state mutation.
+  - Claims requiring human intervention (e.g. skin reaction reports or edge cases) trigger ADK's native confirmation workflow (`require_confirmation=True`), pausing execution until a human advisor reviews and authorizes the refund.
+  - Eliminates external graph checkpointers, duplicate state engines, and dual-stack orchestration complexity.
 
 ## Next practical step
 
-The evaluation pipeline is fully modernized and verified in both offline CI (<25s gate, 106 unit tests + 7 deterministic ADK cases) and live cloud runs (7/7 cases + 5.0/5.0 Vertex AI LLM judge). PR blocking on regression was proven on branch `test/eval-gate-regression`.
-
-Proceed to the Model Armor portion of the tracing/guardrail block. GCP export is verified on frontend turns: `POST /chat` → `chat.turn` → ADK workflow/agent → model/tool spans, with custom RAG attributes.
-Follow with the cleanup and French rehearsal blocks (fictional branding, tighten claim-status wording, rehearse architecture and failure recovery). Do not let broad production tasks displace tracing/guardrail demonstration and French rehearsal.
+Execute the **Claims Modernization** milestone:
+1. Replace the LangGraph claims state machine with ADK Native Tool Callbacks (`before_tool_callback`) and `require_confirmation=True` on `open_return_claim`.
+2. Remove LangGraph dependencies (`langgraph`, `langgraph-checkpoint-sqlite`) from `pyproject.toml` and `backend/`.
+3. Verify that the 106 tests and 7 ADK evaluation benchmarks remain 100% green under pure ADK.
+4. Follow with Model Armor guardrail integration, fictional branding cleanup, and French interview rehearsal.
 
 Production gaps (auth/ownership, robust index metadata updates, cache freshness, persistent refund idempotency,
 retention, deployment scaling) remain documented in `PROJECT_HANDOVER.md` as discussion material. Fix only what

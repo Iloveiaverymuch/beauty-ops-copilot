@@ -8,7 +8,6 @@
 evals/
 scripts/
 tests/
-m365_only/
 m365_mcp/data/drafts.jsonl
 docs/
 *.md

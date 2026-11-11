@@ -1,8 +1,8 @@
 # Eval findings log
 Newest first. Each entry: setup -> numbers -> interpretation -> action.
 
-## 2026-11-11 R5: Migration to Native ADK Evaluation & Vertex AI Gen AI Evaluation Service
-- **Setup:** Replaced Promptfoo (Node.js/npm) with ADK's built-in evaluation framework (`google.adk.evaluation` in `evals/adk/`) and Vertex AI Gen AI Evaluation Service (`evals/vertex/`). CI workflow updated to pure Python with `uv`. GitHub Actions CI gate runs 106 tests + 7 deterministic ADK evaluations in ~21s.
+## 2026-11-11 R5: Native ADK Evaluation & Vertex AI Gen AI Evaluation Architecture
+- **Setup:** Native ADK evaluation framework (`google.adk.evaluation` in `evals/adk/`) and Vertex AI Gen AI Evaluation Service (`evals/vertex/`). CI workflow runs pure Python with `uv`. GitHub Actions CI gate runs 106 tests + 7 deterministic ADK evaluations in ~21s.
 - **Numbers (Live Run in GitHub Actions):**
   - ADK Live Evaluation: **7/7 PASSED (100%)** against `gemini-3.8-flash` in `eu` with Discovery Engine cross-encoder reranking:
     - `clarify_before_recommending`: 3740 ms, 0 tools, passed clarification assertion.
@@ -22,7 +22,7 @@ Newest first. Each entry: setup -> numbers -> interpretation -> action.
   2. *Vertex BYOR Model Conflict*: Vertex AI `EvalTask.evaluate()` raises a ValueError if both `model` is passed and the dataset contains a `response` column (BYOR pattern). Resolved by omitting `model` in `EvalTask` for BYOR.
   3. *Location Alignment*: MetadataStore is not supported on multi-region `eu`, but `gemini-3.8-flash` is deployed in `eu`. Evaluator maps tracker location to `europe-west1` while maintaining LLM-as-a-judge scoring on `eu`.
   4. *CI Regression Gate Verification*: Branch `test/eval-gate-regression` introduced an intentional "Tokyo" off-topic leak. The GitHub Actions CI Gate failed in 21s and branch protection blocked PR merging.
-- **Action:** Retained Promptfoo documentation as archived (`evals/promptfoo/README.md`); standardized all future agent evals on native ADK evalset format and Vertex AI Evaluation Service. Documented in `docs/ADR-002.md`.
+- **Action:** Standardized all agent evals on native ADK evalset format and Vertex AI Evaluation Service. Documented in `docs/ADR-002.md`.
 
 ## 2026-11-11 R4: index lifecycle, versions, context assembly
 - Migration (new columns + version in chunk ids): plan 69 insert / 67 delete -> apply '(migration)' 20.7 s.

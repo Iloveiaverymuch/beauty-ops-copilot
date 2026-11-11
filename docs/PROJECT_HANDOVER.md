@@ -1,9 +1,9 @@
 # Project handover
 
 Verified on 2026-11-11. Initial assessment inspected code/tests/stored
-results without cloud calls. Continuation modernized the evaluation pipeline, replacing Promptfoo with ADK's native
-evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation Service (`evals/vertex/`), eliminating all Node.js
-dependencies from CI. GitHub Actions CI/CD gate is active and verified on branch protection: PR gate runs 106 Python tests
+results without cloud calls. Continuation implemented ADK's native
+evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation Service (`evals/vertex/`), eliminating external
+Node.js dependencies. GitHub Actions CI/CD gate is active and verified on branch protection: PR gate runs 106 Python tests
 and 7 deterministic ADK evaluations in ~21s. A regression PR was proven to block merging. The live cloud evaluation suite
 ran in GitHub Actions against Vertex AI and Discovery Engine, passing 7/7 cases + 5.0/5.0 Vertex LLM judge.
 
@@ -41,7 +41,7 @@ neutralization is authorized; GCP tracing is chosen instead of adding Langfuse. 
   3. **CI/CD (`.github/workflows/ci.yml`)**: GitHub Actions CI gate runs `pytest` (106 tests) and offline ADK eval (7/7) in ~21s.
      No Node.js or npm dependencies. Branch protection rule requires CI gate; regression blocking was proven with a test PR.
      Manual `live-evaluation` workflow authenticates with GCP SA (`secrets.GCP_SA_KEY`), passes 7/7 live cases against
-     Gemini 3.8 Flash and Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0. Promptfoo is archived.
+     Gemini 3.8 Flash and Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0.
 - **Planned/unknown:** advisor deployment, public-table-only runtime IAM, automatic index refresh, real
   Graph/retail integrations, production sessions, freshness alerts and operational SLOs. Terraform and Dockerfiles
   target the original copilot/MCP pair; their live state was not checked.
@@ -151,7 +151,7 @@ cp copilot/.env.example copilot/.env
 gcloud auth application-default login
 uv run uvicorn mock_api.stock_api:app --host 127.0.0.1 --port 8090
 uv run --env-file copilot/.env uvicorn backend.app:app --host 127.0.0.1 --port 8000
-# Alternative developer UI (select beauty_advisor, copilot, or m365_only):
+# Alternative developer UI (select beauty_advisor or copilot):
 uv run --env-file copilot/.env adk web --reload_agents
 # Original copilot also needs its MCP server:
 uv run python -m m365_mcp.server
@@ -273,8 +273,7 @@ deterministic correctness checks.
 
 **Immediate lab continuation:** Modernized ADK and Vertex AI evaluation suites are complete and green.
 See [`evals/adk/README.md`](../evals/adk/README.md) for local offline and CI commands, and [`evals/vertex/README.md`](../evals/vertex/README.md)
-for Vertex AI EvalTask benchmarks and BigQuery production monitoring. Proceed to the Model Armor experiment and then the
-cleanup/French-demo blocks in `LAB_PLAN.md`. Promptfoo documentation is archived in [`evals/promptfoo/README.md`](../evals/promptfoo/README.md).
+for Vertex AI EvalTask benchmarks and BigQuery production monitoring. Proceed to the claims modernization (ADK callbacks & HITL) and Model Armor experiments in `LAB_PLAN.md`.
 The production-oriented items below are deferred unless they block that demo. Metadata-safe ingestion remains a useful future engineering milestone, not the current plan.
 
 | Priority / work | Evidence and benefit | Concrete acceptance criterion |
