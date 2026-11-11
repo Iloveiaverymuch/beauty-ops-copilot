@@ -9,6 +9,7 @@ Endpoints
                    meta, progress, text (chunks), cards, comparison, estimate, availability, delivery, sources,
                    handoff, suggestions, done (latency, time to first text, tokens, tools)
   POST /feedback   {"thread_id", "turn_id", "rating": "up"|"down", "comment"?} -> KPI log
+  POST /chat/sync  same input as /chat -> one JSON response (for evaluations; same execution path)
   GET  /health
 
 Why SSE and not WebSocket: one-way server -> client stream over plain HTTP (works through proxies, load balancers
@@ -157,14 +158,42 @@ async def chat(req: ChatRequest):
                           "tools": tools, "kb_searches": len(kb),
                           "kb_abstained": any(r.get("status") == "no_answer" for r in kb),
                           "api_unavailable": any(r.get("status") == "unavailable" for _, r in results),
-                          "escalated": ESCALATION_TOOL in tools, "error": error}
+                          "escalated": ESCALATION_TOOL in tools, "error": error, "failed": bool(error)}
                 span.set_attributes({k: v for k, v in record.items() if isinstance(v, (int, float, bool, str)) and v is not None})
                 kpi(record)
                 yield sse("done", {k: record[k] for k in ("turn_id", "latency_ms", "ttft_ms", "tokens_in", "tokens_out",
-                                                          "tokens_thinking", "model_ms", "tools_ms", "tools")})
+                                                          "tokens_thinking", "model_ms", "tools_ms", "tools", "failed")})
 
     return StreamingResponse(gen(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.post("/chat/sync")
+async def chat_sync(req: ChatRequest):
+    """Buffer the existing chat stream for HTTP evaluation clients. One turn, one session update, one KPI record.
+
+    These are complete frames yielded by our own generator, not arbitrary network chunks. Retaining structured
+    events lets evaluations check actual cards/prices/tools rather than guessing them from generated prose.
+    `status=error` distinguishes a technical fallback from a successful answer (HTTP 200 alone is insufficient).
+    """
+    response = await chat(req)
+    out = {"status": "error", "thread_id": req.thread_id, "turn_id": None,
+           "text": "", "events": [], "metrics": {}}
+    async for frame in response.body_iterator:
+        if isinstance(frame, bytes):
+            frame = frame.decode("utf-8")
+        event_line, data_line = frame.strip().split("\n", 1)
+        event = event_line.removeprefix("event: ")
+        data = json.loads(data_line.removeprefix("data: "))
+        out["events"].append({"event": event, "data": data})
+        if event == "meta":
+            out.update(thread_id=data["thread_id"], turn_id=data["turn_id"])
+        elif event == "text":
+            out["text"] += data["delta"]
+        elif event == "done":
+            out["metrics"] = data
+            out["status"] = "error" if data["failed"] else "ok"
+    return out
 
 
 class DecisionRequest(BaseModel):

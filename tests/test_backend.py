@@ -96,3 +96,58 @@ def test_chat_stream_contract_with_a_fake_engine(monkeypatch, tmp_path):
     events = [blk.split("\n")[0].removeprefix("event: ") for blk in body.strip().split("\n\n")]
     assert events == ["meta", "progress", "cards", "text", "text", "suggestions", "done"]
     assert '"tokens_in": 100' in body and (tmp_path / "kpi.jsonl").exists()
+
+
+def test_sync_chat_buffers_one_turn_and_preserves_session_and_structured_events(monkeypatch, tmp_path):
+    import json
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+
+    calls = []
+    class Fake:
+        name = "fake"
+
+        async def stream(self, thread_id, message):
+            calls.append((thread_id, message))
+            yield {"type": "tool_call", "name": "search_products", "args": {}}
+            yield {"type": "tool_result", "name": "search_products", "response": {"status": "ok", "products": [{"sku": "S1"}]}}
+            yield {"type": "text", "delta": "Voici "}
+            yield {"type": "text", "delta": "un sérum."}
+            yield {"type": "usage", "tokens_in": 100, "tokens_out": 20}
+
+    monkeypatch.setitem(api.ENGINES, "adk", Fake())
+    monkeypatch.setattr(api, "DATA_DIR", tmp_path)
+    client = TestClient(api.app)
+    first = client.post("/chat/sync", json={"message": "sérum"}).json()
+    assert first["status"] == "ok" and first["text"] == "Voici un sérum."
+    assert first["metrics"]["tools"] == ["search_products"]
+    assert first["metrics"]["tokens_in"] == 100 and not first["metrics"]["failed"]
+    assert next(e["data"] for e in first["events"] if e["event"] == "cards") == {"products": [{"sku": "S1"}]}
+    second = client.post("/chat/sync", json={"message": "le premier", "thread_id": first["thread_id"]}).json()
+    assert second["thread_id"] == first["thread_id"] and second["turn_id"] != first["turn_id"]
+    assert calls == [(first["thread_id"], "sérum"), (first["thread_id"], "le premier")]
+    records = [json.loads(line) for line in (tmp_path / "kpi.jsonl").read_text().splitlines()]
+    assert len(records) == 2 and {r["turn_id"] for r in records} == {first["turn_id"], second["turn_id"]}
+    assert client.post("/chat/sync", json={"message": ""}).status_code == 422
+
+
+def test_sync_chat_reports_engine_errors_instead_of_passing_on_fallback_text(monkeypatch, tmp_path):
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+
+    class Broken:
+        name = "broken"
+
+        async def stream(self, thread_id, message):
+            raise RuntimeError("provider unavailable")
+            yield  # async generator contract
+
+    monkeypatch.setitem(api.ENGINES, "adk", Broken())
+    monkeypatch.setattr(api, "DATA_DIR", tmp_path)
+    client = TestClient(api.app)
+    result = client.post("/chat/sync", json={"message": "bonjour"}).json()
+    assert result["status"] == "error" and result["metrics"]["failed"]
+    assert "problème technique" in result["text"]
+    assert "provider unavailable" not in result["text"]
+    unavailable = client.post("/chat/sync", json={"message": "bonjour", "engine": "langgraph"}).json()
+    assert unavailable["status"] == "error" and unavailable["events"][0]["event"] == "error"
