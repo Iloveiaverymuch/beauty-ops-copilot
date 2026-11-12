@@ -151,17 +151,17 @@ Cliquez sur l'onglet **💼 Copilot Opérations (Workspace & Claims)**.
 
 Basculez sur votre terminal / éditeur de code.
 
-#### 1. La barrière qualité (Gate Offline < 3s)
+#### 1. La barrière qualité (Gate Offline < 10s)
 - **Commande à exécuter devant eux :**
   ```bash
-  uv run pytest -q
+  uv run scripts/verify.py
   ```
-- **Résultat :** `128 passed in ~3s`.
+- **Résultat :** `131 passed in ~5.5s` + `7/7 ADK offline evals in ~0.7s` (Total : ~8s, zéro appel réseau, zéro coût).
 - **Message clé :**
-  > *"Pour garantir qu'un développeur ne casse rien en production, nous avons une suite complète de 128 tests unitaires et d'intégration qui s'exécute en 3 secondes, sans dépendance réseau ni coût d'API."*
+  > *"Pour garantir qu'un développeur ne casse rien en production, nous avons une suite complète de 131 tests unitaires et d'intégration combinée à 7 benchmarks comportementaux ADK qui s'exécutent en moins de 10 secondes via `scripts/verify.py`, sans dépendance réseau ni coût d'API."*
 
 #### 2. L'évaluation ADK Native (7/7 Pass)
-- **Commande à exécuter :**
+- **Commande à exécuter (si le jury souhaite voir l'éval ADK isolée) :**
   ```bash
   uv run python -m evals.adk.run_adk_eval --offline
   ```
