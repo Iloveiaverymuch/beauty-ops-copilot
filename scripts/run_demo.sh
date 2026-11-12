@@ -85,3 +85,4 @@ fi
 
 # Maintenir le script actif jusqu'à Ctrl+C
 wait
+
