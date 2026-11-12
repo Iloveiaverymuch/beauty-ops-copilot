@@ -5,6 +5,14 @@ A per-attempt timeout turns a hang into a fast retry; retries cover transient 42
 Budget: worst case ~= attempts x timeout, so keep it under the caller's own deadline.
 """
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_ROOT / ".env")
+load_dotenv(_ROOT / "copilot" / ".env")
+if "GOOGLE_GENAI_USE_VERTEXAI" not in os.environ and "GEMINI_API_KEY" not in os.environ:
+    os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
 
 from google.adk.models import Gemini
 from google.genai import types

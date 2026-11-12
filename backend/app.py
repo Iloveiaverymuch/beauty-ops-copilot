@@ -28,6 +28,12 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Literal
 
+from dotenv import load_dotenv
+
+_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_ROOT / ".env")
+load_dotenv(_ROOT / "copilot" / ".env")
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles

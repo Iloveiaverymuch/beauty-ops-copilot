@@ -12,6 +12,14 @@ model call (~latency) per turn for no gain. The internal copilot (copilot/) is m
 two domains with different risk levels (M365 writes vs catalog reads).
 """
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(_ROOT / ".env")
+load_dotenv(_ROOT / "copilot" / ".env")
+if "GOOGLE_GENAI_USE_VERTEXAI" not in os.environ and "GEMINI_API_KEY" not in os.environ:
+    os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
 
 from google.adk.agents import Agent
 from google.adk.apps import App
