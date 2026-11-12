@@ -40,6 +40,7 @@ setup_tracing()   # BEFORE the agent is imported (engines import it lazily)
 
 from backend.engines import DATA_DIR, AdkEngine  # noqa: E402
 from backend.ui_events import TOOL_LABELS, suggestions, ui_event_for_tool_result  # noqa: E402
+from guardrails.model_armor import sanitize_prompt  # noqa: E402
 
 log = logging.getLogger("advisor.backend")
 tracer = trace.get_tracer("advisor.backend")
@@ -135,6 +136,23 @@ async def chat(req: ChatRequest):
             _turns[thread_id] += 1
             with tracer.start_as_current_span("chat.turn") as span:
                 span.set_attributes({"chat.turn_id": turn_id, "chat.engine": engine.name})
+                # Defense-in-depth Layer 1: Google Cloud Model Armor prompt sanitization
+                armor = sanitize_prompt(req.message)
+                if not armor["safe"]:
+                    span.set_attributes({"guardrail.model_armor.blocked": True, "guardrail.model_armor.filter": armor["filter_type"]})
+                    yield sse("governance_blocked", {"status": "blocked", "reason": armor["message"], "filter": armor["filter_type"]})
+                    yield sse("text", {"delta": armor["message"]})
+                    ms = round((time.perf_counter() - t0) * 1000)
+                    record = {"kind": "turn", "thread_id": thread_id, "turn_id": turn_id, "engine": engine.name,
+                              "latency_ms": ms, "ttft_ms": ms, "tokens_in": 0, "tokens_out": 0, "tokens_thinking": 0,
+                              "model_calls": 0, "tools_ms": 0, "model_ms": 0, "text_chunks": 1,
+                              "cost_eur": 0.0, "tools": [], "kb_searches": 0, "kb_abstained": False,
+                              "api_unavailable": False, "escalated": False, "error": "", "failed": False,
+                              "model_armor_blocked": True}
+                    kpi(record)
+                    yield sse("done", {k: record[k] for k in ("turn_id", "latency_ms", "ttft_ms", "tokens_in", "tokens_out",
+                                                              "tokens_thinking", "model_ms", "tools_ms", "tools", "failed")})
+                    return
                 try:
                     async for ev in engine.stream(thread_id, req.message):
                         if ev["type"] == "text":
