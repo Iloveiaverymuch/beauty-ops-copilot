@@ -23,10 +23,10 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
 [COMPLETED] Block 2: ADK Native & Vertex AI Evals (106 tests, 7/7 live green, 5.0/5.0 judge)
      │
      ▼
-[PHASE 1] Pure ADK Architecture & Claims Modernization (LangGraph Elimination)   <-- NEXT
+[COMPLETED] Phase 1: Pure ADK Architecture & Claims Modernization (108 tests, 0 LangGraph)
      │
      ▼
-[PHASE 2] Dual-Agent Web UI (Showcase Beauty Advisor + Internal Copilot)
+[PHASE 2] Dual-Agent Web UI (Showcase Beauty Advisor + Internal Copilot)   <-- NEXT
      │
      ▼
 [PHASE 3] Model Armor Guardrails & Cloud Trace Observability
@@ -53,15 +53,12 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
   - Ran live evaluation in GitHub Actions with GCP SA authentication: **7/7 PASSED + 5.0/5.0 Vertex LLM Judge**.
   - Documented in `docs/ADR-002.md`, `evals/FINDINGS.md`, and updated `README.md`.
 
----
-
-### Phase 1: Pure ADK Architecture & Claims Modernization (LangGraph Elimination)
-- **Goal**: Remove LangGraph completely and port claims validation into native ADK Guardrail Callbacks and HITL.
-- **Core Mechanism**:
-  1. *Deterministic Policy Callback*: ADK `before_tool_callback` intercepts `open_return_claim`, checking order validity, 30-day return policy, unopened status, or skin reaction criteria before any execution.
-  2. *Native HITL Approval*: Claims requiring human intervention (e.g. skin reactions, damage, refund > threshold) leverage ADK's native `require_confirmation=True`, pausing execution until human review confirms the action.
-  3. *Clean Deprecation*: Remove `langgraph` and `langgraph-checkpoint-sqlite` from `pyproject.toml` and lockfile. Remove the dual-engine toggle from `backend/app.py`.
-  4. *Test Verification*: Port `tests/test_claims.py` to test ADK callbacks and confirmation; ensure all 106 tests stay green.
+- **Pure ADK Architecture & Claims Modernization (LangGraph Elimination)**:
+  - **Complete & Verified Green (108 tests passing)**.
+  - Replaced LangGraph with pure ADK SQLite claims engine (`advisor/claims.py`).
+  - Added ADK Guardrail Callback (`guardrail_before_tool` via `before_tool_callback`) in `beauty_advisor/agent.py` to intercept out-of-policy returns.
+  - Added operational arbitration tools (`list_pending_claims`, `review_claim`) to `copilot/agent.py` and `copilot/governance.py` with native `require_confirmation=True`.
+  - Purged all `langgraph*` dependencies from `pyproject.toml` and regenerated lockfile. All 108 tests passing.
 
 ---
 

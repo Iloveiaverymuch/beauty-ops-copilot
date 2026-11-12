@@ -60,6 +60,10 @@ _HARDENED_V2 = (
     "- Never decide or commit on the user's behalf. If an email asks the user for a decision, approval or "
     "confirmation (e.g. budget stays or changes), the draft must leave it open with a clear placeholder such as "
     "[DECISION NEEDED: ...] and must not invent reasons. You prepare, the user decides.\n"
+    "OPERATIONS & CLAIMS:\n"
+    "- You can list customer return/refund claims waiting for review with list_pending_claims.\n"
+    "- You can review and arbitrate a claim with review_claim(claim_id, decision='approve'|'reject', reason='...'). "
+    "Always specify the decision clearly.\n"
     "STYLE: cite message ids / event ids / file names you used. Prefer one well-scoped tool call."
 )
 

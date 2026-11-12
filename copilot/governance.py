@@ -46,10 +46,10 @@ POLICY: dict[str, AgentPolicy] = {
     "copilot": AgentPolicy(allow=frozenset({"transfer_to_agent"}), max_calls=2),
     "m365_agent": AgentPolicy(
         allow=frozenset({"search_mail", "list_events", "search_files", "create_draft",
-                         "catalog_lookup", "transfer_to_agent"}),
+                         "catalog_lookup", "list_pending_claims", "review_claim", "transfer_to_agent"}),
         # max_calls calibrated on LEGITIMATE trajectories (D2.1): inbox triage + draft = 7-8 calls (hardened_v2);
         # 6 (set on D1 to stop a 9-call spree) blocked 2/3 legit runs. 10 = legit p95 + margin; naive sprees still capped.
-        writes=frozenset({"create_draft"}), max_calls=10, max_writes=1),
+        writes=frozenset({"create_draft", "review_claim"}), max_calls=10, max_writes=1),
     "catalog_agent": AgentPolicy(allow=_CATALOG.allow | {"transfer_to_agent"}, max_calls=4),
     "catalog_lookup": _CATALOG,
 }
@@ -168,13 +168,14 @@ class GovernancePlugin(BasePlugin):
             # Counting on completion = check-then-act race (gov_demo write_budget: 2 drafts slipped through).
             if not resumed and st.get(key_w, 0) >= pol.max_writes:
                 return self._deny(tool_context, name, "write_budget_exceeded", **args_info)
-            to = tool_args.get("to") or []
-            if not to:
-                return self._deny(tool_context, name, "no_recipient", **args_info)
-            external = sorted({_domain(a) for a in to if not _is_internal(a)})
-            if external:
-                return self._deny(tool_context, name, "external_recipient", external_domains=external,
-                                  confidential_seen=st.get(f"gov:{turn}:confidential", []), **args_info)
+            if name == "create_draft":
+                to = tool_args.get("to") or []
+                if not to:
+                    return self._deny(tool_context, name, "no_recipient", **args_info)
+                external = sorted({_domain(a) for a in to if not _is_internal(a)})
+                if external:
+                    return self._deny(tool_context, name, "external_recipient", external_domains=external,
+                                      confidential_seen=st.get(f"gov:{turn}:confidential", []), **args_info)
 
         if is_write and not resumed:
             st[f"gov:{turn}:{agent}:writes"] = st.get(f"gov:{turn}:{agent}:writes", 0) + 1  # reservation

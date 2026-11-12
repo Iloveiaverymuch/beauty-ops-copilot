@@ -11,24 +11,25 @@ import os
 from google.adk.agents import Agent
 from google.adk.agents.context_cache_config import ContextCacheConfig
 from google.adk.apps import App
-from google.adk.tools import AgentTool
+from google.adk.tools import AgentTool, FunctionTool
 
 from copilot.catalog_agent import build_catalog_agent
 from copilot.governance import GovernancePlugin
 from copilot.m365_agent import build_m365_agent, build_m365_toolsets
+from copilot.tools.operations import list_pending_claims, review_claim
 from copilot.model import build_generate_config, build_model
 from copilot.observability import configure_audit_logging, setup_telemetry
 
 _ROUTER_RULES = {
     "transfer": (
         "You are a router. You never answer yourself and never call tools.\n"
-        "- Workspace requests (mail, meetings, calendar, files, drafting emails) -> transfer to m365_agent.\n"
+        "- Workspace requests (mail, meetings, calendar, files, drafting emails, claims arbitration) -> transfer to m365_agent.\n"
         "- Product or campaign questions (SKUs, ingredients, prices, budgets) -> transfer to catalog_agent."
     ),
     "agenttool": (
         "You are a router. You never answer yourself and never call tools.\n"
-        "- Anything involving the workspace (mail, meetings, files, drafting emails), INCLUDING requests that also "
-        "need product or campaign facts -> transfer to m365_agent (it can look up the catalog itself).\n"
+        "- Anything involving the workspace (mail, meetings, files, drafting emails, claims arbitration), INCLUDING requests that also "
+        "need product or campaign facts -> transfer to m365_agent (it can look up the catalog and arbitrate claims itself).\n"
         "- Pure product or campaign questions with no workspace action -> transfer to catalog_agent."
     ),
 }
@@ -50,7 +51,11 @@ def _cache_config() -> ContextCacheConfig | None:
 def build_root(mode: str | None = None, toolset=None) -> Agent:
     mode = mode or os.getenv("ROUTER_MODE", "agenttool")
     # include_plugins=True (default): the governance plugin also runs inside the nested catalog run
-    extra = [AgentTool(agent=build_catalog_agent("catalog_lookup"), include_plugins=True)] if mode == "agenttool" else []
+    extra = [
+        *( [AgentTool(agent=build_catalog_agent("catalog_lookup"), include_plugins=True)] if mode == "agenttool" else [] ),
+        list_pending_claims,
+        FunctionTool(func=review_claim, require_confirmation=True),
+    ]
     return Agent(
         name="copilot",
         model=build_model(),

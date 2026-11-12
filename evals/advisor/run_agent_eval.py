@@ -207,7 +207,7 @@ CASES = [
     ("A12", "document versions: current policy wins (30 days, not the archived 21)",
      ["Combien de jours ai-je pour retourner un produit non ouvert ?"],
      lambda ts: c_kb(("30 jours",), "pol-retours")(ts) + (["ARCHIVED POLICY: '21 jours' in answer"] if "21 jours" in ts[0].text else [])),
-    ("A13", "claim: skin reaction -> workflow -> human review (LangGraph), no promised refund",
+    ("A13", "claim: skin reaction -> workflow -> human review, no promised refund",
      ["J'ai eu une réaction avec le sérum de ma commande CMD-1002, je voudrais être remboursée",
       "Oui je l'ai ouvert, et j'ai une photo de la réaction"], lambda ts: c_claim(ts)),
     ("A11", "compare the products shown", ["Montre-moi des sérums pour peau grasse à imperfections, sans parfum, moins de 15 €",

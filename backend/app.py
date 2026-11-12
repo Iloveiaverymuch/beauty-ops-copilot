@@ -59,7 +59,7 @@ class ChatRequest(BaseModel):
     """Validated at the edge: bounded size (cost + abuse), thread ids are opaque tokens we generate."""
     message: str = Field(min_length=1, max_length=2000)
     thread_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{32}$")
-    engine: Literal["adk", "langgraph"] = "adk"
+    engine: str = "adk"
 
 
 class FeedbackRequest(BaseModel):

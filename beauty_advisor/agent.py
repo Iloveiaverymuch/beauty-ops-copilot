@@ -28,8 +28,7 @@ MAX_KB_SEARCHES_PER_TURN = int(os.getenv("MAX_KB_SEARCHES_PER_TURN", "2"))
 
 
 def search_knowledge(question: str, tool_context: ToolContext) -> dict:
-    # Budget lives in the ADAPTER, not in advisor/tools.py: the core stays framework-free; the LangGraph adapter
-    # enforces the same cap with a counter in its graph state.
+    # Budget lives in the ADAPTER, not in advisor/tools.py: the core stays framework-free.
     # Why: first manual test, "Je peux l'utiliser avec mon rétinol ?" -> 7 search_knowledge calls in one turn
     # (the KB has no niacinamide + retinol rule; the model kept rephrasing). Honest final answer, but 7x the cost
     # and latency. "temp:" state is scoped to the current invocation (= this user turn) in ADK.
@@ -180,6 +179,31 @@ def _generate_config() -> types.GenerateContentConfig | None:
     return types.GenerateContentConfig(thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel[level.upper()]))
 
 
+def guardrail_before_tool(tool, tool_args: dict, tool_context: ToolContext) -> dict | None:
+    """ADK Guardrail Callback: intercepts tool calls before execution.
+
+    "Callbacks Give You Guardrail Control":
+    Enforces deterministic validation and policy rules on tools in code.
+    If a business or security rule is violated, returns an overriding response dictionary
+    immediately, completely bypassing tool execution.
+    """
+    name = getattr(tool, "name", str(tool))
+    if name == "open_return_claim":
+        order_id = str(tool_args.get("order_id", "")).strip().upper()
+        if not order_id.startswith("CMD-"):
+            return {
+                "status": "rejected",
+                "message": "Format de commande invalide. Le numéro de commande doit commencer par 'CMD-' (ex: CMD-1002)."
+            }
+        if tool_args.get("product_opened") and not tool_args.get("skin_reaction"):
+            return {
+                "status": "rejected",
+                "rule": "opened_product_not_returnable",
+                "message": "Conformément à notre politique d'hygiène [pol-retours#Produits ouverts], les produits ouverts ne sont pas éligibles au retour sauf réaction cutanée documentée."
+            }
+    return None
+
+
 root_agent = Agent(
     name="beauty_advisor",
     generate_content_config=_generate_config(),
@@ -189,6 +213,7 @@ root_agent = Agent(
     tools=[search_products, compare_products, estimate_quantity, search_knowledge, check_availability,
            delivery_options, request_human_advisor, open_return_claim, get_claim_status],
     before_model_callback=prepare_request,
+    before_tool_callback=guardrail_before_tool,
 )
 
 app = App(name="beauty_advisor", root_agent=root_agent)

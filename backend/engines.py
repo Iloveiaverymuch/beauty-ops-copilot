@@ -1,5 +1,5 @@
-"""Orchestration engines behind ONE streaming contract, so the API, the UI, the KPIs and the evals don't care
-which framework runs the agent. ADK today; LangGraph tomorrow implements the same `stream()`.
+"""Orchestration engine behind ONE streaming contract, so the API, the UI, the KPIs and the evals don't care
+about internal details. Built on Google ADK 2.13 implementing `stream()`.
 
 Neutral events yielded by every engine:
     {"type": "text", "delta": str}                       model text, streamed in chunks

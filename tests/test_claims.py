@@ -1,4 +1,4 @@
-"""Claims workflow (LangGraph) end to end, offline: real graph + real SQLite checkpointer + in-process bus +
+"""Claims workflow end to end, offline: pure ADK claims engine + SQLite persistence + in-process bus +
 the mock retail API through a test client. No model calls (rule triage)."""
 import importlib
 
@@ -13,17 +13,17 @@ def wf(monkeypatch, tmp_path):
     monkeypatch.setenv("BACKEND_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("CLAIMS_TRIAGE", "rule")
     monkeypatch.setenv("CLAIMS_BUS", "local")
+    import advisor.claims
     import claims.bus
-    import claims.graph
     import claims.service
     import mock_api.stock_api as api
     importlib.reload(claims.bus)
-    importlib.reload(claims.graph)
+    importlib.reload(advisor.claims)
     importlib.reload(claims.service)
     api.REFUNDS.clear()
     api.FAULT["mode"] = "none"
-    monkeypatch.setattr(claims.graph, "_http", TestClient(api.app))
-    monkeypatch.setattr(claims.graph.time, "sleep", lambda s: None)
+    monkeypatch.setattr(advisor.claims, "_http", TestClient(api.app))
+    monkeypatch.setattr(advisor.claims.time, "sleep", lambda s: None)
     yield claims.service, api, claims.bus.bus()
     api.FAULT["mode"] = "none"
 
@@ -97,3 +97,47 @@ def test_instruction_routes_reactions_to_the_claim_tool_not_the_handoff():
     import beauty_advisor.agent as ag
     rule9 = ag.INSTRUCTION.split("9. Human advisor")[1].split("Safety and limits")[0]
     assert "NOT for returns, refunds or a skin reaction" in rule9
+
+
+def test_operations_copilot_claims_review(wf):
+    svc, api, bus = wf
+    from copilot.tools.operations import list_pending_claims, review_claim
+
+    # 1. Customer opens a claim requiring review (skin reaction)
+    st = svc.open_claim("CMD-1002", "reaction allergique", opened=True, skin_reaction=True, photo_provided=True)
+    cid = st["claim_id"]
+    assert st["status"] == "pending_review"
+
+    # 2. Operations team lists pending claims
+    pending_list = list_pending_claims()
+    assert pending_list["status"] == "ok"
+    assert any(c["claim_id"] == cid for c in pending_list["claims"])
+
+    # 3. Operations team approves claim through Copilot
+    res = review_claim(cid, "approve", reason="Valid dermatological report")
+    assert res["status"] == "refunded" and res["outcome"] == "resumed"
+    assert len(api.REFUNDS) == 1
+
+    # 4. Customer checks status
+    assert svc.status(cid)["status"] == "refunded"
+
+
+def test_guardrail_before_tool_callback():
+    from beauty_advisor.agent import guardrail_before_tool
+    from unittest.mock import MagicMock
+
+    tool = MagicMock()
+    tool.name = "open_return_claim"
+
+    # Blocked by format check
+    res = guardrail_before_tool(tool, {"order_id": "INVALID", "product_opened": False, "skin_reaction": False}, None)
+    assert res == {"status": "rejected", "message": "Format de commande invalide. Le numéro de commande doit commencer par 'CMD-' (ex: CMD-1002)."}
+
+    # Blocked by hygiene policy
+    res2 = guardrail_before_tool(tool, {"order_id": "CMD-1001", "product_opened": True, "skin_reaction": False}, None)
+    assert res2["status"] == "rejected" and res2["rule"] == "opened_product_not_returnable"
+
+    # Allowed when valid
+    res3 = guardrail_before_tool(tool, {"order_id": "CMD-1001", "product_opened": False, "skin_reaction": False}, None)
+    assert res3 is None
+
