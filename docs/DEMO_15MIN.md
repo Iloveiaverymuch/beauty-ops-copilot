@@ -11,8 +11,8 @@ Ce guide est votre fil conducteur minute par minute pour l'entretien technique. 
 | :--- | :--- | :--- |
 | **00:00 - 02:00** | **Pitch d'Architecture & Posture Tech Lead** | Cadrage du besoin retail, choix stratégique Google ADK 2.13, fin de l'improvisation de prompts, architecture à deux agents. |
 | **02:00 - 06:00** | **Démo 1 : Léa (B2C — Advisor & Devis)** | RAG Agentique avec citations, calcul déterministe de devis/quantité, ouverture de réclamation avec garde-fous ADK (`before_tool_callback`). |
-| **06:00 - 10:00** | **Démo 2 : Copilot (B2B — Opérations & HITL)** | Triage M365, découverte du litige client, arbitrage avec **Human-In-The-Loop natif ADK** (`require_confirmation=True`), et interception gouvernance. |
-| **10:00 - 12:30** | **Rigueur CI/CD, Évaluations & Observabilité** | Gate offline (<2s, 110 tests), suite d'éval ADK (7/7 pass), traces Cloud Trace / OpenTelemetry sans fuite de PII. |
+| **06:00 - 10:00** | **Démo 2 : Copilot (B2B — Opérations & HITL)** | Triage Google Workspace (Gmail, Calendar, Drive), découverte du litige client, arbitrage avec **Human-In-The-Loop natif ADK** (`require_confirmation=True`), et interception gouvernance. |
+| **10:00 - 12:30** | **Rigueur CI/CD, Évaluations & Observabilité** | Gate offline (<2s, 120 tests), suite d'éval ADK (7/7 pass), traces Cloud Trace / OpenTelemetry sans fuite de PII. |
 | **12:30 - 15:00** | **Vision Cible & Montée en Compétence (3 ans)** | Plan de transition Clean Architecture (`domain/`, `agents/`, `gateway/`), accompagnement des équipes pour devenir référents ADK. Q&A. |
 
 ---
@@ -43,7 +43,7 @@ Ouvrir le navigateur sur : **`http://localhost:8000`**
 >
 > *Le système met en scène les deux faces d'une même opération retail :*
 > 1. *Côté client : **Léa**, conseillère experte (RAG sourcé, estimation de devis, gestion des retours).*
-> 2. *Côté interne : le **Copilot Opérations**, agent d'arbitrage connecté aux outils de travail (M365) avec validation humaine obligatoire (HITL).*
+> 2. *Côté interne : le **Copilot Opérations**, agent d'arbitrage connecté aux outils de travail (Google Workspace) avec validation humaine obligatoire (HITL).*
 > *Regardons cela en direct sur l'interface."*
 
 ---
@@ -91,7 +91,7 @@ Sur l'UI, assurez-vous d'être sur l'onglet **🌸 Conseillère Léa (Client)**.
 
 ### [06:00 - 10:00] Démo 2 : Le Copilot Opérations & Human-In-The-Loop (HITL)
 
-Cliquez sur l'onglet **💼 Copilot Opérations (M365 & Claims)**.
+Cliquez sur l'onglet **💼 Copilot Opérations (Workspace & Claims)**.
 
 #### Étape 1 : Notification & Consultation des Réclamations
 - **Action UI :**

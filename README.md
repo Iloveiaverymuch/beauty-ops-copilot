@@ -26,9 +26,9 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 │   CLIENT AGENT: LÉA (B2C)       │     │   INTERNAL COPILOT: OPERATIONS (B2B)           │
 │   (beauty_advisor/agent.py)     │     │   (copilot/agent.py)                           │
 ├─────────────────────────────────┤     ├────────────────────────────────────────────────┤
-│ • Agentic RAG (Discovery Engine │     │ • Workplace M365 Tools (Mail, Calendar, Files) │
-│   reranking & exact citations)  │     │   via MCP Server (m365_mcp/server.py)          │
-│ • Deterministic Devis Calc      │     │ • Official Catalog Lookup (SKUs & campaigns)   │
+│ • Agentic RAG (Discovery Engine │     │ • Workplace Google Workspace Tools             │
+│   reranking & exact citations)  │     │   (Gmail, Calendar, Drive) via MCP Server      │
+│ • Deterministic Devis Calc      │     │   (workspace_mcp/server.py)                    │
 │   (estimate_quantity)           │     │ • Operational Claims Arbitration               │
 │ • Official Quote PDF Generator  │     │   (list_pending_claims, review_claim)          │
 │   (headless Chrome + fallback)  │     │ • Native Human-in-the-Loop (HITL)              │
@@ -69,15 +69,15 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **Claims Engine** | `advisor/claims.py` | Thread-safe SQLite claims engine with idempotent refund execution (`Idempotency-Key`) |
 | **Claims Guardrail** | `advisor/claims_guardrail.py` | Deterministic hygiene policy guardrail intercepting claims into `pending_review` |
 | **Internal Copilot** | `copilot/agent.py` | Root operations router coordinating specialist agents |
-| **M365 Agent** | `copilot/m365_agent.py` | Workplace assistant with read/write separation and prompt injection hardening |
+| **Workspace Agent** | `copilot/workspace_agent.py` | Google Workspace specialist (Gmail, Calendar, Drive) with read/write separation |
 | **Governance** | `copilot/governance.py` | Platform `GovernancePlugin`: tool allowlists, turn budgets, corporate domain allowlist |
-| **M365 MCP Server** | `m365_mcp/server.py` | Model Context Protocol server exposing Outlook and OneDrive tools over HTTP |
+| **Workspace MCP Server** | `workspace_mcp/server.py` | Model Context Protocol server exposing Google Workspace tools over HTTP |
 | **FastAPI Backend** | `backend/app.py` | Unified streaming SSE server, Model Armor sanitization, and PDF download endpoints |
 | **Dual Web UI** | `backend/static/index.html` | Dual-tab web interface with state persistence, timestamps, and HITL approval modals |
 | **1-Click Launcher** | `run_demo.sh` | Shell launcher orchestrating mock APIs, backend, and browser auto-launch |
 | **ADK Benchmark** | `evals/adk/` | 7 golden evaluation cases with custom deterministic evaluators (<1s offline runner) |
 | **Vertex AI Eval** | `evals/vertex/` | Pointwise rubrics (Groundedness, Persona, Safety, Compliance) scored with LLM judge |
-| **Unit Tests** | `tests/` | 111 comprehensive tests validating tools, governance, MCP contracts, and PDF generation |
+| **Unit Tests** | `tests/` | 120 comprehensive tests validating tools, governance, MCP contracts, and PDF generation |
 
 ---
 

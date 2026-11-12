@@ -10,7 +10,7 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
 
 - **Pure Google ADK Architecture**: Unify all agents and workflows onto Google ADK 2.13 and Gemini on Vertex AI. Eliminate auxiliary orchestration frameworks (LangGraph) to present a clean, unified mental model.
 - **Callbacks Give You Guardrail Control**: Enforce security and business policies deterministically in code via ADK lifecycle hooks (`before_tool_callback`, `after_tool_callback`, `before_model_callback`) rather than relying on probabilistic system prompts.
-- **Native Human-in-the-Loop (HITL)**: Use ADK's native `require_confirmation=True` for high-stakes actions (M365 drafts, claim refund approvals).
+- **Native Human-in-the-Loop (HITL)**: Use ADK's native `require_confirmation=True` for high-stakes actions (Google Workspace drafts, claim refund approvals).
 - **Two-Tier Verification**: Sub-25s offline CI gate (106 unit tests + 7 deterministic ADK evaluations) for PR blocking, combined with on-demand live Vertex AI evaluation (LLM-as-a-judge rubrics).
 - **Google Cloud Observability**: Cloud Trace spans with content elision (`NO_CONTENT`) and structured governance audit logs.
 - **Confidentiality & Neutralization**: Retail demo branding is neutralized. Client identity is strictly confidential.
@@ -38,7 +38,7 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
 [COMPLETED] Phase 5: Project Architecture Dossier PDF Generation (docs/beauty_ops_copilot_architecture_dossier.pdf)
      │
      ▼
-[COMPLETED] Phase 6: Final Markdown Coherence Sweep & Presentation Polish (110 tests passing)
+[COMPLETED] Phase 6: Final Markdown Coherence Sweep & Presentation Polish (120 tests passing)
 ```
 
 ---
@@ -66,11 +66,11 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
 - **Goal**: Build a unified, sleek web UI that showcases both agents in the live presentation without relying on raw developer CLI tools (`adk web`).
 - **Deliverables**:
   1. *Internal Copilot Frontend*: A dedicated view or tab matching Beauty Advisor's aesthetic (`backend/static/copilot.html` or integrated switcher) that displays:
-     - M365 email triage and calendar summary cards.
+     - Google Workspace email triage and calendar summary cards.
      - Catalog lookup with hero SKUs and campaign details.
      - Interactive **Human Approval Modal** when `create_draft` requests confirmation.
      - Visual **Policy Blocked Badges** (e.g. external recipient blocked before approval).
-  2. *Live Mode Switcher*: Seamlessly switch between "Léa (Customer Skincare Advisor)" and "Copilot (Internal Operations & M365 Assistant)".
+  2. *Live Mode Switcher*: Seamlessly switch between "Léa (Customer Skincare Advisor)" and "Copilot (Internal Operations & Workspace Assistant)".
 
 ---
 
@@ -90,8 +90,8 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
   - `02:00 - 06:00`: **Demo 1 — Beauty Advisor (Agentic RAG + HITL Claims)**:
     - Clarification without retrieval -> SQL-filtered product search + comparison -> 30-day policy citation.
     - Return claim opening with deterministic policy check and human review pause.
-  - `06:00 - 10:00`: **Demo 2 — Internal Operations Copilot (M365 MCP + Governance)**:
-    - Mixed request: M365 draft with authoritative catalog budget.
+  - `06:00 - 10:00`: **Demo 2 — Internal Operations Copilot (Google Workspace MCP + Governance)**:
+    - Mixed request: Workspace draft with authoritative catalog budget.
     - Governance in action: external exfil attempt blocked by code *before* human approval.
     - Cloud Trace waterfall & audit logs.
   - `10:00 - 12:30`: **Engineering Rigor & Evaluation**:
