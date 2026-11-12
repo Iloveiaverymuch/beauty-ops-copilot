@@ -50,6 +50,15 @@
   .tab-btn.active {
     background: #ffffff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
+  .tab-badge {
+    background: #dc2626; color: #fff; font-size: 10.5px; font-weight: 700;
+    border-radius: 10px; padding: 1px 6px; margin-left: 4px; display: inline-block;
+    animation: pulse 1.6s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.85; }
+  }
   .header-actions { display: flex; align-items: center; gap: 8px; }
   .pill-badge {
     font-size: 11px; padding: 2px 8px; border-radius: 12px; background: #f1f5f9;
@@ -63,14 +72,15 @@
 
   /* Ops Alert Strip */
   .ops-strip {
-    display: none; padding: 7px 12px; background: var(--warn-bg); border: 1px solid var(--warn-line);
-    border-radius: 6px; font-size: 12px; color: var(--warn); align-items: center; justify-content: space-between;
+    display: none; padding: 8px 12px; background: var(--warn-bg); border: 1px solid var(--warn-line);
+    border-radius: 6px; font-size: 12.5px; color: var(--warn); align-items: center; justify-content: space-between;
   }
-  .ops-strip.visible { display: flex; }
+  .ops-strip.visible { display: flex; animation: fadeIn .2s ease; }
   .ops-strip button {
-    border: none; background: var(--warn); color: #fff; padding: 3px 8px; border-radius: 4px;
-    font-size: 11px; font-weight: 600; cursor: pointer;
+    border: none; background: var(--warn); color: #fff; padding: 4px 10px; border-radius: 4px;
+    font-size: 11.5px; font-weight: 600; cursor: pointer;
   }
+  .ops-strip button:hover { opacity: .9; }
 
   /* Log area */
   #log { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
@@ -180,11 +190,12 @@
       </button>
       <button class="tab-btn" id="tabCopilot" data-mode="copilot">
         <span>💼</span> Copilot Opérations (M365 & Claims)
+        <span class="tab-badge" id="tabCopilotBadge" style="display:none;">0</span>
       </button>
     </div>
     <div class="ops-strip" id="opsStrip">
       <span>📦 <b id="pendingCount">1</b> réclamation en attente d'arbitrage</span>
-      <button id="btnCheckPending">Consulter</button>
+      <button id="btnCheckPending">Consulter dans le Copilot →</button>
     </div>
   </header>
 
@@ -204,8 +215,8 @@ const ATTR = {actives:"Actifs", price_paid_eur:"Prix payé", price_per_100ml:"Pr
 
 let currentEngine = "advisor";
 const sessions = {
-  advisor: { threadId: null, history: [] },
-  copilot: { threadId: null, history: [] }
+  advisor: { threadId: null, html: "" },
+  copilot: { threadId: null, html: "" }
 };
 
 const log = document.getElementById("log"), q = document.getElementById("q"), send = document.getElementById("send");
@@ -214,6 +225,7 @@ const appTitle = document.getElementById("appTitle");
 const appSubtitle = document.getElementById("appSubtitle");
 const opsStrip = document.getElementById("opsStrip");
 const pendingCount = document.getElementById("pendingCount");
+const tabCopilotBadge = document.getElementById("tabCopilotBadge");
 
 const eur = v => v == null ? "" : v.toFixed(2).replace(".", ",") + " €";
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -260,7 +272,25 @@ const render = {
         ? `Express : le ${esc(o.eta)} · ${eur(o.fee_eur)} (avant ${esc(o.order_before)})`
         : `Standard : du ${esc(o.eta_from)} au ${esc(o.eta_to)} · ${eur(o.fee_eur)}, offerte dès ${eur(o.free_from_eur)}`).join("<br>")}</div>`,
   sources: d => (d.passages || []).length ? `<div class="sources">Sources RAG : ${d.passages.map(p => esc(p.title + " › " + p.section)).join(" · ")}</div>` : "",
-  claim: d => `<div class="box ${["rejected","rejected_by_reviewer","needs_info"].includes(d.status) ? "warn" : "info"}"><h4>Dossier ${esc(d.claim_id)}</h4>${esc(d.message || d.status)}${d.amount_eur ? ` · montant ${eur(d.amount_eur)}` : ""}${d.refund_id ? ` · remboursement ${esc(d.refund_id)}` : ""}</div>`,
+  claim: d => {
+    const isPending = d.status === "pending_review";
+    const isRefunded = d.status === "refunded";
+    const isRejected = ["rejected", "rejected_by_reviewer", "needs_info"].includes(d.status);
+    let extra = "";
+    if (isPending) {
+      extra = `<div style="margin-top:8px; padding-top:6px; border-top:1px dashed #fde68a; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+        <span style="font-size:12px; color:#92400e;">⚡ Dossier transmis au Copilot Opérations pour validation humaine</span>
+        <button class="chip" style="background:#1e40af; color:#fff; border:none; padding:4px 8px; font-weight:600; font-size:11.5px;" onclick="switchEngine('copilot'); ask('Liste les réclamations en attente d\\'arbitrage');">
+          Voir dans le Copilot →
+        </button>
+      </div>`;
+    }
+    return `<div class="box ${isPending || isRejected ? 'warn' : 'info'}">
+      <h4>📦 Dossier ${esc(d.claim_id)} : ${isPending ? 'En attente d\'arbitrage' : isRefunded ? 'Remboursé' : esc(d.status)}</h4>
+      ${esc(d.message || d.status)}${d.amount_eur ? ` · Montant : ${eur(d.amount_eur)}` : ""}${d.refund_id ? ` · Remboursement ${esc(d.refund_id)}` : ""}
+      ${extra}
+    </div>`;
+  },
   handoff: d => `<div class="box"><h4>Conseiller humain</h4>Demande transmise · ticket <b>${esc(d.ticket_id)}</b></div>`,
   governance_blocked: d => `<div class="blocked-box"><div class="blocked-title">🛡️ Action bloquée par la Gouvernance ADK</div><div class="blocked-detail">${esc(d.reason || d.message || "Interception de sécurité")}</div></div>`,
   pending_claims: d => {
@@ -308,7 +338,7 @@ async function confirmAction(callId, confirmed, containerId) {
   }
   const bot = el("msg bot"), bubble = el("bubble"), extras = el(""), progress = el("progress");
   bot.append(progress, bubble, extras); log.appendChild(bot); progress.textContent = "Reprise de l'exécution..."; scroll();
-  send.disabled = true; let buf = "";
+  send.disabled = true;
 
   const resp = await fetch("/chat/confirm", {
     method: "POST", headers: {"Content-Type": "application/json"},
@@ -348,6 +378,9 @@ async function processStream(resp, bubble, progress, extras, bot) {
         extras.insertAdjacentHTML("beforeend", renderConfirmationCard(data));
       } else if (render[ev]) {
         extras.insertAdjacentHTML("beforeend", render[ev](data));
+        if (ev === "claim" || ev === "claim_reviewed") {
+          checkPendingClaims();
+        }
       } else if (ev === "suggestions") {
         const c = el("chips");
         (data.chips || []).forEach(t => {
@@ -365,6 +398,7 @@ async function processStream(resp, bubble, progress, extras, bot) {
             body: JSON.stringify({thread_id: sessions[currentEngine].threadId, turn_id: data.turn_id, rating: k ? "down" : "up"})});
         });
         bot.appendChild(m);
+        checkPendingClaims();
       } else if (ev === "error") {
         bubble.textContent = data.message;
       }
@@ -395,6 +429,11 @@ async function ask(text) {
 }
 
 function switchEngine(mode) {
+  // 1. Save current active conversation HTML
+  if (currentEngine && log.innerHTML.trim()) {
+    sessions[currentEngine].html = log.innerHTML;
+  }
+
   currentEngine = mode;
   document.body.setAttribute("data-engine", mode);
   document.querySelectorAll(".tab-btn").forEach(b => {
@@ -406,20 +445,22 @@ function switchEngine(mode) {
     appTitle.textContent = "Léa, votre conseillère beauté & devis";
     appSubtitle.textContent = "Google ADK 2.13 · Agentic RAG, Devis & Retours clients";
     q.placeholder = "Demander un conseil soin, un devis personnalisé, un retour...";
-    opsStrip.classList.remove("visible");
   } else {
     avatarIcon.textContent = "💼";
     appTitle.textContent = "Copilot Opérations & Service Client";
     appSubtitle.textContent = "Google ADK 2.13 Multi-Agent · M365 Workspace & HITL Claims Review";
     q.placeholder = "Consulter emails M365, lister réclamations, arbitrer un remboursement...";
-    checkPendingClaims();
   }
 
-  // Switch log contents
+  // 2. Restore chat history or show greeting
   log.innerHTML = "";
-  if (!sessions[mode].threadId) {
+  if (sessions[mode].html) {
+    log.innerHTML = sessions[mode].html;
+  } else {
     greet(mode);
   }
+  scroll();
+  checkPendingClaims();
 }
 
 async function checkPendingClaims() {
@@ -427,17 +468,28 @@ async function checkPendingClaims() {
     const res = await fetch("/claims/pending");
     if (res.ok) {
       const claims = await res.json();
-      if (claims.length > 0) {
-        pendingCount.textContent = claims.length;
+      const count = claims.length;
+      if (count > 0) {
+        pendingCount.textContent = count;
         opsStrip.classList.add("visible");
+        if (tabCopilotBadge) {
+          tabCopilotBadge.style.display = "inline-block";
+          tabCopilotBadge.textContent = count;
+        }
       } else {
         opsStrip.classList.remove("visible");
+        if (tabCopilotBadge) {
+          tabCopilotBadge.style.display = "none";
+        }
       }
     }
   } catch (e) {}
 }
 
 document.getElementById("btnCheckPending").onclick = () => {
+  if (currentEngine !== "copilot") {
+    switchEngine("copilot");
+  }
   ask("Liste les réclamations en attente d'arbitrage");
 };
 
@@ -445,7 +497,7 @@ function greet(mode) {
   if (mode === "advisor") {
     const b = el("msg bot", md("Bonjour ! Je suis Léa. Je peux vous conseiller des soins sur-mesure, calculer votre devis de routine, comparer des produits et ouvrir un dossier de retour si besoin. Que souhaitez-vous faire ?"));
     const c = el("chips");
-    ["Devis crème pour 90 jours", "Comparer sérum éclat et anti-âge", "Conseille-moi un nettoyant peau sensible", "Retourner ma commande CMD-12345"].forEach(t => {
+    ["Devis crème pour 90 jours", "Comparer sérum éclat et anti-âge", "Conseille-moi un nettoyant peau sensible", "Retourner ma commande CMD-1002 (réaction allergique)"].forEach(t => {
       const btn = document.createElement("button"); btn.className = "chip"; btn.textContent = t;
       btn.onclick = () => { c.remove(); ask(t); }; c.appendChild(btn);
     });
@@ -454,7 +506,7 @@ function greet(mode) {
   } else {
     const b = el("msg bot", md("Bonjour. Je suis le Copilot Opérations internes. Je peux consulter vos emails & réunions M365, vérifier les réclamations clients en attente et valider les remboursements avec approbation humaine (HITL)."));
     const c = el("chips");
-    ["Quelles sont les réclamations en attente ?", "Consulte mes emails M365", "Vérifie le stock catalogue", "Valider la réclamation CLM-XXXXX"].forEach(t => {
+    ["Quelles sont les réclamations en attente ?", "Consulte mes emails M365", "Vérifie le stock catalogue"].forEach(t => {
       const btn = document.createElement("button"); btn.className = "chip"; btn.textContent = t;
       btn.onclick = () => { c.remove(); ask(t); }; c.appendChild(btn);
     });
@@ -472,12 +524,14 @@ document.getElementById("f").onsubmit = e => {
 
 document.getElementById("reset").onclick = () => {
   sessions[currentEngine].threadId = null;
+  sessions[currentEngine].html = "";
   log.innerHTML = "";
   greet(currentEngine);
 };
 
-// Initial state
+// Initial state & polling
 switchEngine("advisor");
+setInterval(checkPendingClaims, 4000);
 </script>
 </body>
 </html>

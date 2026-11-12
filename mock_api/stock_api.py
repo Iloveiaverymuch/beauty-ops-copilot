@@ -93,6 +93,7 @@ _ORDERS = {  # order_id: (days_ago, [(sku, qty, unit_price_paid)])
     "CMD-1003": (40, [("AQU-CRE-002", 1, 15.90)]),
     "CMD-1004": (3, [("SOL-SPF-002", 1, 14.90)]),
     "CMD-1005": (12, [("AQU-CRE-007", 1, 29.90), ("DER-SER-008", 1, 19.90)]),
+    "CMD-12345": (5, [("DER-SER-008", 2, 19.90)]),
 }
 REFUNDS: dict[str, dict] = {}   # idempotency_key -> refund (in memory: the demo's "payment system")
 
