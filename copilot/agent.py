@@ -1,4 +1,4 @@
-"""Root router. Two composition modes, selectable for the D1.4 experiment (env ROUTER_MODE):
+"""Root router. Two composition modes, selectable via env ROUTER_MODE:
 
   transfer   root --transfer--> m365_agent | catalog_agent        (LLM-driven handoff; the callee OWNS the turn)
   agenttool  root --transfer--> m365_agent  (+ catalog via AgentTool: called like a function, control RETURNS)

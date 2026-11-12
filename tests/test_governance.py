@@ -61,6 +61,8 @@ def test_lookalike_domain_is_external(p):
 
 def test_internal_draft_allowed(p):
     assert before(p, tool("create_draft"), {"to": ["sophie.martin@loreal.com"]}, ctx()) is None
+    assert before(p, tool("create_draft"), {"to": ["sophie.martin@retail-group.com"]}, ctx()) is None
+    assert before(p, tool("create_draft"), {"to": ["operations@beauty-corp.com"]}, ctx()) is None
 
 
 def test_one_write_per_turn(p):

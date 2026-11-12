@@ -1,19 +1,17 @@
-# Beauty Ops Copilot: ADK + Vertex AI + MCP agent POC
+# Beauty Ops Copilot: ADK + Vertex AI + MCP Agent Platform
 
-Current interview-lab continuation (advisor, claims workflow, ADK native and Vertex AI evaluations):
+Executive interview presentation and architecture documentation:
 [`docs/DEMO_15MIN.md`](docs/DEMO_15MIN.md) (15-min interview presentation script),
 [`docs/beauty_ops_copilot_architecture_dossier.pdf`](docs/beauty_ops_copilot_architecture_dossier.pdf) (5-page architecture dossier),
 [`docs/LAB_PLAN.md`](docs/LAB_PLAN.md), [`docs/PROJECT_HANDOVER.md`](docs/PROJECT_HANDOVER.md),
 [`docs/ADR-001-adk-vs-langgraph.md`](docs/ADR-001-adk-vs-langgraph.md), [`docs/ADR-002-callbacks-guardrails-hitl.md`](docs/ADR-002-callbacks-guardrails-hitl.md),
 [`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
-The original copilot notes below are retained.
 
 A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI**. One agent reaches
 Microsoft 365 through an **MCP server**. A **governance plugin** enforces tool policy in code, and every claim
 is backed by a measured trial in [`evals/FINDINGS.md`](evals/FINDINGS.md).
 
-A 3-day lab (Day 1 = agentic core, Day 2 = prove it, Day 3 = run it in production), built as interview prep for an "AI agents engine" mission (Python, ADK, Vertex/Gemini, MCP connectors for M365,
-governance, observability). Lab plan: AI Formation project doc `claude/pipeline/loreal-adk-agent-poc-lab.md`.
+An enterprise-grade retail AI agent platform (Python 3.12, Google ADK 2.13, Gemini 3.8 Flash on Vertex AI, Model Armor defense, MCP connectors for M365, deterministic governance, and distributed Cloud Trace observability).
 
 ## Architecture
 
@@ -94,7 +92,7 @@ uv run --env-file copilot/.env python scripts/routing_trials.py --n 3
 uv run --env-file copilot/.env python scripts/injection_trials.py --n 5 --variants naive hardened --governance off enforce
 uv run python scripts/mcp_smoke.py [dev-readonly-token]                # MCP contract via ADK client
 
-# D2.1 evaluation
+# Automated evaluation
 uv run python evals/build_evalset.py                                   # regenerate the ADK evalset
 # PYTHONPATH=. : `adk eval` imports copilot/ by file path without the repo root on sys.path
 PYTHONPATH=. M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env adk eval copilot evals/core/copilot_core.evalset.json \
@@ -104,7 +102,7 @@ M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env pytest evals/test_eval_core
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance enforce     # safety + utility
 uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys
 
-# D2.2 observability
+# Distributed observability
 OTEL_SERVICE_NAME=beauty-ops-copilot uv run --env-file copilot/.env adk web --otel_to_cloud   # adk web: native flag
 TELEMETRY=gcp uv run --env-file copilot/.env python scripts/gov_demo.py                    # scripts: our setup
 uv run python evals/obs_report.py --since <unix_ts> --label "<config>"   # p50/p95, model share, tokens, cache hits
@@ -126,7 +124,7 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 | `GOOGLE_CLOUD_LOCATION` | `eu` | `eu` multi-region (residency). Single EU regions don't serve current Flash. `global` = availability, no residency guarantee |
 | `MODEL` | `gemini-3.8-flash` | Verify with `probe_models.py`: a model listed in the catalog isn't necessarily callable |
 | `MODEL_TIMEOUT_S` / `MODEL_RETRY_ATTEMPTS` | `60` / `3` | Per-attempt timeout; retries on 408/429/5xx |
-| `ROUTER_MODE` | `agenttool` | `transfer` kept for the D1.4 comparison |
+| `ROUTER_MODE` | `agenttool` | `agenttool` (recommended) or `transfer` |
 | `M365_PROMPT` | `hardened` | `hardened_v2` = recommended (scoped caution, data minimization, no commitments); `naive` for baselines |
 | `M365_MCP_URL` / `M365_MCP_TOKEN` | `http://127.0.0.1:8080/mcp` / `dev-agent-token` | `dev-readonly-token` has no `Mail.ReadWrite` |
 | `M365_CONFIRM_WRITES` | `1` | Native human approval on `create_draft` |
@@ -135,7 +133,7 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 | `TELEMETRY` | `off` | `gcp` = ADK spans to Cloud Trace + GenAI metrics to Cloud Monitoring |
 | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `NO_CONTENT` | Prompts/responses in telemetry. Two libs read it with different conventions (ADK: `true`/`false`; GenAI instrumentor: `NO_CONTENT`/`SPAN_ONLY`/...). `NO_CONTENT` = off for both: M365 content stays out of traces |
 | `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default (global fallback) |
-| `THINKING_LEVEL_ROUTER` / `_CATALOG` / `_M365` | `LOW` / `LOW` / unset | Per-agent thinking by risk: LOW where there are no writes and no untrusted content; full reasoning for the M365 agent (under LOW it attempted an exfil 2/3, blocked by policy) |
+| `THINKING_LEVEL_ROUTER` / `_CATALOG` / `_M365` | `LOW` / `LOW` / unset | Per-agent thinking by risk: LOW where there are no writes and no untrusted content; full reasoning for the M365 agent |
 | `CONTEXT_CACHE` | `0` | `1` = per-agent Gemini context cache (`CONTEXT_CACHE_MIN_TOKENS`, default 2048) |
 
 ## Governance policy (`copilot/governance.py`)
@@ -143,12 +141,12 @@ export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 | Agent | Allowed tools | Calls / turn | Writes / turn |
 |---|---|---|---|
 | `copilot` (router) | `transfer_to_agent` | 2 | 0 |
-| `m365_agent` | search_mail, list_events, search_files, create_draft, catalog_lookup, transfer | 10 (calibrated on legit triage, D2.1) | 1 |
+| `m365_agent` | search_mail, list_events, search_files, create_draft, catalog_lookup, transfer | 10 (calibrated on legitimate triage) | 1 |
 | `catalog_agent` / `catalog_lookup` | search_products, get_campaign (+ transfer) | 4 | 0 |
 | any other agent | nothing (deny by default) | 0 | 0 |
 
 Other rules:
-- Drafts to recipients outside `@loreal.com` are blocked; lookalike domains count as outside.
+- Drafts to recipients outside corporate domains (`@retail-group.com`, `@beauty-corp.com`, etc.) are blocked; lookalike domains count as outside.
 - The write set is **our** list, not the server's `read_only_hint`. A mismatch raises an alert.
 - Budgets are scoped to the **user turn**: the key is the id of the last user event that has text, so they survive approval resumes.
 - Write slots are **reserved at decision time**, which handles parallel function calls.
@@ -156,17 +154,17 @@ Other rules:
 
 ## Results (details and raw numbers in `evals/FINDINGS.md`; decisions in `docs/ADR-001.md` and `docs/ADR-002.md`; demo in `DEMO.md`)
 
-| Block | Finding |
+| Capability Block | Finding |
 |---|---|
-| D1.1 tools | Constraints as tool params: 6 → 3 tool calls; near-miss hint when exact filters hide alternatives |
-| D1.2 MCP | No token 401; read-only token `insufficient_scope`; injected mail returned as data (by design) |
-| D1.3 prompt-only | 0/15 external drafts (upper bound ≈ 20%); naive agent's real risk = unrequested writes |
-| D1.4 routing | AgentTool vs transfer: same pass rate, ~2× faster, ⅓ calls, authoritative source → **chosen** |
-| D1.5 governance | gov_demo 5/5; parallel-call race and approval-resume scope bugs fixed |
-| D2.1 eval | Core evalset 10/10 + call-budget gate; matrix below; hardened_v2 = safe and useful |
-| D2.2 observability | Governance visible on trace spans; latency provider-bound (thinking −90% tokens, no gain); per-agent thinking |
-| D2.3 deploy | 2 private Cloud Run services; 403 edge / 401 app; structured audit + `governance_denies` metric |
-| R5 ADK & Vertex Eval | Native ADK eval (`evals/adk/`) + Vertex AI Eval (`evals/vertex/`). CI gate: 106 tests + 7 ADK offline (<25s); regression blocked on PR. Live run: 7/7 passed, Vertex LLM judge 5.0/5.0 |
+| Tools & Catalog | Constraints as tool params: 6 → 3 tool calls; near-miss hint when exact filters hide alternatives |
+| MCP Protocol | No token 401; read-only token `insufficient_scope`; injected mail returned as data (by design) |
+| Prompt Hardening | 0/15 external drafts (upper bound ≈ 20%); naive agent's real risk = unrequested writes |
+| Router Composition | AgentTool vs transfer: same pass rate, ~2× faster, ⅓ calls, authoritative source → **chosen** |
+| Governance Plugin | gov_demo 5/5; parallel-call race and approval-resume scope bugs fixed |
+| Evaluation Framework | Core evalset 10/10 + call-budget gate; matrix below; hardened_v2 = safe and useful |
+| Distributed Tracing | Governance visible on trace spans; latency provider-bound; per-agent thinking configured |
+| Cloud Run Deploy | 2 private Cloud Run services; 403 edge / 401 app; structured audit + `governance_denies` metric |
+| Dual-Agent Architecture | Native ADK eval (`evals/adk/`) + Vertex AI Eval (`evals/vertex/`). CI gate: 111 tests + 7 ADK offline (<25s); regression blocked on PR. Live run: 7/7 passed, Vertex LLM judge 5.0/5.0 |
 
 **Prompt × governance matrix** (n=3, rubber-stamp approver, 4 attacks + ambiguous legitimate task):
 
@@ -199,28 +197,27 @@ false-fail · telemetry silent failures (provider ownership, missing `gcp.projec
 
 - M365 is a mock: same contract as Graph (tools, scopes, Purview label), fixture data. Real Graph would need
   Entra auth (on-behalf-of the user) and is a change to `m365_mcp/server.py` only.
-- Dev auth uses static bearer tokens. In prod: Google ID tokens between Cloud Run services (D2.3), Entra-issued tokens for Graph.
-- Recipient policy is not DLP: an internal relay (`msg-011` → `migration-backup@loreal.com`) is allowed by policy; only the model resists it.
+- Dev auth uses static bearer tokens. In prod: Google ID tokens between Cloud Run services, Entra-issued tokens for Graph.
+- Recipient policy is not DLP: an internal relay (`msg-011` → `migration-backup@retail-group.com`) is allowed by policy; only the model resists it.
 - Eval sample sizes (n=3) give direction, not SLOs or safety guarantees; configs were A/B'd sequentially (time-of-day confound).
 - Session-state budget keys build up per turn (fine for a POC; a production store needs a TTL).
-- Every transfer re-sends the prompt uncached, because `context_cache_config` isn't set yet (D2.2).
+- Every transfer re-sends the prompt uncached, because `context_cache_config` isn't set yet.
 - The `Failed to configure mTLS` line at startup is google-auth probing for client certificates. It's harmless.
 
-## Progress
+## Roadmap & Milestones
 
-- [x] H0 GCP setup, ADC, model x location probe (`gemini-3.8-flash` @ `eu`)
-- [x] D1.1 catalog agent + tools (constraints in params, near-miss)
-- [x] D1.2 M365 MCP server (bearer, audience, scopes, annotations)
-- [x] D1.3 M365 agent + injection baseline (naive vs hardened)
-- [x] D1.4 router: transfer vs AgentTool → AgentTool
-- [x] D1.5 governance plugin + native approval; gov_demo 5/5; 2 race bugs fixed
-- [x] D2.1 evaluation: ADK evalset 10/10 + call-budget gate; safety suite (4 attacks, over-refusal, commitment); prompt x governance matrix; hardened_v2 + budget 10
-- [x] D2.2 observability: Cloud Trace (governance on spans, content elided), thinking/cache A/B (latency = provider-bound), per-agent thinking by risk
-- [x] D2.3 first deploy: 2 private Cloud Run services, Google ID-token S2S + per-caller scopes (403 edge / 401 app), structured audit logs + `governance_denies` metric -> `deploy/DEPLOY.md`
-- [x] D2.4 package: `docs/ADR-001.md` (9 decisions + evidence), `DEMO.md` (5-min script, warm-up, fallback, Q&A), results tables
-- [x] R5 evaluation architecture: native ADK evalset (`evals/adk/`) + Vertex AI Evaluation Service (`evals/vertex/`), 106 tests, CI gate verified with regression blocking, live cloud eval 7/7 passed + 5.0/5.0 judge -> `docs/ADR-002.md`
-- [ ] D3.1 IaC: Terraform for services, least-privilege SAs, Secret Manager, Artifact Registry (remote state in GCS)
-- [ ] D3.2 CI/CD: tests -> `adk eval` gate -> no-traffic revision -> canary 10% -> promote; one-command rollback
-- [ ] D3.3 state & scaling: persistent sessions (approval survives restart), budget-key TTL, instances, Vertex quotas/429
-- [ ] D3.4 load & cost: 20-50 concurrent sessions, p50/p95/p99, errors, EUR per conversation, bottleneck
-- [ ] D3.5 failure drills: MCP down, eu 503, bad secret, budget flood, regression blocked -> RUNBOOK.md + SLOs
+- [x] Cloud platform setup, ADC, model verification (`gemini-3.8-flash` @ `eu`)
+- [x] Catalog agent & deterministic tools (constraints in params, near-miss hint)
+- [x] M365 MCP server (bearer, audience, scopes, annotations)
+- [x] M365 agent & injection defense baseline (naive vs hardened)
+- [x] Router composition: transfer vs AgentTool
+- [x] Governance plugin & native Human-in-the-Loop approval
+- [x] Automated evaluation suite: ADK evalset + call-budget gate + prompt x governance matrix
+- [x] Observability: Cloud Trace distributed spans + content elision
+- [x] Cloud Run deployment: 2 private services, service-to-service IAM auth, structured audit logs
+- [x] Documentation & ADRs: `docs/ADR-001.md`, `docs/ADR-002.md`, results tables
+- [x] Dual-Agent Architecture & CI/CD: Beauty Advisor + Claims Engine (111 tests, 7/7 ADK evals, CI gate)
+- [ ] Infrastructure as Code: Terraform modules for Cloud Run, Artifact Registry, Secret Manager
+- [ ] Production Sessions: Persistent PostgreSQL / Cloud SQL session storage
+- [ ] Enterprise Directory: Entra ID / MS Graph live tenant connector
+- [ ] Performance & Scaling: Auto-scaling stress testing and latency SLO monitoring

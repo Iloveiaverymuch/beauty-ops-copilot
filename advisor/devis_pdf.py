@@ -265,7 +265,7 @@ def _generate_fallback_pdf(data: dict[str, Any], dest_path: Path) -> Path:
     devis_id = "DEV-" + hashlib.sha256(f"{sku}|{days}|{time.time()}".encode()).hexdigest()[:8].upper()
 
     lines = [
-        f"L'OREAL / BEAUTY ADVISOR - DEVIS PROVISOIRE ({devis_id})",
+        f"BEAUTY OPS / CONSEILLERE LEA - DEVIS PROVISOIRE ({devis_id})",
         f"Article: {name} (SKU: {sku})",
         f"Duree prevue: {days} jours - Quantite recommandee: {units} unite(s)",
         f"Total TTC estime: {total_eur:.2f} EUR",

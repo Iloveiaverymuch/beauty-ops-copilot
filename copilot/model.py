@@ -35,7 +35,7 @@ def build_generate_config(role: str | None = None) -> types.GenerateContentConfi
     """Thinking level per agent ROLE: THINKING_LEVEL_<ROLE> (ROUTER|CATALOG|M365), falling back to THINKING_LEVEL.
     Values: MINIMAL|LOW|MEDIUM|HIGH (Gemini 3); unset/empty = model default.
 
-    Why per role (D2.2): LOW cut reasoning tokens 80-95% with equal core-eval quality and NO latency gain (latency is
+    Why per role: LOW cut reasoning tokens 80-95% with equal core-eval quality and NO latency gain (latency is
     provider-dominated), so it's a cost lever. But under LOW the M365 agent started ATTEMPTING the internal-authority
     exfil (2/3, blocked by policy; 0/3 at default). Low-risk agents (no writes, no untrusted content) get LOW; the
     agent that reads untrusted mail and can write keeps full reasoning as a defense layer."""
