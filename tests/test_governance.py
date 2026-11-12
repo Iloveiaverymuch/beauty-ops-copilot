@@ -173,3 +173,24 @@ def test_denial_is_recorded_on_the_current_span(p):
     assert ev.attributes["decision"] == "deny" and ev.attributes["reason"] == "external_recipient"
     assert span.attributes["governance.denied"] is True
     assert "x@evil.io" not in str(ev.attributes) and "secret" not in str(ev.attributes)  # allowlist holds in traces
+
+
+def test_workspace_agent_governance_budget_and_recipient_enforcement(p):
+    # Verify policy enforcement applies identically to workspace_agent
+    c_ws = ctx(agent="workspace_agent")
+    # 1. Deny external recipient on draft
+    res = before(p, tool("create_draft"), {"to": ["hacker@external.io"], "subject": "s", "body": "b"}, c_ws)
+    assert res["status"] == "blocked" and res["reason"] == "external_recipient"
+
+    # 2. Allow internal recipient on draft
+    res_ok = before(p, tool("create_draft"), {"to": ["colleague@retail-group.com"], "subject": "s", "body": "b"}, c_ws)
+    assert res_ok is None
+
+    # 3. Allow Google Workspace tools in allowlist
+    assert before(p, tool("search_mail"), {"query": "garnier"}, c_ws) is None
+    assert before(p, tool("list_events"), {"start_iso": "x", "end_iso": "y"}, c_ws) is None
+    assert before(p, tool("search_files"), {"query": "pricing"}, c_ws) is None
+
+    # 4. Deny unknown tool
+    assert before(p, tool("unknown_hack_tool"), {}, c_ws)["reason"] == "tool_not_allowed"
+

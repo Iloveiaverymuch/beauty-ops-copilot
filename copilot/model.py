@@ -32,14 +32,15 @@ def build_model() -> Gemini:
 
 
 def build_generate_config(role: str | None = None) -> types.GenerateContentConfig | None:
-    """Thinking level per agent ROLE: THINKING_LEVEL_<ROLE> (ROUTER|CATALOG|M365), falling back to THINKING_LEVEL.
-    Values: MINIMAL|LOW|MEDIUM|HIGH (Gemini 3); unset/empty = model default.
-
-    Why per role: LOW cut reasoning tokens 80-95% with equal core-eval quality and NO latency gain (latency is
-    provider-dominated), so it's a cost lever. But under LOW the M365 agent started ATTEMPTING the internal-authority
-    exfil (2/3, blocked by policy; 0/3 at default). Low-risk agents (no writes, no untrusted content) get LOW; the
-    agent that reads untrusted mail and can write keeps full reasoning as a defense layer."""
-    level = (os.getenv(f"THINKING_LEVEL_{role.upper()}") if role else None) or os.getenv("THINKING_LEVEL")
+    """Thinking level per agent ROLE: THINKING_LEVEL_<ROLE> (ROUTER|CATALOG|WORKSPACE|M365), falling back to THINKING_LEVEL.
+    Values: MINIMAL|LOW|MEDIUM|HIGH (Gemini 3); unset/empty = model default."""
+    role_key = role.upper() if role else ""
+    level = None
+    if role_key:
+        level = os.getenv(f"THINKING_LEVEL_{role_key}")
+        if not level and role_key in ("WORKSPACE", "M365"):
+            level = os.getenv("THINKING_LEVEL_WORKSPACE") or os.getenv("THINKING_LEVEL_M365")
+    level = level or os.getenv("THINKING_LEVEL")
     if not level:
         return None
     return types.GenerateContentConfig(

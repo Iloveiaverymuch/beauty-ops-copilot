@@ -1,0 +1,2 @@
+"""Google Workspace MCP package."""
+

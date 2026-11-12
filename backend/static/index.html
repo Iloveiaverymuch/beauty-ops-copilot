@@ -192,7 +192,7 @@
         <span>🌸</span> Conseillère Léa (Client)
       </button>
       <button class="tab-btn" id="tabCopilot" data-mode="copilot">
-        <span>💼</span> Copilot Opérations (M365 & Claims)
+        <span>💼</span> Copilot Opérations (Workspace & Claims)
         <span class="tab-badge" id="tabCopilotBadge" style="display:none;">0</span>
       </button>
     </div>
@@ -324,7 +324,7 @@ const render = {
     </table></div>`;
   },
   claim_reviewed: d => `<div class="box ${d.status === "approved" ? "info" : "warn"}"><h4>Arbitrage ${esc(d.claim_id)} : ${d.status === "approved" ? "Validé" : "Rejeté"}</h4>Décision : <b>${esc(d.decision)}</b>${d.refund_id ? ` · Remboursement ${esc(d.refund_id)}` : ""}${d.reason ? `<br>Motif : ${esc(d.reason)}` : ""}</div>`,
-  draft_created: d => `<div class="box info"><h4>✉️ Brouillon M365 créé</h4>Destinataire : <b>${esc(d.to || d.recipient)}</b><br>Objet : <i>${esc(d.subject)}</i></div>`,
+  draft_created: d => `<div class="box info"><h4>✉️ Brouillon Gmail créé</h4>Destinataire : <b>${esc(d.to || d.recipient)}</b><br>Objet : <i>${esc(d.subject)}</i></div>`,
 };
 
 async function downloadDevisPdf(data, btn) {
@@ -497,8 +497,8 @@ function switchEngine(mode) {
   } else {
     avatarIcon.textContent = "💼";
     appTitle.textContent = "Copilot Opérations & Service Client";
-    appSubtitle.textContent = "Google ADK 2.13 Multi-Agent · M365 Workspace & HITL Claims Review";
-    q.placeholder = "Consulter emails M365, lister réclamations, arbitrer un remboursement...";
+    appSubtitle.textContent = "Google ADK 2.13 Multi-Agent · Google Workspace & HITL Claims Review";
+    q.placeholder = "Consulter Gmail, agenda Google Calendar, documents Drive, réclamations...";
   }
 
   // 2. Restore chat history or show greeting
@@ -560,9 +560,9 @@ function greet(mode) {
     b.appendChild(c);
     log.appendChild(b);
   } else {
-    const b = el("msg bot", `${md("Bonjour. Je suis le Copilot Opérations internes. Je peux consulter vos emails & réunions M365, vérifier les réclamations clients en attente et valider les remboursements avec approbation humaine (HITL).")}<span class="msg-time">${timeStr()}</span>`);
+    const b = el("msg bot", `${md("Bonjour. Je suis le Copilot Opérations internes. Je peux consulter vos emails Gmail & réunions Google Calendar, vérifier les réclamations clients en attente et valider les remboursements avec approbation humaine (HITL).")}<span class="msg-time">${timeStr()}</span>`);
     const c = el("chips");
-    ["Quelles sont les réclamations en attente ?", "Consulte mes emails M365", "Vérifie le stock catalogue"].forEach(t => {
+    ["Quelles sont les réclamations en attente ?", "Consulte mes emails Gmail", "Vérifie le stock catalogue"].forEach(t => {
       const btn = document.createElement("button"); btn.className = "chip"; btn.textContent = t;
       btn.onclick = () => { c.remove(); ask(t); }; c.appendChild(btn);
     });

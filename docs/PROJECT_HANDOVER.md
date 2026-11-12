@@ -17,13 +17,14 @@ neutralization is authorized; GCP tracing is chosen instead of adding Langfuse. 
 
 - **Implemented:** 100% Pure Google ADK 2.13 Dual-Agent Architecture.
   - **Beauty Advisor (`beauty_advisor/`)**: Customer-facing B2C agent with Agentic RAG, product comparisons, deterministic devis/quantity estimation (`estimate_quantity`), and return claim submission guarded by ADK native `before_tool_callback` (`advisor/claims_guardrail.py`).
-  - **Internal Operations Copilot (`copilot/`)**: B2B agent with M365 tools, catalog lookup, and operational claims arbitration (`list_pending_claims`, `review_claim` with native HITL `require_confirmation=True`).
+  - **Internal Operations Copilot (`copilot/`)**: B2B agent with Google Workspace tools (`workspace_agent`), catalog lookup, and operational claims arbitration (`list_pending_claims`, `review_claim` with native HITL `require_confirmation=True`).
+  - **Google Workspace MCP Server (`workspace_mcp/`)**: Narrow enterprise contract exposing 4 tools (`search_mail`, `list_events`, `search_files`, `create_draft`) with Google OAuth scopes, static and Cloud Run S2S ID-token verifiers.
   - **Claims Engine (`advisor/claims.py`)**: Pure ADK SQLite claims engine with zero LangGraph dependencies. Thread-safe with re-entrant locks, idempotent refunds (`Idempotency-Key = claim_id`).
   - **Dual Web UI (`backend/static/index.html`)**: Sleek dual-tab interface toggling between Léa (B2C) and Copilot (B2B) with live SSE streaming, Human-In-The-Loop interactive approval cards, and governance block alerts.
   - **Defense-in-Depth Guardrails**: Google Cloud Model Armor prompt sanitization (`guardrails/model_armor.py`), ADK tool callbacks, and ADK platform governance plugin.
-  - **Test Suite**: **110 tests passing in ~2s**, 7/7 ADK offline evals passing, 5.0/5.0 Vertex AI judge.
-  - **Architecture Dossier & Demo**: 15-minute live demo script (`docs/DEMO_15MIN.md`) and 5-page PDF architecture dossier (`docs/beauty_ops_copilot_architecture_dossier.pdf`).
-- **Partial/demo:** M365 and retail data are fixtures; human handoff creates a ticket-shaped response only
+  - **Test Suite**: **120 tests passing in ~5s**, 7/7 ADK offline evals passing, 5.0/5.0 Vertex AI judge.
+  - **Architecture Dossier & Demo**: 15-minute live demo script (`docs/DEMO_15MIN.md`), 5-page PDF architecture dossier (`docs/beauty_ops_copilot_architecture_dossier.pdf`), and live Google Workspace OAuth roadmap (`docs/GOOGLE_WORKSPACE_LIVE_OAUTH.md`).
+- **Partial/demo:** Google Workspace and retail data are fixtures; human handoff creates a ticket-shaped response only
   (`advisor/tools.py:313`), with no queue, persistence or actual human notification. Claims photo input is a boolean,
   not an uploaded/verified photograph. Advisor endpoints have no customer/reviewer authentication.
 - **Added in continuation:** `/chat/sync` buffers the existing streaming path (`backend/app.py:171`).
@@ -31,7 +32,7 @@ neutralization is authorized; GCP tracing is chosen instead of adding Langfuse. 
   1. **ADK native eval (`evals/adk/`)**: 7 golden cases in `beauty_advisor.evalset.json`, custom deterministic evaluators
      in `custom_evaluators.py` (canaries, prompt leaks, citations, refund guard, product filter check), offline runner
      using `InMemoryRunner` with zero cloud calls in <1s. Integrated into pytest (`tests/test_adk_eval.py`, 14 regression tests).
-     Full test suite: **106 passed** in ~2.5s.
+     Full test suite: **120 passed** in ~5s.
   2. **Vertex AI Gen AI Evaluation (`evals/vertex/`)**: 4 Pointwise rubrics (Groundedness, Persona Quality, Safety Refusal,
      Claim Compliance) scoring 1-5 via Vertex AI `EvalTask` with Gemini 3.8 Flash, plus BigQuery continuous trace monitoring.
   3. **CI/CD (`.github/workflows/ci.yml`)**: GitHub Actions CI gate runs `pytest` (106 tests) and offline ADK eval (7/7) in ~21s.

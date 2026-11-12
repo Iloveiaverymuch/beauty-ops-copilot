@@ -34,7 +34,7 @@ def test_campaign_filters():
 
 def test_agent_builds():
     from copilot.agent import root_agent
-    assert root_agent.name == "copilot" and {a.name for a in root_agent.sub_agents} == {"m365_agent", "catalog_agent"}
+    assert root_agent.name == "copilot" and {a.name for a in root_agent.sub_agents} == {"workspace_agent", "catalog_agent"}
 
 
 def test_price_and_category_filters_in_tool_not_model():
@@ -59,5 +59,5 @@ def test_router_modes_wire_agenttool_only_in_agenttool_mode():
     from google.adk.tools import AgentTool
     from copilot.agent import build_root
     for mode, expect in (("transfer", False), ("agenttool", True)):
-        m365 = next(a for a in build_root(mode).sub_agents if a.name == "m365_agent")
-        assert any(isinstance(t, AgentTool) for t in m365.tools) is expect
+        agent = next(a for a in build_root(mode).sub_agents if a.name in ("workspace_agent", "m365_agent"))
+        assert any(isinstance(t, AgentTool) for t in agent.tools) is expect

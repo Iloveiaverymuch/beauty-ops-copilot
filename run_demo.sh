@@ -86,7 +86,7 @@ cat << "EOF"
 ================================================================================
   • Interface Web Dual-Agent : http://127.0.0.1:8000
       - Onglet 1 : Conseillère Léa (Client B2C : RAG, Devis PDF, Réclamations)
-      - Onglet 2 : Copilot Opérations (B2B : M365, Stock, Arbitrage HITL)
+      - Onglet 2 : Copilot Opérations (B2B : Google Workspace, Stock, Arbitrage HITL)
   • API Retail & Stock Mock  : http://127.0.0.1:8090
   • Google Cloud Trace       : https://console.cloud.google.com/traces
   • Script Démo 15 min       : docs/DEMO_15MIN.md

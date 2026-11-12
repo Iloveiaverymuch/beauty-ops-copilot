@@ -11,11 +11,11 @@ TOOL_LABELS = {  # progress line shown while a tool runs ("Recherche dans le cat
     "check_availability": "Vérification du stock en magasin", "delivery_options": "Calcul des options de livraison",
     "request_human_advisor": "Transfert vers un conseiller",
     "open_return_claim": "Ouverture du dossier de retour", "get_claim_status": "Recherche du dossier",
-    # Internal Operations Copilot tools
-    "search_mail": "Recherche dans les emails (M365)",
-    "list_events": "Consultation de l'agenda (M365)",
-    "search_files": "Recherche documentaire (M365)",
-    "create_draft": "Préparation du brouillon email",
+    # Internal Operations Copilot tools (Google Workspace)
+    "search_mail": "Recherche dans les emails (Gmail)",
+    "list_events": "Consultation de l'agenda (Google Calendar)",
+    "search_files": "Recherche documentaire (Google Drive)",
+    "create_draft": "Préparation du brouillon (Gmail Draft)",
     "catalog_lookup": "Consultation du catalogue officiel",
     "list_pending_claims": "Récupération des réclamations en attente",
     "review_claim": "Arbitrage et validation de la réclamation",

@@ -15,7 +15,7 @@ from google.adk.tools import AgentTool, FunctionTool
 
 from copilot.catalog_agent import build_catalog_agent
 from copilot.governance import GovernancePlugin
-from copilot.m365_agent import build_m365_agent, build_m365_toolsets
+from copilot.workspace_agent import build_workspace_agent, build_workspace_toolsets
 from copilot.tools.operations import list_pending_claims, review_claim
 from copilot.model import build_generate_config, build_model
 from copilot.observability import configure_audit_logging, setup_telemetry
@@ -23,13 +23,13 @@ from copilot.observability import configure_audit_logging, setup_telemetry
 _ROUTER_RULES = {
     "transfer": (
         "You are a router. You never answer yourself and never call tools.\n"
-        "- Workspace requests (mail, meetings, calendar, files, drafting emails, claims arbitration) -> transfer to m365_agent.\n"
+        "- Workspace requests (Gmail, meetings, Google Calendar, Google Drive files, drafting emails, claims arbitration) -> transfer to workspace_agent.\n"
         "- Product or campaign questions (SKUs, ingredients, prices, budgets) -> transfer to catalog_agent."
     ),
     "agenttool": (
         "You are a router. You never answer yourself and never call tools.\n"
-        "- Anything involving the workspace (mail, meetings, files, drafting emails, claims arbitration), INCLUDING requests that also "
-        "need product or campaign facts -> transfer to m365_agent (it can look up the catalog and arbitrate claims itself).\n"
+        "- Anything involving the workspace (Gmail, meetings, Google Calendar, Google Drive files, drafting emails, claims arbitration), "
+        "INCLUDING requests that also need product or campaign facts -> transfer to workspace_agent (it can look up the catalog and arbitrate claims itself).\n"
         "- Pure product or campaign questions with no workspace action -> transfer to catalog_agent."
     ),
 }
@@ -63,7 +63,7 @@ def build_root(mode: str | None = None, toolset=None) -> Agent:
         description="Beauty Ops Copilot router.",
         instruction=_ROUTER_RULES[mode],
         sub_agents=[
-            build_m365_agent(toolset=toolset or build_m365_toolsets(), extra_tools=extra),
+            build_workspace_agent(toolset=toolset or build_workspace_toolsets(), extra_tools=extra),
             build_catalog_agent(),
         ],
     )
