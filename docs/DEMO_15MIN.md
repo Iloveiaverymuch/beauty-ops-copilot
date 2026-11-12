@@ -131,7 +131,7 @@ Cliquez sur l'onglet **💼 Copilot Opérations (Workspace & Claims)**.
     **🛡️ Action bloquée par la Gouvernance ADK**
     *Motif : Le domaine de messagerie gmail.com n'est pas autorisé par la politique d'entreprise.*
 - **Message clé à dire :**
-  > *"Voici notre politique de gouvernance : même si le LLM hallucinait ou tentait d'écrire à l'extérieur, le `GovernancePlugin` ADK coupe l'exécution au niveau de la plateforme avant même que l'outil ne s'exécute."*
+  > *"Voici notre politique de gouvernance : en amont, l'architecture prévoit Google Cloud Model Armor (avec fallback regex déterministe en environnement local) pour assainir les entrées. Et au niveau de l'orchestration, le `GovernancePlugin` ADK coupe l'exécution au niveau de la plateforme avant même que l'outil ne s'exécute."*
 
 ---
 
@@ -182,10 +182,10 @@ Basculez sur la console Google Cloud ou montrez les fichiers d'infrastructure :
     > *"En production, Cloud Run instancie nos runners ADK sans état. Si une instance redémarre ou que le trafic explose, le client ne perd rien : sa session est rechargée depuis Cloud SQL ou Vertex AI Session Service."*
 
 - **Google BigQuery (Analytics & Suivi de la Performance) :**
-  - Montrez la table BigQuery et la requête type de suivi analytique :
-  - Requête SQL mesurant le coût moyen par conversation (`cost_eur`), le taux d'escalade vers un conseiller humain (`escalated`), et la dérive de latence du premier token (TTFT).
+  - Montrez la structure JSON des logs d'audit et KPI générés (`kpi.jsonl`) :
+  - Événements structurés mesurant le coût estimé par conversation, le taux d'escalade vers un conseiller, et les motifs de réclamation.
   - *Message clé :*
-    > *"Les KPI conversationnels alimentent en continu notre table BigQuery. Cela permet aux équipes data et produit de suivre la dérive du modèle (drift), d'optimiser les coûts de tokens et d'alimenter les tableaux de bord Looker de la direction."*
+    > *"Les KPI conversationnels sont persistés au format JSON structuré dans `kpi.jsonl`, selon un schéma directement synchronisé par streaming ou batch vers Google BigQuery pour alimenter les tableaux de bord Looker de la direction et suivre la dérive (drift)."*
 
 ---
 
@@ -210,7 +210,7 @@ Ouvrez le dossier d'architecture PDF (`docs/beauty_ops_copilot_architecture_doss
 | Question du Jury | Réponse Recommandée (Tech Lead) |
 | :--- | :--- |
 | **Pourquoi ADK et pas LangGraph ?** | *"LangGraph traite les agents comme des graphes de nœuds génériques où la gouvernance doit être recodée à la main. Google ADK 2.13 apporte nativement la gestion de plugins de gouvernance, l'intégration OpenTelemetry conforme GCP, le Context Caching Gemini automatique sur les transferts d'agents, et un Human-In-The-Loop intégré au protocole d'événements. En environnement GCP/Vertex AI, ADK est l'outil souverain et le plus efficient."* |
-| **Comment gérez-vous la latence du premier token ?** | *"Grâce au streaming SSE natif (`StreamingMode.SSE`) configuré sur le `RunConfig` ADK. L'utilisateur reçoit les premiers tokens en 1 à 2 secondes au lieu d'attendre la complétion intégrale, ce qui réduit drastiquement la latence perçue."* |
-| **Comment éviter les surcoûts lors des transferts multi-agents ?** | *"Lorsqu'un routeur transfère vers un sous-agent, le system prompt change. Dans notre configuration ADK, nous activons `ContextCacheConfig` avec un TTL de 30 minutes, ce qui permet à Vertex AI de réutiliser les préfixes mis en cache et de réduire la facture de 50 à 75% sur les conversations longues."* |
+| **Comment gérez-vous la latence du premier token ?** | *"Sur une architecture multi-agents avec appels d'outils, la latence est dominée par le provider (le round-trip des outils puis la complétion). Pour offrir une excellente expérience utilisateur, nous activons le streaming SSE natif (`StreamingMode.SSE`) configuré sur le `RunConfig` ADK : dès que la synthèse finale démarre, les tokens arrivent en continu au lieu d'attendre la complétion intégrale, ce qui réduit drastiquement la latence perçue."* |
+| **Comment éviter les surcoûts lors des transferts multi-agents ?** | *"Lorsqu'un routeur transfère vers un sous-agent, le system prompt change. Dans notre configuration ADK, nous activons `ContextCacheConfig` avec un TTL de 30 minutes, ce qui permet à Vertex AI de réutiliser les préfixes mis en cache et de réduire significativement la consommation de tokens sur les sessions longues récurrentes."* |
 | **Comment stockez-vous l'état en production ?** | *"En local pour la démo, nous utilisons `SqliteSessionService`. Pour la production Cloud Run, nous basculons simplement sur `DatabaseSessionService` branché sur Google Cloud SQL (PostgreSQL), ou sur `VertexAiSessionService` pour une gestion entièrement managée."* |
 

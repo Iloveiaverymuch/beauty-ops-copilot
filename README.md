@@ -4,8 +4,8 @@
 
 **Beauty Ops Copilot** is an enterprise-grade multi-agent retail platform built with **Google ADK 2.13**, **Vertex AI Gemini 3.8 Flash**, and **Model Context Protocol (MCP)**. It unifies customer engagement and back-office operations into a single coherent system:
 
-- **🌸 Léa (Customer Skincare & Quote Advisor — B2C):** An Agentic RAG chatbot that answers skincare, ingredient, and policy questions grounded strictly in validated catalog data with verifiable citations (zero hallucinations). It calculates deterministic routine budgets (`estimate_quantity`), generates official print-ready PDF quotes on the fly, and initiates customer return claims guarded by native ADK lifecycle callbacks (`before_tool_callback`).
-- **💼 Operations Copilot (Internal Back-Office Assistant — B2B):** A workplace copilot connected to Microsoft 365 (Outlook, Calendar, OneDrive) via MCP, performing authoritative catalog lookups and arbitrating customer claims under deterministic code-enforced governance (call/write budgets, corporate recipient allowlist) with native Human-in-the-Loop approval (`require_confirmation=True`).
+- **🌸 Léa (Customer Skincare & Quote Advisor — B2C):** An Agentic RAG chatbot that answers skincare, ingredient, and policy questions grounded strictly in validated catalog data with verifiable citations (groundedness verified by automated evaluation gates). It calculates deterministic routine budgets (`estimate_quantity`), generates official print-ready PDF quotes on the fly, and initiates customer return claims guarded by native ADK lifecycle callbacks (`before_tool_callback`).
+- **💼 Operations Copilot (Internal Back-Office Assistant — B2B):** A workplace copilot connected to Google Workspace (Gmail, Calendar, Drive) via MCP, performing authoritative catalog lookups and arbitrating customer claims under deterministic code-enforced governance (call/write budgets, corporate recipient allowlist) with native Human-in-the-Loop approval (`require_confirmation=True`).
 
 ---
 
@@ -53,8 +53,8 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 
 * [**15-Minute Live Interview Demo Script**](docs/DEMO_15MIN.md) — Chronological walkthrough with live GCP console inspection.
 * [**5-Page Architecture Dossier (PDF)**](docs/beauty_ops_copilot_architecture_dossier.pdf) — Complete executive engineering overview.
-* [**ADR-001: Pure ADK Architecture vs LangGraph**](docs/ADR-001-adk-vs-langgraph.md) — Why ADK was selected over auxiliary frameworks.
-* [**ADR-002: Deterministic Governance & Human-in-the-Loop**](docs/ADR-002-callbacks-guardrails-hitl.md) — ADK callbacks vs prompt-only guardrails.
+* [**ADR-001: Pure ADK Architecture & Router Patterns**](docs/ADR-001.md) — Why ADK was selected and how agent composition is structured.
+* [**ADR-002: Deterministic Governance & Two-Tier Evaluation**](docs/ADR-002.md) — ADK callbacks, offline behavioral gate, and Vertex AI Gen AI Evaluation.
 * [**ADK Evaluation Suite**](evals/adk/README.md) & [**Vertex AI Evaluation**](evals/vertex/README.md) — Automated quality gates.
 
 ---
@@ -67,7 +67,7 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **Advisor Tools** | `advisor/tools.py` | Catalog search, product comparison, deterministic quantity and budget estimation |
 | **Quote PDF Engine** | `advisor/devis_pdf.py` | Official quotation PDF generator (A4 print-ready with mandatory legal disclaimers) |
 | **Claims Engine** | `advisor/claims.py` | Thread-safe SQLite claims engine with idempotent refund execution (`Idempotency-Key`) |
-| **Claims Guardrail** | `advisor/claims_guardrail.py` | Deterministic hygiene policy guardrail intercepting claims into `pending_review` |
+| **Claims Guardrail** | `beauty_advisor/agent.py` | Deterministic hygiene policy callback (`guardrail_before_tool`) intercepting out-of-policy claims |
 | **Internal Copilot** | `copilot/agent.py` | Root operations router coordinating specialist agents |
 | **Workspace Agent** | `copilot/workspace_agent.py` | Google Workspace specialist (Gmail, Calendar, Drive) with read/write separation |
 | **Governance** | `copilot/governance.py` | Platform `GovernancePlugin`: tool allowlists, turn budgets, corporate domain allowlist |
@@ -144,10 +144,10 @@ The platform enforces defense-in-depth where **code guarantees security before h
 
 | Capability Block | Method | Measured Result |
 |---|---|---|
-| **RAG Citations** | Discovery Engine Rerank | Zero hallucinations; strict source grounding on validated knowledge base |
+| **RAG Citations** | Discovery Engine Rerank | Groundedness verified by automated evaluation gates (5.0/5.0 Vertex Judge); strict citations |
 | **Devis Estimation** | Deterministic Pydantic Tool | 100% arithmetical accuracy; print-ready PDF generated with legal disclaimers |
 | **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked |
 | **Exfiltration Defense** | Corporate Domain Allowlist | 4/4 external exfiltration attempts blocked by code before human review |
 | **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal |
-| **CI/CD Quality Gate** | GitHub Actions Pipeline | 111 unit tests + 7 deterministic ADK benchmarks executed in <25s |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 120 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
 | **Cloud Evaluation** | Vertex AI Gen AI Eval | 7/7 live cases passed, 5.0/5.0 Vertex LLM judge rating across all rubrics |
