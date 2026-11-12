@@ -1,8 +1,8 @@
 """Root router. Two composition modes, selectable via env ROUTER_MODE:
 
-  transfer   root --transfer--> m365_agent | catalog_agent        (LLM-driven handoff; the callee OWNS the turn)
-  agenttool  root --transfer--> m365_agent  (+ catalog via AgentTool: called like a function, control RETURNS)
-             root --transfer--> catalog_agent                        (pure catalog questions)
+  transfer   root --transfer--> workspace_agent | catalog_agent        (LLM-driven handoff; the callee OWNS the turn)
+  agenttool  root --transfer--> workspace_agent  (+ catalog via AgentTool: called like a function, control RETURNS)
+             root --transfer--> catalog_agent                          (pure catalog questions)
 
 Rule of thumb: transfer = "you take over the conversation"; AgentTool = "do this sub-task and report back".
 """

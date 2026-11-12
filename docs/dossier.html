@@ -214,9 +214,9 @@
         </ul>
       </div>
       <div class="card">
-        <h3 style="color:#1e40af;">💼 Agent Back : Copilot Opérations (M365 & Claims B2B)</h3>
+        <h3 style="color:#1e40af;">💼 Agent Back : Copilot Opérations (Workspace & Claims B2B)</h3>
         <ul>
-          <li><b>Triage Collaboratif Workspace :</b> Recherche d'emails, réunions et fichiers internes via protocoles M365 sécurisés.</li>
+          <li><b>Triage Collaboratif Workspace :</b> Recherche d'emails Gmail, réunions Google Calendar et fichiers Drive via MCP.</li>
           <li><b>Arbitrage des Remboursements :</b> Récupération des litiges en attente (<code>list_pending_claims</code>) pour validation.</li>
           <li><b>Human-In-The-Loop (HITL) Natif :</b> Suspension d'exécution et accord obligatoire d'un gestionnaire pour tout virement.</li>
         </ul>
@@ -249,7 +249,7 @@
         <!-- B2B Section -->
         <rect x="510" y="25" width="225" height="120" rx="6" fill="#fefce8" stroke="#fde047" stroke-width="1.5"/>
         <text x="520" y="45" font-family="sans-serif" font-size="11" font-weight="bold" fill="#854d0e">Portail Opérations (B2B)</text>
-        <text x="520" y="65" font-family="sans-serif" font-size="9" fill="#713f12">• Workspace Tools (M365 Mail/Cal)</text>
+        <text x="520" y="65" font-family="sans-serif" font-size="9" fill="#713f12">• Workspace Tools (Gmail/Calendar/Drive)</text>
         <text x="520" y="82" font-family="sans-serif" font-size="9" fill="#713f12">• Arbitrage Réclamation en attente</text>
         <text x="520" y="99" font-family="sans-serif" font-size="9" fill="#713f12">• Envoi Remboursement Idempotent</text>
         <rect x="520" y="110" width="205" height="22" rx="4" fill="#fef08a" stroke="#eab308"/>
@@ -312,7 +312,7 @@
 
         <rect x="340" y="92" width="200" height="58" rx="4" fill="#ffffff" stroke="#86efac"/>
         <text x="348" y="106" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#166534">App 2 : Copilot Router</text>
-        <text x="348" y="120" font-family="sans-serif" font-size="7.5" fill="#15803d">Sub-agent 1: m365_agent (M365 Tools)</text>
+        <text x="348" y="120" font-family="sans-serif" font-size="7.5" fill="#15803d">Sub-agent 1: workspace_agent (Workspace Tools)</text>
         <text x="348" y="133" font-family="sans-serif" font-size="7.5" fill="#15803d">Sub-agent 2: catalog_agent (Catalog RAG)</text>
         <text x="348" y="145" font-family="sans-serif" font-size="7.5" fill="#15803d">GovernancePlugin &amp; HITL review_claim</text>
 
@@ -357,7 +357,7 @@
           <td><b>AgentTool</b> (Sous-traitance)</td>
           <td>L'agent principal invoque un sous-agent comme une fonction typée classique et attend son résultat.</td>
           <td>Le sous-agent s'exécute isolément, synthétise sa donnée, et <b>le contrôle revient</b> à l'appelant.</td>
-          <td>Questions composites (ex: l'agent M365 cherche des infos dans le catalogue pour rédiger un email d'équipe).</td>
+          <td>Questions composites (ex: l'agent Workspace cherche des infos dans le catalogue pour rédiger un email d'équipe).</td>
         </tr>
       </tbody>
     </table>
@@ -690,7 +690,7 @@
       <div class="card">
         <h3 style="color:#854d0e;">📂 3. gateway/ &amp; infra/</h3>
         <p style="font-size:8pt;">
-          Adaptateurs d'entrée et de sortie : API FastAPI (SSE Streaming), connecteurs ERP / PIM SAP, clients M365, base Cloud SQL et métriques OTel Cloud Trace.
+          Adaptateurs d'entrée et de sortie : API FastAPI (SSE Streaming), connecteurs ERP / PIM SAP, clients Google Workspace, base Cloud SQL et métriques OTel Cloud Trace.
         </p>
       </div>
     </div>

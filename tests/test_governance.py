@@ -13,7 +13,7 @@ def user_event(eid, text=None):
     return SimpleNamespace(id=eid, author="user", content=SimpleNamespace(parts=[part]))
 
 
-def ctx(agent="m365_agent", state=None, confirmed=None, events=None, invocation_id="inv-1"):
+def ctx(agent="workspace_agent", state=None, confirmed=None, events=None, invocation_id="inv-1"):
     events = events if events is not None else [user_event("turn-1", "please draft")]
     return SimpleNamespace(agent_name=agent, state=state if state is not None else {}, invocation_id=invocation_id,
                            tool_confirmation=confirmed, session=SimpleNamespace(events=events))
@@ -45,7 +45,7 @@ def test_deny_by_default_unknown_agent(p):
     assert before(p, tool("search_mail"), {}, ctx(agent="rogue_agent"))["reason"] == "tool_not_allowed"
 
 
-def test_catalog_agent_cannot_touch_m365(p):
+def test_catalog_agent_cannot_touch_workspace(p):
     assert before(p, tool("search_mail"), {"query": "x"}, ctx(agent="catalog_lookup"))["reason"] == "tool_not_allowed"
 
 
@@ -97,7 +97,7 @@ def test_failed_write_releases_reservation(p):
 def test_tool_call_budget(p):
     from copilot.governance import POLICY
     c = ctx()
-    for _ in range(POLICY["m365_agent"].max_calls):
+    for _ in range(POLICY["workspace_agent"].max_calls):
         assert before(p, tool("search_mail"), {"query": "x"}, c) is None
     assert before(p, tool("search_mail"), {"query": "x"}, c)["reason"] == "tool_budget_exceeded"
 
@@ -110,7 +110,7 @@ def test_resumed_call_after_approval_not_double_counted(p):
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # 6th call, counted
     c.tool_confirmation = SimpleNamespace(confirmed=True)
     assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # resumed, not counted
-    assert c.state["gov:turn-1:m365_agent:calls"] == 6
+    assert c.state["gov:turn-1:workspace_agent:calls"] == 6
 
 
 def test_confidential_taint_recorded(p):

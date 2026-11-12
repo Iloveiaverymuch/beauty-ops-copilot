@@ -9,7 +9,7 @@ comparison triggers one call per product; a policy question triggers search_know
 
 Why one agent and not a multi-agent router here: 4 tools in one domain fit in one context; a router adds a
 model call (~latency) per turn for no gain. The internal copilot (copilot/) is multi-agent because it spans
-two domains with different risk levels (M365 writes vs catalog reads).
+two domains with different risk levels (Workspace writes vs catalog reads).
 """
 import os
 from pathlib import Path
@@ -180,7 +180,7 @@ def _model() -> Gemini:
 def _generate_config() -> types.GenerateContentConfig | None:
     """THINKING_LEVEL_ADVISOR=MINIMAL|LOW|MEDIUM|HIGH (unset = model default). Measured first: the model is 85-100%
     of turn latency, ~250-1000 thinking tokens per call. Low-risk agent (no writes) -> a candidate for LOW, but only
-    if the safety cases (A6-A9) still pass: on the internal copilot, LOW made the M365 agent ATTEMPT an exfil."""
+    if the safety cases (A6-A9) still pass: on the internal copilot, LOW made the workspace agent ATTEMPT an exfil."""
     level = os.getenv("THINKING_LEVEL_ADVISOR")
     if not level:
         return None

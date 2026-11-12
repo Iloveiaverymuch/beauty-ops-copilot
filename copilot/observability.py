@@ -13,7 +13,7 @@ create their TracerProvider before loading the agent, and Google's Telemetry API
 resource lacks `gcp.project_id`; a provider's resource can't be changed afterwards. With --otel_to_cloud ADK builds
 the provider with the proper GCP resource. Without it, the GCP batch exporter returns 400 Bad Request.
 
-PRIVACY: prompts/responses (= M365 mail bodies here) are replaced by "<elided>" unless
+PRIVACY: prompts/responses (= email/file bodies here) are replaced by "<elided>" unless
 OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true. We force the safe default explicitly.
 """
 import logging

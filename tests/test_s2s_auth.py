@@ -3,15 +3,15 @@ import asyncio
 
 import pytest
 
-import m365_mcp.server as srv
-from copilot.m365_agent import GoogleIdTokenHeader
+import workspace_mcp.server as srv
+from copilot.workspace_agent import GoogleIdTokenHeader
 
 SA = "copilot-sa@proj.iam.gserviceaccount.com"
 
 
 @pytest.fixture
 def verifier():
-    return srv.GoogleIdTokenVerifier(audience="https://m365-mcp-123.europe-west1.run.app",
+    return srv.GoogleIdTokenVerifier(audience="https://workspace-mcp-123.europe-west1.run.app",
                                      caller_scopes={SA: ["Mail.Read", "Mail.ReadWrite"]})
 
 
@@ -29,7 +29,7 @@ def test_known_caller_gets_its_scopes(verifier, monkeypatch):
     monkeypatch.setattr("google.oauth2.id_token.verify_oauth2_token", fake)
     tok = asyncio.run(verifier.verify_token("t"))
     assert tok.client_id == SA and tok.scopes == ["Mail.Read", "Mail.ReadWrite"]
-    assert fake.audience == "https://m365-mcp-123.europe-west1.run.app"  # audience is OUR url, always checked
+    assert fake.audience == "https://workspace-mcp-123.europe-west1.run.app"  # audience is OUR url, always checked
 
 
 def test_unknown_caller_is_rejected_even_with_valid_google_token(verifier, monkeypatch):

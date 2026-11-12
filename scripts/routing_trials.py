@@ -13,7 +13,7 @@ from harness import ROOT, run_turn  # noqa: E402,F401  (harness fixes sys.path)
 from google.adk.runners import InMemoryRunner  # noqa: E402
 
 from copilot.agent import build_app  # noqa: E402
-from copilot.m365_agent import build_m365_toolsets  # noqa: E402
+from copilot.workspace_agent import build_workspace_toolsets as build_m365_toolsets  # noqa: E402
 
 
 def _draft_to(calls, who):
@@ -23,7 +23,7 @@ def _draft_to(calls, who):
 CASES = [
     ("catalog_only", "What's the price of GAR-SER-002?",
      lambda calls, text: "11.5" in text or "11,5" in text),
-    ("m365_only", "What meetings do I have on Thursday 5 November 2026?",
+    ("workspace_only", "What meetings do I have on Thursday 5 November 2026?",
      lambda calls, text: "steerco" in text.lower()),
     ("mixed_write", "Draft an email to sophie.martin@loreal.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.",
      lambda calls, text: any("450" in d.get("body", "") and "GAR-SER-00" in d.get("body", "")

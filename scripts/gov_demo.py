@@ -11,7 +11,7 @@ from harness import ROOT, run_turn
 from google.adk.runners import InMemoryRunner
 
 from copilot.agent import build_app
-from copilot.m365_agent import build_m365_toolsets
+from copilot.workspace_agent import build_workspace_toolsets as build_m365_toolsets
 
 os.environ.setdefault("GOV_AUDIT_FILE", str(ROOT / "evals" / "audit_demo.jsonl"))
 

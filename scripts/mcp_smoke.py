@@ -1,5 +1,5 @@
-"""D1.2 smoke test: talk to the m365 MCP server exactly like the agent will (ADK McpToolset).
-Start the server first:  uv run python -m m365_mcp.server
+"""Smoke test: talk to the Workspace MCP server exactly like the agent will (ADK McpToolset).
+Start the server first:  uv run python -m workspace_mcp.server
 Then:                    uv run python scripts/mcp_smoke.py [token]
 """
 import asyncio
@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 
 from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 
-URL = os.environ.get("M365_MCP_URL", "http://127.0.0.1:8080/mcp")
+URL = os.environ.get("WORKSPACE_MCP_URL") or os.environ.get("M365_MCP_URL", "http://127.0.0.1:8080/mcp")
 TOKEN = sys.argv[1] if len(sys.argv) > 1 else "dev-agent-token"
 
 

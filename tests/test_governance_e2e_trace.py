@@ -42,7 +42,7 @@ def test_denial_lands_on_execute_tool_span_through_real_runner():
         tp = TracerProvider()
         trace.set_tracer_provider(tp)
     tp.add_span_processor(SimpleSpanProcessor(EXPORTER))
-    runner = InMemoryRunner(app=App(name="t", root_agent=Agent(name="m365_agent", model=_FakeLlm(), instruction="x",
+    runner = InMemoryRunner(app=App(name="t", root_agent=Agent(name="workspace_agent", model=_FakeLlm(), instruction="x",
                                                                tools=[create_draft]), plugins=[GovernancePlugin()]))
 
     async def go():
