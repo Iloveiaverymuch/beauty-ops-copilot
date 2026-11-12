@@ -36,8 +36,7 @@ def ui_event_for_tool_result(name: str, resp: dict) -> dict | None:
     if name in ("check_availability", "delivery_options"):
         return {"event": "availability" if name == "check_availability" else "delivery", "data": resp}
     if name == "search_knowledge":
-        return {"event": "sources", "data": {"status": status, "passages": [
-            {"citation": p["citation"], "title": p["title"], "section": p["section"]} for p in resp.get("passages", [])]}}
+        return None  # RAG grounding is conveyed through model prose; omitted from UI widgets
     if name in ("open_return_claim", "get_claim_status") and resp.get("claim_id"):
         return {"event": "claim", "data": resp}
     if name == "request_human_advisor" and status == "ok":

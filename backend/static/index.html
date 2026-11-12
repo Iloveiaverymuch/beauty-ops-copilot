@@ -88,6 +88,9 @@
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   .user { align-self: flex-end; background: var(--user); padding: 9px 14px; border-radius: 14px 14px 2px 14px; }
   .bot { align-self: flex-start; max-width: 92%; }
+  .msg-time { font-size: 10.5px; color: var(--muted); margin-top: 4px; display: block; opacity: 0.85; }
+  .user .msg-time { text-align: right; color: #406d5a; }
+  body[data-engine="copilot"] .user .msg-time { color: #3730a3; }
   .bubble { padding: 2px 0; }
   .bubble p { margin: 0 0 8px; } .bubble ul { margin: 4px 0 8px 18px; padding: 0; }
   .cite { font-size: 11px; color: var(--brand); background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; }
@@ -194,8 +197,8 @@
       </button>
     </div>
     <div class="ops-strip" id="opsStrip">
-      <span id="opsStripText">📦 <b id="pendingCount">1</b> réclamation en attente d'arbitrage</span>
-      <button id="btnCheckPending">Consulter les réclamations →</button>
+      <span id="opsStripText">📋 Vous avez <b>1</b> demande en cours</span>
+      <button id="btnCheckPending">Suivre mon dossier</button>
     </div>
   </header>
 
@@ -231,6 +234,7 @@ const tabCopilotBadge = document.getElementById("tabCopilotBadge");
 const eur = v => v == null ? "" : v.toFixed(2).replace(".", ",") + " €";
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = v => Array.isArray(v) ? v.join(", ") : typeof v === "boolean" ? (v ? "oui" : "non") : typeof v === "number" ? String(v).replace(".", ",") : v;
+const timeStr = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
 function md(text) {
   const lines = esc(text).split("\n"); let html = "", inList = false;
@@ -264,16 +268,27 @@ const render = {
       ${d.differences.map(r => `<tr><td>${ATTR[r.attribute] || r.attribute}</td>${skus.map(s => `<td>${esc(r.attribute.startsWith("price") ? eur(r.values[s]) : r.attribute === "size_ml" ? r.values[s] + " ml" : fmt(r.values[s]))}</td>`).join("")}</tr>`).join("")}</table></div>`;
   },
   estimate: d => {
-    const estId = 'est_' + Math.random().toString(36).slice(2, 9);
-    window[estId] = d;
+    const qParams = new URLSearchParams({
+      sku: d.sku || 'SKU-PROV',
+      name: d.name || 'Produit sélectionné',
+      days: d.days || 30,
+      units: d.units || 1,
+      size_ml: d.size_ml || 50,
+      total_eur: d.total_eur || 0,
+      savings_eur: d.savings_eur || 0,
+      usage_ml_per_day: d.usage_ml_per_day || 1
+    }).toString();
     return `<div class="box" style="border-left: 4px solid #2d6a4f;">
       <h4>📋 Estimation de devis</h4>
       <b>${esc(d.name)}</b> · Pour <b>${d.days} jours</b> (${String(d.usage_ml_per_day).replace(".", ",")} ml/jour)<br>
       <b>${d.units} unité${d.units > 1 ? "s" : ""}</b> de ${d.size_ml} ml · Total estimé : <b>${eur(d.total_eur)}</b>${d.savings_eur > 0 ? ` <span style="color:#15803d;">(économie ${eur(d.savings_eur)})</span>` : ""}
       <div style="margin-top:10px;">
-        <button class="chip" style="background:#2d6a4f; color:#fff; border:none; font-weight:600; padding:6px 12px; cursor:pointer;" onclick="downloadDevisPdf(window['${estId}'], this)">
+        <a class="chip" style="background:#2d6a4f; color:#fff; border:none; font-weight:600; padding:7px 14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; border-radius:6px;"
+           href="/devis/pdf?${qParams}"
+           download="Devis_Provisoire_${d.days || 30}j.pdf"
+           target="_blank">
           📄 Télécharger le devis officiel (PDF)
-        </button>
+        </a>
       </div>
       <div style="font-size:11px; color:#64748b; margin-top:6px; font-style:italic;">
         * Devis provisoire indicatif — une vraie commande doit être passée pour confirmer les prix finaux.
@@ -287,7 +302,7 @@ const render = {
       `<div class="box"><h4>Livraison ${esc(d.postcode)}</h4>${(d.options || []).map(o => o.type === "express"
         ? `Express : le ${esc(o.eta)} · ${eur(o.fee_eur)} (avant ${esc(o.order_before)})`
         : `Standard : du ${esc(o.eta_from)} au ${esc(o.eta_to)} · ${eur(o.fee_eur)}, offerte dès ${eur(o.free_from_eur)}`).join("<br>")}</div>`,
-  sources: d => (d.passages || []).length ? `<div class="sources">Sources RAG : ${d.passages.map(p => esc(p.title + " › " + p.section)).join(" · ")}</div>` : "",
+  sources: d => "",
   claim: d => {
     const isPending = d.status === "pending_review";
     const isRefunded = d.status === "refunded";
@@ -313,30 +328,29 @@ const render = {
 };
 
 async function downloadDevisPdf(data, btn) {
+  if (!data) return;
   const oldText = btn.innerHTML;
   btn.innerHTML = "⏳ Génération du devis...";
   btn.disabled = true;
   try {
-    const res = await fetch("/devis/pdf", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error("Erreur génération PDF");
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Devis_Provisoire_${data.days || 30}j.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
+    const qParams = new URLSearchParams({
+      sku: data.sku || 'SKU-PROV',
+      name: data.name || 'Produit sélectionné',
+      days: data.days || 30,
+      units: data.units || 1,
+      size_ml: data.size_ml || 50,
+      total_eur: data.total_eur || 0,
+      savings_eur: data.savings_eur || 0,
+      usage_ml_per_day: data.usage_ml_per_day || 1
+    }).toString();
+    window.open(`/devis/pdf?${qParams}`, "_blank");
   } catch (e) {
     alert("Impossible de générer le devis PDF pour le moment.");
   } finally {
-    btn.innerHTML = oldText;
-    btn.disabled = false;
+    setTimeout(() => {
+      btn.innerHTML = oldText;
+      btn.disabled = false;
+    }, 1500);
   }
 }
 
@@ -426,7 +440,7 @@ async function processStream(resp, bubble, progress, extras, bot) {
       } else if (ev === "done") {
         progress.style.display = "none";
         const m = el("meta", `<button title="Utile">👍</button><button title="Pas utile">👎</button>
-          <span>${(data.latency_ms/1000).toFixed(1)} s · 1er mot ${data.ttft_ms ? (data.ttft_ms/1000).toFixed(1) + " s" : "-"} · modèle ${(data.model_ms/1000).toFixed(1)} s / outils ${(data.tools_ms/1000).toFixed(1)} s · ${data.tokens_in}+${data.tokens_out} tokens${data.tools.length ? " · " + data.tools.join(", ") : ""}</span>`);
+          <span><b>${timeStr()}</b> · ${(data.latency_ms/1000).toFixed(1)} s · 1er mot ${data.ttft_ms ? (data.ttft_ms/1000).toFixed(1) + " s" : "-"} · modèle ${(data.model_ms/1000).toFixed(1)} s / outils ${(data.tools_ms/1000).toFixed(1)} s · ${data.tokens_in}+${data.tokens_out} tokens${data.tools.length ? " · " + data.tools.join(", ") : ""}</span>`);
         m.querySelectorAll("button").forEach((b, k) => b.onclick = async () => {
           m.querySelectorAll("button").forEach(x => x.disabled = true); b.classList.add("on");
           await fetch("/feedback", {method: "POST", headers: {"Content-Type": "application/json"},
@@ -444,7 +458,7 @@ async function processStream(resp, bubble, progress, extras, bot) {
 
 async function ask(text) {
   if (!text.trim()) return;
-  log.appendChild(el("msg user", esc(text)));
+  log.appendChild(el("msg user", `${esc(text)}<span class="msg-time">${timeStr()}</span>`));
   const bot = el("msg bot"), bubble = el("bubble"), extras = el(""), progress = el("progress");
   bot.append(progress, bubble, extras); log.appendChild(bot);
   progress.textContent = currentEngine === "copilot" ? "Copilot analyse la demande..." : "Léa réfléchit...";
@@ -537,7 +551,7 @@ async function checkPendingClaims() {
 
 function greet(mode) {
   if (mode === "advisor") {
-    const b = el("msg bot", md("Bonjour ! Je suis Léa. Je peux vous conseiller des soins sur-mesure, calculer votre devis de routine, comparer des produits et ouvrir un dossier de retour si besoin. Que souhaitez-vous faire ?"));
+    const b = el("msg bot", `${md("Bonjour ! Je suis Léa. Je peux vous conseiller des soins sur-mesure, calculer votre devis de routine, comparer des produits et ouvrir un dossier de retour si besoin. Que souhaitez-vous faire ?")}<span class="msg-time">${timeStr()}</span>`);
     const c = el("chips");
     ["Devis crème pour 90 jours", "Comparer sérum éclat et anti-âge", "Conseille-moi un nettoyant peau sensible", "Retourner ma commande CMD-1002 (réaction allergique)"].forEach(t => {
       const btn = document.createElement("button"); btn.className = "chip"; btn.textContent = t;
@@ -546,7 +560,7 @@ function greet(mode) {
     b.appendChild(c);
     log.appendChild(b);
   } else {
-    const b = el("msg bot", md("Bonjour. Je suis le Copilot Opérations internes. Je peux consulter vos emails & réunions M365, vérifier les réclamations clients en attente et valider les remboursements avec approbation humaine (HITL)."));
+    const b = el("msg bot", `${md("Bonjour. Je suis le Copilot Opérations internes. Je peux consulter vos emails & réunions M365, vérifier les réclamations clients en attente et valider les remboursements avec approbation humaine (HITL).")}<span class="msg-time">${timeStr()}</span>`);
     const c = el("chips");
     ["Quelles sont les réclamations en attente ?", "Consulte mes emails M365", "Vérifie le stock catalogue"].forEach(t => {
       const btn = document.createElement("button"); btn.className = "chip"; btn.textContent = t;

@@ -19,15 +19,17 @@ Ce guide est votre fil conducteur minute par minute pour l'entretien technique. 
 
 ## 1. Démarrage de l'environnement (Avant l'entretien)
 
-Dans deux terminaux locaux :
+Dans deux terminaux locaux (la télémétrie GCP est activée par défaut avec `TELEMETRY=gcp` dans `.env`) :
 ```bash
 # Terminal 1 : API Retail (Stock & Délais)
 uv run uvicorn mock_api.stock_api:app --port 8090
 
-# Terminal 2 : Backend FastAPI & Moteurs ADK
-uv run uvicorn backend.app:app --port 8000
+# Terminal 2 : Backend FastAPI & Moteurs ADK (avec rechargement automatique)
+uv run uvicorn backend.app:app --port 8000 --reload
 ```
 Ouvrir le navigateur sur : **`http://localhost:8000`**
+
+*(Optionnel pour la démo GCP live : avoir un onglet ouvert sur la console Google Cloud du projet `rk-adk-poc-1104`).*
 
 ---
 
@@ -57,20 +59,21 @@ Sur l'UI, assurez-vous d'être sur l'onglet **🌸 Conseillère Léa (Client)**.
   ```
 - **Ce qui se passe :**
   - Léa déclenche l'outil `search_knowledge` sur les fiches produits et la base cosmétique.
-  - L'UI affiche les sources `Sources RAG : ...` avec le score de pertinence et la citation de passage.
+  - La réponse est groundée directement avec les citations réglementaires dans le texte, sans widgets techniques superflus.
 - **Message clé à dire :**
-  > *"Remarquez la rapidité d'affichage (SSE streaming) et surtout la traçabilité : l'agent ne fait aucune hallucination commerciale, chaque conseil cite le passage exact du catalogue validé."*
+  > *"Remarquez la fluidité de la réponse en streaming SSE et surtout la traçabilité : l'agent ne fait aucune hallucination commerciale, chaque conseil cite le passage exact du guide validé en production."*
 
-#### Étape 2 : Calcul de Devis / Quantité Déterministe
+#### Étape 2 : Calcul de Devis Déterministe & Téléchargement PDF
 - **Prompt à copier :**
   ```text
   J'aimerais faire une cure de sérum éclat pour 90 jours, combien de flacons dois-je prévoir et quel sera le budget ?
   ```
 - **Ce qui se passe :**
   - Léa invoque l'outil déterministe `estimate_quantity`.
-  - L'UI affiche la carte de devis : nombre d'unités requises, contenance totale (ml), prix remisé éventuel et économie calculée.
+  - L'UI affiche la carte de devis : nombre d'unités requises, contenance totale (ml), prix remisé et économie calculée.
+  - Un bouton **`📄 Télécharger le devis officiel (PDF)`** permet de générer et télécharger instantanément le devis au format PDF officiel avec mentions légales provisoires obligatoires.
 - **Message clé à dire :**
-  > *"Ce calcul de devis n'est pas délégué aux capacités arithmétiques aléatoires du LLM. C'est un FunctionTool typé avec Pydantic qui applique la règle volumétrique exacte. Exactement ce qu'on applique pour un devis de carrelage ou de robinetterie de salle de bain."*
+  > *"Ce calcul de devis n'est pas délégué aux capacités arithmétiques aléatoires du LLM. C'est un FunctionTool typé avec Pydantic qui applique la règle volumétrique exacte. En un clic, le client télécharge un PDF conforme généré à la volée, avec les mentions légales obligatoires."*
 
 #### Étape 3 : Ouverture d'une Réclamation Client & Guardrails Callbacks
 - **Prompt à copier :**
@@ -154,10 +157,35 @@ Basculez sur votre terminal / éditeur de code.
 - **Message clé :**
   > *"Chaque cas critique (tentative de prompt injection, ingénierie sociale pour avoir des remises, respect des filtres de recherche) est verrouillé dans un jeu d'évaluation ADK. En CI/CD, aucun merge n'est autorisé si ce rapport n'est pas à 100%."*
 
-#### 3. Observabilité Cloud Trace & OpenTelemetry
-- Montrez le fichier `copilot/observability.py` et `backend/telemetry.py`.
-- **Message clé :**
-  > *"Toutes nos métriques (TTFT, latence modèle vs outils, coût en euros par tour, tokens d'entrée/sortie) sont émises via OpenTelemetry standard vers Google Cloud Trace et Cloud Logging, avec masque automatique des données sensibles (PII). Le resource provider injecte systématiquement `gcp.project_id` pour respecter le contrat d'API GCP."*
+#### 3. Démonstration Live de l'Écosystème Google Cloud (GCP Sovereign Stack)
+
+Basculez sur la console Google Cloud ou montrez les fichiers d'infrastructure :
+
+- **Google Cloud Trace (`telemetry.googleapis.com`) :**
+  - Ouvrez l'explorateur de traces ou montrez la capture de span :
+  - *Cascade de traces* : `chat.turn` $\rightarrow$ `guardrails.model_armor` $\rightarrow$ `call_llm (Gemini 3.8)` $\rightarrow$ `execute_tool (open_return_claim)`.
+  - *Conformité RGPD / Privacy by Design* : Montrez que les prompts et corps d'emails sont masqués par défaut (`NO_CONTENT`). Seules les métriques objectives (durée, tokens, statuts de gouvernance) sont exportées.
+  - *Message clé :*
+    > *"Nous utilisons les exporteurs natifs ADK pour Cloud Trace. Le `TracerProvider` injecte obligatoirement l'attribut `gcp.project_id` pour respecter le protocole de l'API Google Telemetry et garantir un échantillonnage 100% fiable en environnement conteneurisé."*
+
+- **Google Cloud Logging & Audit Structured Logs :**
+  - Montrez la structure JSON des logs d'audit générés (`copilot/observability.py` et `kpi.jsonl`) :
+  - Chaque arbitrage ou blocage de sécurité émet une entrée de log structurée avec `turn_id`, `claim_id`, `decision`, `reviewer`.
+  - *Message clé :*
+    > *"Toutes les décisions de gouvernance et approbations humaines sont tracées dans Cloud Logging au format JSON structuré. Cela permet aux équipes de conformité et de sécurité d'avoir une piste d'audit infalsifiable."*
+
+- **Google Cloud Run (Déploiement Conteneurisé Stateless) :**
+  - Montrez le `Dockerfile` et la configuration Cloud Run :
+  - L'application est stateless et scale-to-zero (0 instance active hors charge = coût minimal).
+  - La persistance des sessions et de l'historique conversationnel est déléguée soit à **Cloud SQL** (`DatabaseSessionService`) soit à **Vertex AI Agent Engine Sessions** (`VertexAiSessionService`).
+  - *Message clé :*
+    > *"En production, Cloud Run instancie nos runners ADK sans état. Si une instance redémarre ou que le trafic explose, le client ne perd rien : sa session est rechargée depuis Cloud SQL ou Vertex AI Session Service."*
+
+- **Google BigQuery (Analytics & Suivi de la Performance) :**
+  - Montrez la table BigQuery et la requête type de suivi analytique :
+  - Requête SQL mesurant le coût moyen par conversation (`cost_eur`), le taux d'escalade vers un conseiller humain (`escalated`), et la dérive de latence du premier token (TTFT).
+  - *Message clé :*
+    > *"Les KPI conversationnels alimentent en continu notre table BigQuery. Cela permet aux équipes data et produit de suivre la dérive du modèle (drift), d'optimiser les coûts de tokens et d'alimenter les tableaux de bord Looker de la direction."*
 
 ---
 
