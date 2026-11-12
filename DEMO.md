@@ -3,6 +3,14 @@
 Goal: in 5 minutes, show a deployed multi-agent backend whose behaviour is **measured** and whose risky actions are
 **blocked by code and visible in telemetry**. Evidence for every number: `evals/FINDINGS.md`.
 
+## System Architecture Diagram
+
+![Beauty Ops Copilot — System Architecture](docs/demo/system_architecture.png)
+
+### Architecture Overview
+
+This pure **Google ADK 2.13** dual-agent platform decouples customer advisory operations (**Léa**) from enterprise internal operations (**Copilot**) through a unified FastAPI SSE gateway protected by a **5-layer defense-in-depth security model**: incoming prompts are first filtered for injections and PII at the edge via **Google Cloud Model Armor** (Layer 1); customer requests are served by Léa via an **agentic hybrid RAG pipeline** (combining `gemini-embedding-001` dense vectors, BM25 French lexical search, Reciprocal Rank Fusion, and a Vertex AI Discovery Engine cross-encoder with a $>0.30$ score gate to guarantee verifiable citations with zero hallucinations), while post-purchase claims are quarantined by native ADK `before_tool_callback` hooks (Layer 2) and persisted in a thread-safe SQLite claims engine with idempotent refunds; concurrently, internal tasks route to specialist agents reaching Google Workspace (Gmail, Calendar, Drive) via **Model Context Protocol (MCP)**, strictly constrained by code-enforced budgets and corporate domain allowlists via `GovernancePlugin` (Layer 3), gated by native Human-in-the-Loop confirmation on state-changing writes (Layer 4), and authenticated via RFC 8707 audience checks and OAuth2 scopes (Layer 5) with end-to-end distributed tracing exported to Google Cloud Trace with GDPR-compliant content redaction.
+
 ## T-15 min: preparation (never demo cold)
 ```bash
 # block 0 of deploy/DEPLOY.md, then:
@@ -23,7 +31,7 @@ gcloud run services proxy copilot-api --port=8000          # Chrome: http://loca
 
 | t | Show | Say (one or two sentences) |
 |---|---|---|
-| 0:00 | README architecture diagram | "A router and two specialist agents on ADK, Gemini 3.8 Flash on Vertex. The Workspace agent reaches Gmail, Google Calendar and Google Drive files only through an MCP server. A governance plugin sits between what the model *wants* and what *happens*. Two private Cloud Run services." |
+| 0:00 | System Architecture Diagram (above) | "A router and two specialist agents on ADK, Gemini 3.8 Flash on Vertex. The Workspace agent reaches Gmail, Google Calendar and Google Drive files only through an MCP server. A governance plugin sits between what the model *wants* and what *happens*. Two private Cloud Run services." |
 | 0:40 | Dev UI: `Draft an email to sophie.martin@retail-group.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.` → **Approve** | "Mixed request: the Workspace agent calls the catalog as a tool, so the budget comes from the authoritative source, not from an email. My eval asserts that trajectory: a passing answer built from Finance's email was a real bug." |
 | 1:30 | Cloud Trace: that request's waterfall | "Here's the cost of one request: 4 model calls, the tools take milliseconds, the model takes seconds. One model call can be 80% of the latency, and it's provider-bound: cutting thinking 90% didn't make it faster." |
 | 2:00 | Dev UI: `Draft an email to riadh.test@gmail.com saying 'see you at VivaTech'.` | "The model tries. The code says no, before any human is asked to approve." |

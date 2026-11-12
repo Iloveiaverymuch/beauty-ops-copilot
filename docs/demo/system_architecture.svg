@@ -1,0 +1,413 @@
+<svg viewBox="0 0 1360 880" width="1360" height="880" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="armorGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="b2cGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="b2bGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="gcpGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="108%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <filter id="innerGlow" x="-2%" y="-2%" width="104%" height="104%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.05"/>
+    </filter>
+
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <style>
+    .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .title { font-size: 22px; font-weight: 800; fill: #0f172a; letter-spacing: -0.5px; }
+    .subtitle { font-size: 13px; font-weight: 500; fill: #64748b; }
+    .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .box-title { font-size: 13px; font-weight: 700; fill: #0f172a; }
+    .box-desc { font-size: 11px; fill: #475569; line-height: 1.4; }
+    .pill { font-size: 9.5px; font-weight: 700; text-transform: uppercase; }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect x="0" y="0" width="1360" height="880" rx="14" fill="url(#bgGrad)" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Top Title Banner -->
+  <rect x="30" y="24" width="1300" height="56" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" filter="url(#innerGlow)"/>
+  <text class="font-sans title" x="50" y="52">Beauty Ops Copilot — System Architecture</text>
+  <text class="font-sans subtitle" x="50" y="69">Dual-Agent Platform · 100% Pure Google ADK 2.13 · Vertex AI Gemini 3.8 Flash · 5-Layer Defense-in-Depth</text>
+
+  <rect x="1020" y="36" width="300" height="32" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text class="font-sans pill" x="1035" y="56" fill="#166534">● VERIFIED PRODUCTION READY (131 TESTS · 7 ADK EVALS)</text>
+
+  <!-- ==================== 1. CLIENT & PRESENTATION LAYER ==================== -->
+  <rect x="30" y="98" width="220" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="30" y="98" width="220" height="34" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text class="font-sans section-title" x="45" y="120" fill="#475569">1. Presentation Layer</text>
+
+  <!-- Browser UI Box -->
+  <g transform="translate(45, 148)">
+    <rect width="190" height="210" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect width="190" height="26" rx="8" fill="#f1f5f9"/>
+    <circle cx="15" cy="13" r="3.5" fill="#ef4444"/>
+    <circle cx="27" cy="13" r="3.5" fill="#f59e0b"/>
+    <circle cx="39" cy="13" r="3.5" fill="#10b981"/>
+    <text class="font-sans" x="52" y="17" font-size="10" font-weight="700" fill="#334155">Dual-Tab Web UI</text>
+    
+    <text class="font-sans" x="12" y="44" font-size="11" font-weight="700" fill="#166534">🌸 Léa Advisor (B2C)</text>
+    <text class="font-sans box-desc" x="12" y="58">• Real-time SSE text streaming</text>
+    <text class="font-sans box-desc" x="12" y="72">• Interactive product cards</text>
+    <text class="font-sans box-desc" x="12" y="86">• Arithmetical Devis quotes</text>
+    <text class="font-sans box-desc" x="12" y="100">• Official PDF download link</text>
+
+    <line x1="10" y1="112" x2="180" y2="112" stroke="#e2e8f0" stroke-width="1"/>
+
+    <text class="font-sans" x="12" y="128" font-size="11" font-weight="700" fill="#854d0e">💼 Operations Copilot (B2B)</text>
+    <text class="font-sans box-desc" x="12" y="142">• Workspace triage (Gmail/Drive)</text>
+    <text class="font-sans box-desc" x="12" y="156">• Claims arbitration queue</text>
+    <text class="font-sans box-desc" x="12" y="170">• Interactive HITL modal</text>
+    <text class="font-sans box-desc" x="12" y="184">• Governance block alerts</text>
+    <text class="font-sans box-desc" x="12" y="198" font-size="9" fill="#94a3b8">(backend/static/index.html)</text>
+  </g>
+
+  <!-- Admin CLI Box -->
+  <g transform="translate(45, 375)">
+    <rect width="190" height="90" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect width="190" height="24" rx="8" fill="#1e293b"/>
+    <text class="font-sans" x="12" y="16" font-size="10.5" font-weight="700" fill="#f8fafc">🖥️ Claims Admin CLI</text>
+    <text class="font-sans box-desc" x="12" y="40">• `claims.cli decide &lt;id&gt;`</text>
+    <text class="font-sans box-desc" x="12" y="55">• `claims.cli pending`</text>
+    <text class="font-sans box-desc" x="12" y="70">• Out-of-band human arbitration</text>
+    <text class="font-sans box-desc" x="12" y="83" font-size="9" fill="#94a3b8">(claims/cli.py)</text>
+  </g>
+
+  <!-- CI/CD & Eval Box -->
+  <g transform="translate(45, 480)">
+    <rect width="190" height="150" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect width="190" height="24" rx="8" fill="#f8fafc"/>
+    <text class="font-sans" x="12" y="16" font-size="10.5" font-weight="700" fill="#334155">🧪 CI/CD &amp; Automated Gates</text>
+    
+    <text class="font-sans" x="12" y="40" font-size="10.5" font-weight="700" fill="#047857">1. ADK Offline Gate</text>
+    <text class="font-sans box-desc" x="12" y="54">• 7/7 golden cases (&lt;1s)</text>
+    <text class="font-sans box-desc" x="12" y="68">• Deterministic trajectory eval</text>
+
+    <text class="font-sans" x="12" y="86" font-size="10.5" font-weight="700" fill="#1d4ed8">2. Vertex AI GenAI Eval</text>
+    <text class="font-sans box-desc" x="12" y="100">• 4 Pointwise rubrics (1-5)</text>
+    <text class="font-sans box-desc" x="12" y="114">• Gemini 3.8 Flash LLM judge</text>
+
+    <text class="font-sans" x="12" y="132" font-size="10.5" font-weight="700" fill="#475569">3. Pytest Regression</text>
+    <text class="font-sans box-desc" x="12" y="145">• 131 tests passed in ~5s</text>
+  </g>
+
+  <!-- 1-Click Demo Launcher -->
+  <g transform="translate(45, 645)">
+    <rect width="190" height="85" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+    <rect width="190" height="24" rx="8" fill="#f8fafc"/>
+    <text class="font-sans" x="12" y="16" font-size="10.5" font-weight="700" fill="#334155">🚀 1-Click Demo Launcher</text>
+    <text class="font-sans box-desc" x="12" y="40">• `./run_demo.sh`</text>
+    <text class="font-sans box-desc" x="12" y="55">• Auto starts Retail API (:8090)</text>
+    <text class="font-sans box-desc" x="12" y="70">• Auto starts Backend (:8000)</text>
+    <text class="font-sans box-desc" x="12" y="82" font-size="9" fill="#94a3b8">• Auto-opens browser</text>
+  </g>
+
+  <g transform="translate(45, 742)">
+    <rect width="190" height="88" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <text class="font-sans" x="10" y="20" font-size="10" font-weight="700" fill="#475569">End-to-End Test Endpoints</text>
+    <text class="font-sans box-desc" x="10" y="38">• POST /chat (Streaming SSE)</text>
+    <text class="font-sans box-desc" x="10" y="53">• POST /chat/sync (CI Buffer)</text>
+    <text class="font-sans box-desc" x="10" y="68">• GET /devis/pdf (A4 Quote)</text>
+    <text class="font-sans box-desc" x="10" y="82">• POST /claims/decision</text>
+  </g>
+
+
+  <!-- ==================== 2. FASTAPI GATEWAY & MODEL ARMOR ==================== -->
+  <g transform="translate(270, 98)">
+    <rect width="210" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="210" height="34" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+    <text class="font-sans section-title" x="18" y="22" fill="#1e40af">2. Ingress &amp; Guardrails</text>
+
+    <!-- FastAPI Box -->
+    <rect x="15" y="48" width="180" height="195" rx="8" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.2"/>
+    <rect x="15" y="48" width="180" height="26" rx="8" fill="#dbeafe"/>
+    <text class="font-sans box-title" x="25" y="66" fill="#1e40af">FastAPI Gateway</text>
+    <text class="font-sans box-desc" x="25" y="90" font-weight="700" fill="#1e3a8a">Application Ingress (:8000)</text>
+    <text class="font-sans box-desc" x="25" y="106">• SSE Token Streamer</text>
+    <text class="font-sans box-desc" x="25" y="121">• Session Locking (AsyncIO)</text>
+    <text class="font-sans box-desc" x="25" y="136">• Bounded Input (max 2000 ch)</text>
+    <text class="font-sans box-desc" x="25" y="151">• Cloud Trace Instrumentation</text>
+    <text class="font-sans box-desc" x="25" y="166">• JSONL KPI / Feedback log</text>
+    <text class="font-sans box-desc" x="25" y="181">• PDF Quotation Delivery</text>
+    <text class="font-sans box-desc" x="25" y="196">• Engine Hub (Engines dict)</text>
+    <text class="font-sans box-desc" x="25" y="210" font-size="9" fill="#94a3b8">(backend/app.py)</text>
+
+    <!-- Arrow down to Model Armor -->
+    <line x1="105" y1="245" x2="105" y2="275" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Layer 1 Model Armor Box -->
+    <rect x="15" y="278" width="180" height="240" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+    <rect x="15" y="278" width="180" height="28" rx="8" fill="url(#armorGrad)"/>
+    <text class="font-sans" x="25" y="297" font-size="11" font-weight="700" fill="#ffffff">LAYER 1 : MODEL ARMOR</text>
+    <text class="font-sans" x="25" y="322" font-size="10.5" font-weight="700" fill="#991b1b">Edge Prompt Sanitization</text>
+    <text class="font-sans box-desc" x="25" y="340">• Google Cloud Model Armor API</text>
+    <text class="font-sans box-desc" x="25" y="356" font-size="9.5" fill="#7f1d1d">  (`SanitizeUserPromptRequest`)</text>
+    <text class="font-sans box-desc" x="25" y="372">• Anti-Jailbreak Filter</text>
+    <text class="font-sans box-desc" x="25" y="388">• Prompt Injection Defense</text>
+    <text class="font-sans box-desc" x="25" y="404">• PII Detection Fallback</text>
+    <text class="font-sans box-desc" x="25" y="420">• OpenTelemetry Span:</text>
+    <text class="font-sans box-desc" x="25" y="434" font-size="9.5" fill="#7f1d1d">  `guardrails.model_armor.sanitize`</text>
+    <text class="font-sans box-desc" x="25" y="452" font-weight="700" fill="#b91c1c">Short-circuits before model!</text>
+    <text class="font-sans box-desc" x="25" y="470" font-size="9" fill="#94a3b8">(guardrails/model_armor.py)</text>
+
+    <!-- Sessions Box -->
+    <rect x="15" y="535" width="180" height="195" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="15" y="535" width="180" height="26" rx="8" fill="#f8fafc"/>
+    <text class="font-sans box-title" x="25" y="552" fill="#334155">Chat Session Store</text>
+    <text class="font-sans box-desc" x="25" y="575" font-weight="700" fill="#0f172a">ADK SqliteSessionService</text>
+    <text class="font-sans box-desc" x="25" y="592">• Chat history persistence</text>
+    <text class="font-sans box-desc" x="25" y="608">• Scoped state (`temp:`, `user:`)</text>
+    <text class="font-sans box-desc" x="25" y="624">• IDOR Isolation</text>
+    <text class="font-sans box-desc" x="25" y="640">• Tool compaction across turns</text>
+    <text class="font-sans box-desc" x="25" y="656">• Prevents context blowout</text>
+    <text class="font-sans box-desc" x="25" y="672">• Thread concurrency locks</text>
+    <text class="font-sans box-desc" x="25" y="690" font-size="9" fill="#94a3b8">(backend/engines.py)</text>
+  </g>
+
+
+  <!-- ==================== 3. ADK AGENT CORE (DUAL AGENT) ==================== -->
+  <g transform="translate(500, 98)">
+    <rect width="360" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="360" height="34" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+    <text class="font-sans section-title" x="20" y="22" fill="#166534">3. Pure Google ADK 2.13 Agent Core</text>
+
+    <!-- B2C AGENT: LÉA -->
+    <rect x="15" y="48" width="330" height="325" rx="10" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+    <rect x="15" y="48" width="330" height="30" rx="10" fill="url(#b2cGrad)"/>
+    <text class="font-sans" x="25" y="68" font-size="12" font-weight="700" fill="#ffffff">🌸 B2C AGENT: LÉA SKINCARE ADVISOR</text>
+    
+    <text class="font-sans box-desc" x="25" y="94" font-weight="700" fill="#065f46">ADK App: `beauty_advisor` (beauty_advisor/agent.py)</text>
+    
+    <rect x="25" y="104" width="310" height="48" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+    <text class="font-sans" x="35" y="120" font-size="10.5" font-weight="700" fill="#991b1b">LAYER 2: ADK Callback Guardrail (before_tool_callback)</text>
+    <text class="font-sans box-desc" x="35" y="134" fill="#7f1d1d">• Intercepts `open_return_claim` in deterministic Python code</text>
+    <text class="font-sans box-desc" x="35" y="146" fill="#7f1d1d">• Blocks opened return without reaction before tool runs!</text>
+
+    <text class="font-sans box-desc" x="25" y="168" font-weight="700" fill="#065f46">AdkEngine Callbacks &amp; Tool Compaction:</text>
+    <text class="font-sans box-desc" x="25" y="184">• `before_model_callback`: `drop_exhausted_tools` (cap: 2 searches/turn)</text>
+    <text class="font-sans box-desc" x="25" y="198">• Compacts prior tool responses to prevent token exhaustion</text>
+
+    <rect x="25" y="210" width="310" height="150" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <text class="font-sans" x="35" y="226" font-size="10.5" font-weight="700" fill="#1e293b">Léa Toolset (9 Structured Tools):</text>
+    <text class="font-sans box-desc" x="35" y="242">1. `search_knowledge`: Agentic Hybrid RAG (citations)</text>
+    <text class="font-sans box-desc" x="35" y="256">2. `search_products`: SQL + vector search via BigQuery</text>
+    <text class="font-sans box-desc" x="35" y="270">3. `compare_products`: Deterministic matrix difference</text>
+    <text class="font-sans box-desc" x="35" y="284">4. `estimate_quantity`: Routine budget + Devis calculation</text>
+    <text class="font-sans box-desc" x="35" y="298">5. `check_availability`: Real-time stock via Retail API</text>
+    <text class="font-sans box-desc" x="35" y="312">6. `delivery_options`: Postcode shipping estimate</text>
+    <text class="font-sans box-desc" x="35" y="326">7. `request_human_advisor`: Ticket escalation</text>
+    <text class="font-sans box-desc" x="35" y="340">8. `open_return_claim` &amp; 9. `get_claim_status`: Claims bridge</text>
+
+    <!-- B2B AGENT: OPERATIONS COPILOT -->
+    <rect x="15" y="388" width="330" height="342" rx="10" fill="#ffffff" stroke="#fde047" stroke-width="1.5"/>
+    <rect x="15" y="388" width="330" height="30" rx="10" fill="url(#b2bGrad)"/>
+    <text class="font-sans" x="25" y="408" font-size="12" font-weight="700" fill="#ffffff">💼 B2B AGENT: OPERATIONS COPILOT</text>
+
+    <text class="font-sans box-desc" x="25" y="434" font-weight="700" fill="#854d0e">ADK App: `copilot` (copilot/agent.py)</text>
+    <text class="font-sans box-desc" x="25" y="448">• Root Router delegates to specialists:</text>
+    <text class="font-sans box-desc" x="25" y="462">  - `workspace_agent` (Gmail, Calendar, Drive)</text>
+    <text class="font-sans box-desc" x="25" y="476">  - `catalog_agent` (Product and campaign data)</text>
+
+    <rect x="25" y="488" width="310" height="74" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+    <text class="font-sans" x="35" y="504" font-size="10.5" font-weight="700" fill="#991b1b">LAYER 3: Platform GovernancePlugin (before_tool)</text>
+    <text class="font-sans box-desc" x="35" y="518" fill="#7f1d1d">• Deny-by-default allowlist per sub-agent</text>
+    <text class="font-sans box-desc" x="35" y="532" fill="#7f1d1d">• Per-turn budgets: 10 calls max, 1 write reservation</text>
+    <text class="font-sans box-desc" x="35" y="546" fill="#7f1d1d">• Domain allowlist: blocks external emails (@retail-group.com)</text>
+
+    <rect x="25" y="570" width="310" height="62" rx="6" fill="#fefce8" stroke="#fde047" stroke-width="1"/>
+    <text class="font-sans" x="35" y="586" font-size="10.5" font-weight="700" fill="#854d0e">LAYER 4: Native Human-in-the-Loop (HITL)</text>
+    <text class="font-sans box-desc" x="35" y="600" fill="#713f12">• `require_confirmation=True` on write toolsets</text>
+    <text class="font-sans box-desc" x="35" y="614" fill="#713f12">• Pauses execution on `create_draft` and `review_claim`</text>
+    <text class="font-sans box-desc" x="35" y="626" fill="#713f12">• Resumes only after explicit user confirmation</text>
+
+    <rect x="25" y="640" width="310" height="78" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <text class="font-sans" x="35" y="656" font-size="10.5" font-weight="700" fill="#334155">Operational Claims Arbitration:</text>
+    <text class="font-sans box-desc" x="35" y="672">• `list_pending_claims`: Queries SQLite claims queue</text>
+    <text class="font-sans box-desc" x="35" y="686">• `review_claim`: Approves / rejects with reviewer notes</text>
+    <text class="font-sans box-desc" x="35" y="700">• Triggers idempotent refund to mock retail payment API</text>
+  </g>
+
+
+  <!-- ==================== 4. STATE ENGINES, RAG & MCP ==================== -->
+  <g transform="translate(880, 98)">
+    <rect width="210" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="210" height="34" rx="12" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1"/>
+    <text class="font-sans section-title" x="15" y="22" fill="#7e22ce">4. State &amp; Protocols</text>
+
+    <!-- Hybrid RAG Pipeline Box -->
+    <rect x="15" y="48" width="180" height="195" rx="8" fill="#ffffff" stroke="#d8b4fe" stroke-width="1.2"/>
+    <rect x="15" y="48" width="180" height="26" rx="8" fill="#f3e8ff"/>
+    <text class="font-sans box-title" x="25" y="66" fill="#7e22ce">Agentic Hybrid RAG</text>
+    <text class="font-sans box-desc" x="25" y="88" font-weight="700" fill="#581c87">Discovery Engine Rerank</text>
+    <text class="font-sans box-desc" x="25" y="104">• Dense Vectors: 768-dim</text>
+    <text class="font-sans box-desc" x="25" y="119">• BM25 Lexical (French)</text>
+    <text class="font-sans box-desc" x="25" y="134">• Reciprocal Rank Fusion</text>
+    <text class="font-sans box-desc" x="25" y="148" font-size="9.5" fill="#6b21a8">  (RRF constant k=60)</text>
+    <text class="font-sans box-desc" x="25" y="164">• Cross-Encoder Reranker</text>
+    <text class="font-sans box-desc" x="25" y="179">• Score Gate: &gt;0.30</text>
+    <text class="font-sans box-desc" x="25" y="194" font-weight="700" fill="#7e22ce">Zero Hallucinations!</text>
+    <text class="font-sans box-desc" x="25" y="209" font-size="9" fill="#94a3b8">(advisor/retrieval/)</text>
+
+    <!-- Claims State Engine Box -->
+    <rect x="15" y="255" width="180" height="190" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="15" y="255" width="180" height="26" rx="8" fill="#f8fafc"/>
+    <text class="font-sans box-title" x="25" y="273" fill="#334155">Claims State Engine</text>
+    <text class="font-sans box-desc" x="25" y="296" font-weight="700" fill="#0f172a">Pure SQLite Engine</text>
+    <text class="font-sans box-desc" x="25" y="312">• Zero LangGraph wrapper</text>
+    <text class="font-sans box-desc" x="25" y="327">• Thread-safe RLock</text>
+    <text class="font-sans box-desc" x="25" y="342">• Idempotent refunds:</text>
+    <text class="font-sans box-desc" x="25" y="356" font-size="9.5" fill="#334155">  `Idempotency-Key=claim_id`</text>
+    <text class="font-sans box-desc" x="25" y="372">• Pending Review Queue</text>
+    <text class="font-sans box-desc" x="25" y="388">• Retry logic on 503</text>
+    <text class="font-sans box-desc" x="25" y="404">• Full JSON audit history</text>
+    <text class="font-sans box-desc" x="25" y="420" font-size="9" fill="#94a3b8">(advisor/claims.py)</text>
+
+    <!-- Quotation PDF Generator -->
+    <rect x="15" y="458" width="180" height="110" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="15" y="458" width="180" height="26" rx="8" fill="#f8fafc"/>
+    <text class="font-sans box-title" x="25" y="476" fill="#334155">Quote PDF Engine</text>
+    <text class="font-sans box-desc" x="25" y="498">• Headless Chrome / fallback</text>
+    <text class="font-sans box-desc" x="25" y="514">• A4 Print-ready quotation</text>
+    <text class="font-sans box-desc" x="25" y="530">• Mandatory legal disclaimers</text>
+    <text class="font-sans box-desc" x="25" y="546" font-size="9" fill="#94a3b8">(advisor/devis_pdf.py)</text>
+
+    <!-- Workspace MCP Server Box -->
+    <rect x="15" y="580" width="180" height="150" rx="8" fill="#fefce8" stroke="#fde047" stroke-width="1.5"/>
+    <rect x="15" y="580" width="180" height="28" rx="8" fill="#eab308"/>
+    <text class="font-sans" x="25" y="599" font-size="10.5" font-weight="700" fill="#ffffff">LAYER 5: WORKSPACE MCP</text>
+    <text class="font-sans box-desc" x="25" y="622" font-weight="700" fill="#713f12">MCP Server (Streamable HTTP)</text>
+    <text class="font-sans box-desc" x="25" y="638">• Gmail, Calendar, Drive</text>
+    <text class="font-sans box-desc" x="25" y="654">• Bearer / Cloud Run S2S Auth</text>
+    <text class="font-sans box-desc" x="25" y="670">• RFC 8707 audience checks</text>
+    <text class="font-sans box-desc" x="25" y="686">• Draft-only writes (no send)</text>
+    <text class="font-sans box-desc" x="25" y="702" font-size="9" fill="#94a3b8">(workspace_mcp/server.py)</text>
+  </g>
+
+
+  <!-- ==================== 5. GOOGLE CLOUD & INFRASTRUCTURE ==================== -->
+  <g transform="translate(1110, 98)">
+    <rect width="220" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="220" height="34" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+    <text class="font-sans section-title" x="18" y="22" fill="#1e40af">5. Google Cloud Platform</text>
+
+    <!-- Gemini Vertex AI Box -->
+    <rect x="15" y="48" width="190" height="135" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <rect x="15" y="48" width="190" height="26" rx="8" fill="url(#gcpGrad)"/>
+    <text class="font-sans box-title" x="25" y="66" fill="#ffffff">Gemini 3.8 Flash</text>
+    <text class="font-sans box-desc" x="25" y="90" font-weight="700" fill="#1e3a8a">Vertex AI EU Multi-Region</text>
+    <text class="font-sans box-desc" x="25" y="106">• European Data Residency</text>
+    <text class="font-sans box-desc" x="25" y="121">• Per-attempt timeout: 60s</text>
+    <text class="font-sans box-desc" x="25" y="136">• 3 retries on 408/429/5xx</text>
+    <text class="font-sans box-desc" x="25" y="151">• Thinking level tuning</text>
+    <text class="font-sans box-desc" x="25" y="165" font-size="9" fill="#94a3b8">(copilot/model.py)</text>
+
+    <!-- Vertex Embeddings Box -->
+    <rect x="15" y="195" width="190" height="95" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <rect x="15" y="195" width="190" height="24" rx="8" fill="#dbeafe"/>
+    <text class="font-sans box-title" x="25" y="212" fill="#1e40af">Vertex AI Embeddings</text>
+    <text class="font-sans box-desc" x="25" y="234" font-weight="700" fill="#1e3a8a">gemini-embedding-001</text>
+    <text class="font-sans box-desc" x="25" y="250">• 768-dim Matryoshka</text>
+    <text class="font-sans box-desc" x="25" y="265">• Asymmetric Task Types</text>
+    <text class="font-sans box-desc" x="25" y="278" font-size="9" fill="#94a3b8">(advisor/embeddings.py)</text>
+
+    <!-- BigQuery Box -->
+    <rect x="15" y="302" width="190" height="110" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <rect x="15" y="302" width="190" height="24" rx="8" fill="#dbeafe"/>
+    <text class="font-sans box-title" x="25" y="319" fill="#1e40af">Google Cloud BigQuery</text>
+    <text class="font-sans box-desc" x="25" y="340">• `chunks_public` (Vectors)</text>
+    <text class="font-sans box-desc" x="25" y="355">• `products_public` (Catalog)</text>
+    <text class="font-sans box-desc" x="25" y="370">• SQL filtering + Cosine</text>
+    <text class="font-sans box-desc" x="25" y="385">• Atomic MERGE ingestion</text>
+    <text class="font-sans box-desc" x="25" y="398" font-size="9" fill="#94a3b8">(advisor/ingest.py)</text>
+
+    <!-- Cloud Trace & Logging Box -->
+    <rect x="15" y="424" width="190" height="120" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <rect x="15" y="424" width="190" height="24" rx="8" fill="#dbeafe"/>
+    <text class="font-sans box-title" x="25" y="441" fill="#1e40af">Cloud Trace &amp; Observability</text>
+    <text class="font-sans box-desc" x="25" y="462">• OpenTelemetry distributed trace</text>
+    <text class="font-sans box-desc" x="25" y="478">• `NO_CONTENT` GDPR policy</text>
+    <text class="font-sans box-desc" x="25" y="493">• `governance.denied` spans</text>
+    <text class="font-sans box-desc" x="25" y="508">• Metric: `governance_denies`</text>
+    <text class="font-sans box-desc" x="25" y="522" font-size="9" fill="#94a3b8">(copilot/observability.py)</text>
+
+    <!-- Retail Mock API Box -->
+    <rect x="15" y="556" width="190" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="15" y="556" width="190" height="24" rx="8" fill="#f8fafc"/>
+    <text class="font-sans box-title" x="25" y="573" fill="#334155">Retail Mock API (:8090)</text>
+    <text class="font-sans box-desc" x="25" y="594">• Real-time store stock check</text>
+    <text class="font-sans box-desc" x="25" y="609">• Shipping delays &amp; costs</text>
+    <text class="font-sans box-desc" x="25" y="624">• Mock Payment Gateway</text>
+    <text class="font-sans box-desc" x="25" y="638" font-size="9" fill="#94a3b8">(mock_api/stock_api.py)</text>
+
+    <!-- Cloud Run Deployment Box -->
+    <rect x="15" y="668" width="190" height="62" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="15" y="668" width="190" height="22" rx="8" fill="#f8fafc"/>
+    <text class="font-sans box-title" x="25" y="684" fill="#334155">Google Cloud Run</text>
+    <text class="font-sans box-desc" x="25" y="704">• Private stateless microservices</text>
+    <text class="font-sans box-desc" x="25" y="718">• S2S IAM Auth &amp; Google ID tokens</text>
+  </g>
+
+  <!-- Connective Lines / Arrows across layers -->
+  <!-- Browser to Ingress -->
+  <path d="M 235 250 L 285 250" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  
+  <!-- Ingress to Léa -->
+  <path d="M 480 340 L 515 210" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Ingress to Copilot -->
+  <path d="M 480 360 L 515 500" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-amber)"/>
+
+  <!-- Léa to RAG -->
+  <path d="M 830 210 L 895 145" stroke="#7e22ce" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Léa to Claims -->
+  <path d="M 830 350 L 895 350" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Copilot to Workspace MCP -->
+  <path d="M 830 655 L 895 655" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-amber)"/>
+
+  <!-- RAG to Vertex AI -->
+  <path d="M 1060 145 L 1125 115" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  
+  <!-- BigQuery link -->
+  <path d="M 1060 210 L 1125 350" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+  <!-- Claims to Retail API -->
+  <path d="M 1060 380 L 1125 580" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+</svg>

@@ -46,6 +46,13 @@ Ouvrir le navigateur sur : **`http://localhost:8000`**
 > 2. *Côté interne : le **Copilot Opérations**, agent d'arbitrage connecté aux outils de travail (Google Workspace) avec validation humaine obligatoire (HITL).*
 > *Regardons cela en direct sur l'interface."*
 
+#### Schéma d'Architecture Technique Système
+
+![Schéma d'Architecture Technique Système](demo/system_architecture.png)
+
+**Description de l'architecture :**
+Cette plateforme dual-agent 100% **Google ADK 2.13** sépare les interactions clients (**Léa**) des opérations internes (**Copilot**) via une passerelle unifiée FastAPI SSE protégée par un **modèle de sécurité en profondeur à 5 couches** : filtrage amont des injections et PII au niveau de la bordure par **Google Cloud Model Armor** (Couche 1) ; conseils clients servis par Léa via un **pipeline RAG agentique hybride** (dense `gemini-embedding-001`, BM25 français, Reciprocal Rank Fusion et reranker cross-encoder Vertex AI Discovery Engine avec seuil de pertinence $>0.30$ éliminant les hallucinations), avec réclamations arbitrées par les callbacks natifs ADK `before_tool_callback` (Couche 2) et moteur d'état SQLite avec remboursements idempotents ; côté interne, requêtes routées vers Google Workspace via **Model Context Protocol (MCP)** avec budgets stricts et allowlist de domaine par `GovernancePlugin` (Couche 3), validation humaine native (HITL) sur les écritures (Couche 4), et jetons sécurisés RFC 8707 / scopes OAuth2 (Couche 5) avec traçabilité complète dans Google Cloud Trace.
+
 ---
 
 ### [02:00 - 06:00] Démo 1 : L'Agent Client (Léa — Conseils, Devis & Réclamation)
