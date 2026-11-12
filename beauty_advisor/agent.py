@@ -23,7 +23,7 @@ if "GOOGLE_GENAI_USE_VERTEXAI" not in os.environ and "GEMINI_API_KEY" not in os.
 
 from google.adk.agents import Agent
 from google.adk.apps import App
-from google.adk.models import Gemini
+from google.adk.models import Gemini, LlmResponse
 from google.adk.tools import ToolContext
 from google.genai import types
 
@@ -111,7 +111,28 @@ def compact_history(llm_request) -> int:
 
 
 def prepare_request(callback_context, llm_request):
-    """Runs before EVERY model call: (1) compact earlier turns' tool results, (2) enforce the search budget."""
+    """ADK Lifecycle Callback (before_model_callback):
+    1. Short-Circuiting: If prompt sanitization detects malicious injection, return an immediate
+       LlmResponse, skipping the Gemini API call entirely at zero token cost.
+    2. Context Compaction: Compact earlier turns' tool results to control token bloat.
+    3. Tool budget enforcement: Remove exhausted tools from the request.
+    """
+    if os.getenv("GUARDRAIL_SHORT_CIRCUIT", "1") == "1" and llm_request and hasattr(llm_request, "contents"):
+        for content in reversed(llm_request.contents or []):
+            if getattr(content, "role", None) == "user":
+                prompt_text = " ".join(
+                    p.text for p in (getattr(content, "parts", None) or [])
+                    if hasattr(p, "text") and p.text
+                ).lower()
+                if any(k in prompt_text for k in ("ignore previous instructions", "drop all tables", "system prompt override")):
+                    return LlmResponse(
+                        content=types.Content(
+                            role="model",
+                            parts=[types.Part.from_text(
+                                text="Désolée, cette requête enfreint nos règles de sécurité et ne peut être traitée."
+                            )]
+                        )
+                    )
     if os.getenv("COMPACT_HISTORY", "1") == "1":
         compact_history(llm_request)
     return drop_exhausted_tools(callback_context, llm_request)

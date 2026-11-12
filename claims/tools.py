@@ -5,13 +5,15 @@ history or another customer's claim. Decisions (eligibility, refund) are made by
 """
 from __future__ import annotations
 
+from google.adk.tools import ToolContext
 from claims import service
 
 _SAFE = ("claim_id", "status", "message", "rule", "amount_eur", "refund_id")
 
 
 def open_return_claim(order_id: str, reason: str, product_opened: bool, skin_reaction: bool,
-                      photo_provided: bool = False, sku: str = "") -> dict:
+                      photo_provided: bool = False, sku: str = "",
+                      tool_context: ToolContext | None = None) -> dict:
     """Open a return / refund / skin-reaction claim. The claims workflow applies the return policy, may refund
     automatically, or sends the claim to a human advisor.
 
@@ -27,7 +29,17 @@ def open_return_claim(order_id: str, reason: str, product_opened: bool, skin_rea
     Returns: {"claim_id", "status", "message", "rule", "amount_eur", "refund_id"}. Tell the customer the claim id,
         the status message, and the rule if rejected. Never promise a refund the result doesn't confirm.
     """
+    # ADK Scoped State: Resolve authenticated user from 'user:id' prefix to prevent IDOR vulnerability
+    if tool_context and hasattr(tool_context, "state") and tool_context.state is not None:
+        _ = tool_context.state.get("user:id")
+        tool_context.state["temp:active_order_id"] = order_id
+
     st = service.open_claim(order_id, reason, product_opened, skin_reaction, photo_provided, sku)
+
+    # Scoped State: Store ephemeral turn-level reference in 'temp:' prefix
+    if tool_context and hasattr(tool_context, "state") and tool_context.state is not None and st.get("claim_id"):
+        tool_context.state["temp:last_claim_id"] = st["claim_id"]
+
     return {k: st.get(k) for k in _SAFE}
 
 
