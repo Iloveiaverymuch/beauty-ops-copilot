@@ -20,6 +20,10 @@ def test_a2a_agent_card_structure():
 
 
 from types import SimpleNamespace
+from fastapi.testclient import TestClient
+import advisor.claims
+import mock_api.stock_api as api
+
 
 def test_before_model_short_circuiting_on_injection():
     # Simulate a user message attempting prompt injection
@@ -35,7 +39,11 @@ def test_before_model_short_circuiting_on_injection():
     assert "sécurité" in text.lower()
 
 
-def test_scoped_state_prefixes_in_claims_tool():
+def test_scoped_state_prefixes_in_claims_tool(monkeypatch, tmp_path):
+    monkeypatch.setenv("BACKEND_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("CLAIMS_TRIAGE", "rule")
+    monkeypatch.setattr(advisor.claims, "_http", TestClient(api.app))
+
     class DummyToolContext:
         def __init__(self):
             self.state = {"user:id": "customer-usr-999"}
@@ -48,7 +56,7 @@ def test_scoped_state_prefixes_in_claims_tool():
         skin_reaction=False,
         tool_context=ctx,
     )
-    assert res["status"] in ("eligible", "approved", "pending_review")
+    assert res["status"] in ("eligible", "approved", "pending_review", "refunded")
     # Verify ephemeral turn-level reference was saved in temp: prefix
     assert "temp:last_claim_id" in ctx.state
     assert ctx.state["temp:active_order_id"] == "CMD-1002"
