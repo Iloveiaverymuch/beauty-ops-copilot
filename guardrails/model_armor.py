@@ -103,3 +103,4 @@ def sanitize_prompt(text: str) -> dict[str, Any]:
             "guardrail.model_armor.status": "passed",
         })
         return {"safe": True, "action": "allow", "filter_type": None, "message": ""}
+
