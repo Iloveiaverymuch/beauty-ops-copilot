@@ -358,3 +358,26 @@ def claims_decide(claim_id: str, req: DecisionRequest):
 def feedback(req: FeedbackRequest):
     kpi({"kind": "feedback", **req.model_dump()})
     return {"status": "ok"}
+
+
+class DevisPdfRequest(BaseModel):
+    sku: str = "SKU-PROV"
+    name: str = "Produit sélectionné"
+    days: int = 30
+    units: int = 1
+    size_ml: int | float = 50
+    total_eur: float = 0.0
+    savings_eur: float = 0.0
+    usage_ml_per_day: float = 1.0
+
+
+@app.post("/devis/pdf")
+async def devis_pdf(req: DevisPdfRequest):
+    """Generate and return a provisional quote PDF with mandatory legal mentions."""
+    from advisor.devis_pdf import generate_devis_pdf
+    pdf_path = generate_devis_pdf(req.model_dump())
+    return FileResponse(
+        path=str(pdf_path),
+        media_type="application/pdf",
+        filename=f"Devis_Provisoire_{req.days}j.pdf",
+    )

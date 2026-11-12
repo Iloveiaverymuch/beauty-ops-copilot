@@ -216,3 +216,22 @@ def test_model_armor_blocks_prompt_injection(monkeypatch, tmp_path):
     assert "Model Armor" in body
 
 
+def test_devis_pdf_generation(monkeypatch, tmp_path):
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+
+    client = TestClient(api.app)
+    res = client.post("/devis/pdf", json={
+        "sku": "DER-SER-008",
+        "name": "Sérum Anti-Rides",
+        "days": 90,
+        "units": 2,
+        "size_ml": 50,
+        "total_eur": 39.80,
+    })
+    assert res.status_code == 200
+    assert res.headers["content-type"] == "application/pdf"
+    assert res.content.startswith(b"%PDF")
+
+
+
