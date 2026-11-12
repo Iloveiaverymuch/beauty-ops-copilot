@@ -2,7 +2,10 @@
 
 ## About
 
-Beauty Ops Copilot is a multi-agent assistant built with Google ADK, Vertex AI Gemini, and MCP. The first agent answers product and campaign questions only from tool results (SKUs, ingredients, prices) and must cite sources. Later work adds Microsoft 365, routing, governance, and deployment.
+**Beauty Ops Copilot** is an enterprise-grade multi-agent retail platform built with **Google ADK 2.13**, **Vertex AI Gemini 3.8 Flash**, and **Model Context Protocol (MCP)**. It unifies customer engagement and back-office operations into a single coherent system:
+
+- **🌸 Léa (Customer Skincare & Quote Advisor — B2C):** An Agentic RAG chatbot that answers skincare, ingredient, and policy questions grounded strictly in validated catalog data with verifiable citations (zero hallucinations). It calculates deterministic routine budgets (`estimate_quantity`), generates official print-ready PDF quotes on the fly, and initiates customer return claims guarded by native ADK lifecycle callbacks (`before_tool_callback`).
+- **💼 Operations Copilot (Internal Back-Office Assistant — B2B):** A workplace copilot connected to Microsoft 365 (Outlook, Calendar, OneDrive) via MCP, performing authoritative catalog lookups and arbitrating customer claims under deterministic code-enforced governance (call/write budgets, corporate recipient allowlist) with native Human-in-the-Loop approval (`require_confirmation=True`).
 
 ---
 
