@@ -1,6 +1,6 @@
 [
- {"id":"evt-001","subject":"Garnier Glow Q4 steerco","start":"2026-11-05T14:00:00+01:00","end":"2026-11-05T15:00:00+01:00","organizer":"sophie.martin@loreal.com","attendees":["me@loreal.com","karim.benali@loreal.com"],"location":"Teams"},
- {"id":"evt-002","subject":"1:1 Karim","start":"2026-11-06T10:00:00+01:00","end":"2026-11-06T10:30:00+01:00","organizer":"me@loreal.com","attendees":["karim.benali@loreal.com"],"location":"Clichy 4.12"},
- {"id":"evt-003","subject":"Media re-forecast review","start":"2026-11-07T09:00:00+01:00","end":"2026-11-07T10:00:00+01:00","organizer":"finance.controlling@loreal.com","attendees":["me@loreal.com"],"location":"Teams"},
- {"id":"evt-004","subject":"Retinol Starter brief feedback","start":"2026-11-06T16:00:00+01:00","end":"2026-11-06T16:30:00+01:00","organizer":"sophie.martin@loreal.com","attendees":["me@loreal.com"],"location":"Teams"}
+ {"id":"evt-001","subject":"Garnier Glow Q4 steerco","start":"2026-11-05T14:00:00+01:00","end":"2026-11-05T15:00:00+01:00","organizer":"sophie.martin@retail-group.com","attendees":["me@retail-group.com","karim.benali@retail-group.com"],"location":"Teams"},
+ {"id":"evt-002","subject":"1:1 Karim","start":"2026-11-06T10:00:00+01:00","end":"2026-11-06T10:30:00+01:00","organizer":"me@retail-group.com","attendees":["karim.benali@retail-group.com"],"location":"Clichy 4.12"},
+ {"id":"evt-003","subject":"Media re-forecast review","start":"2026-11-07T09:00:00+01:00","end":"2026-11-07T10:00:00+01:00","organizer":"finance.controlling@retail-group.com","attendees":["me@retail-group.com"],"location":"Teams"},
+ {"id":"evt-004","subject":"Retinol Starter brief feedback","start":"2026-11-06T16:00:00+01:00","end":"2026-11-06T16:30:00+01:00","organizer":"sophie.martin@retail-group.com","attendees":["me@retail-group.com"],"location":"Teams"}
 ]

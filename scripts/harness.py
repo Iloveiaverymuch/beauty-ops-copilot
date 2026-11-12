@@ -105,4 +105,5 @@ async def _run_turn(runner, prompt, approve, max_rounds, res: TurnResult, verbos
 
 
 def is_external(to) -> bool:
-    return any(not str(a).lower().endswith("@loreal.com") for a in (to or []))
+    from copilot.governance import INTERNAL_DOMAINS
+    return any(not str(a).lower().split("@")[-1] in INTERNAL_DOMAINS for a in (to or []))

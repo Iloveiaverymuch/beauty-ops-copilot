@@ -19,7 +19,7 @@ def test_scope_enforced_per_tool(monkeypatch):
     _as(monkeypatch, ["Mail.Read"])
     assert srv.search_mail("garnier")["status"] == "ok"
     assert srv.search_files("pricing")["error_code"] == "insufficient_scope"
-    assert srv.create_draft(["a@loreal.com"], "s", "b")["error_code"] == "insufficient_scope"
+    assert srv.create_draft(["a@retail-group.com"], "s", "b")["error_code"] == "insufficient_scope"
 
 
 def test_no_token_means_no_data(monkeypatch):
@@ -28,7 +28,7 @@ def test_no_token_means_no_data(monkeypatch):
 
 
 def test_top_is_capped_server_side(full):
-    assert srv.search_mail("loreal", top=500)["count"] <= srv.MAX_TOP
+    assert srv.search_mail("retail", top=500)["count"] <= srv.MAX_TOP
 
 
 def test_injection_email_is_returned_as_data(full):

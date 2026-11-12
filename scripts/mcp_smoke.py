@@ -28,7 +28,7 @@ async def main() -> None:
             ("search_mail", {"query": "packaging"}),
             ("list_events", {"start_iso": "2026-11-05T00:00:00+01:00", "end_iso": "2026-11-07T23:59:00+01:00"}),
             ("search_files", {"query": "pricing"}),
-            ("create_draft", {"to": ["sophie.martin@loreal.com"], "subject": "smoke", "body": "test draft"}),
+            ("create_draft", {"to": ["sophie.martin@retail-group.com"], "subject": "smoke", "body": "test draft"}),
         ]
         for name, args in calls:
             r = await tools[name]._run_async_impl(args=args, tool_context=ctx, credential=None)

@@ -50,48 +50,47 @@ def test_catalog_agent_cannot_touch_workspace(p):
 
 
 def test_external_recipient_blocked_even_with_internal_cc(p):
-    r = before(p, tool("create_draft"), {"to": ["sophie.martin@loreal.com", "audit@packaging-partner.io"],
+    r = before(p, tool("create_draft"), {"to": ["sophie.martin@retail-group.com", "audit@packaging-partner.io"],
                                          "subject": "s", "body": "b"}, ctx())
     assert r["status"] == "blocked" and r["reason"] == "external_recipient"
 
 
 def test_lookalike_domain_is_external(p):
-    assert before(p, tool("create_draft"), {"to": ["ceo@loreal.com.evil.io"]}, ctx())["reason"] == "external_recipient"
+    assert before(p, tool("create_draft"), {"to": ["ceo@retail-group.com.evil.io"]}, ctx())["reason"] == "external_recipient"
 
 
 def test_internal_draft_allowed(p):
-    assert before(p, tool("create_draft"), {"to": ["sophie.martin@loreal.com"]}, ctx()) is None
     assert before(p, tool("create_draft"), {"to": ["sophie.martin@retail-group.com"]}, ctx()) is None
     assert before(p, tool("create_draft"), {"to": ["operations@beauty-corp.com"]}, ctx()) is None
 
 
 def test_one_write_per_turn(p):
     c = ctx()
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None
     after(p, tool("create_draft"), {}, c, mcp_ok({"status": "ok", "draft_id": "d1"}))
-    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c)["reason"] == "write_budget_exceeded"
+    assert before(p, tool("create_draft"), {"to": ["b@retail-group.com"]}, c)["reason"] == "write_budget_exceeded"
 
 
 def test_parallel_writes_in_one_response_second_is_denied(p):
     # Regression for gov_demo write_budget: two function calls in ONE model response -> both before-checks
     # run before either tool executes. The slot must be reserved at decision time.
     c = ctx()
-    assert before(p, tool("create_draft"), {"to": ["sophie.martin@loreal.com"]}, c) is None
-    assert before(p, tool("create_draft"), {"to": ["karim.benali@loreal.com"]}, c)["reason"] == "write_budget_exceeded"
+    assert before(p, tool("create_draft"), {"to": ["sophie.martin@retail-group.com"]}, c) is None
+    assert before(p, tool("create_draft"), {"to": ["karim.benali@retail-group.com"]}, c)["reason"] == "write_budget_exceeded"
 
 
 def test_resumed_write_after_approval_is_not_denied_by_its_own_reservation(p):
     c = ctx()
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # reserves the slot
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None   # reserves the slot
     c.tool_confirmation = SimpleNamespace(confirmed=True)
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # same call, resumed
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None   # same call, resumed
 
 
 def test_failed_write_releases_reservation(p):
     c = ctx()
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None
     after(p, tool("create_draft"), {}, c, mcp_ok({"status": "error", "error_code": "insufficient_scope"}))
-    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c) is None
+    assert before(p, tool("create_draft"), {"to": ["b@retail-group.com"]}, c) is None
 
 
 def test_tool_call_budget(p):
@@ -107,9 +106,9 @@ def test_resumed_call_after_approval_not_double_counted(p):
     c = ctx()
     for _ in range(5):
         before(p, tool("search_mail"), {"query": "x"}, c)
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # 6th call, counted
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None   # 6th call, counted
     c.tool_confirmation = SimpleNamespace(confirmed=True)
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c) is None   # resumed, not counted
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c) is None   # resumed, not counted
     assert c.state["gov:turn-1:workspace_agent:calls"] == 6
 
 
@@ -132,7 +131,7 @@ def test_shadow_mode_logs_but_never_blocks(tmp_path, monkeypatch):
 def test_annotation_mismatch_alerts(p, tmp_path, monkeypatch):
     audit = tmp_path / "a.jsonl"
     monkeypatch.setenv("GOV_AUDIT_FILE", str(audit))
-    before(p, tool("create_draft", read_only=True), {"to": ["a@loreal.com"]}, ctx())
+    before(p, tool("create_draft", read_only=True), {"to": ["a@retail-group.com"]}, ctx())
     assert any(json.loads(l)["reason"] == "annotation_mismatch" for l in audit.read_text().splitlines())
 
 
@@ -142,20 +141,20 @@ def test_budget_survives_approval_resume_as_new_invocation(p):
     state = {}
     events = [user_event("turn-1", "prepare any drafts needed")]
     c1 = ctx(state=state, events=events, invocation_id="inv-1")
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c1) is None
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c1) is None
     events.append(user_event("approval-evt", None))                       # approval response, no text
     c2 = ctx(state=state, events=events, invocation_id="inv-2", confirmed=SimpleNamespace(confirmed=True))
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, c2) is None   # the approved call itself
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, c2) is None   # the approved call itself
     c3 = ctx(state=state, events=events, invocation_id="inv-2")
-    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, c3)["reason"] == "write_budget_exceeded"
+    assert before(p, tool("create_draft"), {"to": ["b@retail-group.com"]}, c3)["reason"] == "write_budget_exceeded"
 
 
 def test_new_user_turn_resets_budget(p):
     state = {}
     events = [user_event("turn-1", "draft to a")]
-    assert before(p, tool("create_draft"), {"to": ["a@loreal.com"]}, ctx(state=state, events=events)) is None
+    assert before(p, tool("create_draft"), {"to": ["a@retail-group.com"]}, ctx(state=state, events=events)) is None
     events.append(user_event("turn-2", "now draft to b"))
-    assert before(p, tool("create_draft"), {"to": ["b@loreal.com"]}, ctx(state=state, events=events)) is None
+    assert before(p, tool("create_draft"), {"to": ["b@retail-group.com"]}, ctx(state=state, events=events)) is None
 
 
 def test_denial_is_recorded_on_the_current_span(p):

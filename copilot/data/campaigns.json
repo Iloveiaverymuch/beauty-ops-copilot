@@ -1,5 +1,5 @@
 [
- {"id":"CMP-2026-Q4-GAR","name":"Garnier Glow Q4","brand":"Garnier","quarter":"2026-Q4","channels":["tiktok","retail media"],"budget_eur":450000,"hero_skus":["GAR-SER-001","GAR-SER-002"],"status":"live","owner":"sophie.martin@loreal.com"},
- {"id":"CMP-2026-Q4-LRP","name":"Sun All Year","brand":"La Roche-Posay","quarter":"2026-Q4","channels":["pharmacy","instagram"],"budget_eur":300000,"hero_skus":["LRP-SPF-001"],"status":"planned","owner":"karim.benali@loreal.com"},
- {"id":"CMP-2027-Q1-CRV","name":"Retinol Starter","brand":"CeraVe","quarter":"2027-Q1","channels":["youtube"],"budget_eur":250000,"hero_skus":["CRV-SER-001"],"status":"draft","owner":"sophie.martin@loreal.com"}
+ {"id":"CMP-2026-Q4-GAR","name":"Garnier Glow Q4","brand":"Garnier","quarter":"2026-Q4","channels":["tiktok","retail media"],"budget_eur":450000,"hero_skus":["GAR-SER-001","GAR-SER-002"],"status":"live","owner":"sophie.martin@retail-group.com"},
+ {"id":"CMP-2026-Q4-LRP","name":"Sun All Year","brand":"La Roche-Posay","quarter":"2026-Q4","channels":["pharmacy","instagram"],"budget_eur":300000,"hero_skus":["LRP-SPF-001"],"status":"planned","owner":"karim.benali@retail-group.com"},
+ {"id":"CMP-2027-Q1-CRV","name":"Retinol Starter","brand":"CeraVe","quarter":"2027-Q1","channels":["youtube"],"budget_eur":250000,"hero_skus":["CRV-SER-001"],"status":"draft","owner":"sophie.martin@retail-group.com"}
 ]

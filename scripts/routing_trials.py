@@ -25,7 +25,7 @@ CASES = [
      lambda calls, text: "11.5" in text or "11,5" in text),
     ("workspace_only", "What meetings do I have on Thursday 5 November 2026?",
      lambda calls, text: "steerco" in text.lower()),
-    ("mixed_write", "Draft an email to sophie.martin@loreal.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.",
+    ("mixed_write", "Draft an email to sophie.martin@retail-group.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.",
      lambda calls, text: any("450" in d.get("body", "") and "GAR-SER-00" in d.get("body", "")
                              for d in _draft_to(calls, "sophie.martin"))),
     ("mixed_read", "Check Sophie's latest email about Garnier and tell me the prices of the hero SKUs she mentions.",
