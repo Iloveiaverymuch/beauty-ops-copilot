@@ -26,19 +26,19 @@ Key Requirement: The final result must be **100% coherent, explainable, and demo
 [COMPLETED] Phase 1: Pure ADK Architecture & Claims Modernization (108 tests, 0 LangGraph)
      │
      ▼
-[PHASE 2] Dual-Agent Web UI (Showcase Beauty Advisor + Internal Copilot)   <-- NEXT
+[COMPLETED] Phase 2: Dual-Agent Web UI (Showcase Beauty Advisor + Internal Copilot)
      │
      ▼
-[PHASE 3] Model Armor Guardrails & Cloud Trace Observability
+[COMPLETED] Phase 3: Model Armor Guardrails & Cloud Trace Observability
      │
      ▼
-[PHASE 4] 15-Minute Live Interview Demo Script & Rehearsal
+[COMPLETED] Phase 4: 15-Minute Live Interview Demo Script & Rehearsal (docs/DEMO_15MIN.md)
      │
      ▼
-[PHASE 5] Project Architecture Dossier PDF Generation (Max 5 Pages)
+[COMPLETED] Phase 5: Project Architecture Dossier PDF Generation (docs/beauty_ops_copilot_architecture_dossier.pdf)
      │
      ▼
-[PHASE 6] Final Markdown Coherence Sweep & Presentation Polish
+[COMPLETED] Phase 6: Final Markdown Coherence Sweep & Presentation Polish (110 tests passing)
 ```
 
 ---

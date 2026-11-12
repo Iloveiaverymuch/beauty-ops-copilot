@@ -1,8 +1,11 @@
 # Beauty Ops Copilot: ADK + Vertex AI + MCP agent POC
 
 Current interview-lab continuation (advisor, claims workflow, ADK native and Vertex AI evaluations):
+[`docs/DEMO_15MIN.md`](docs/DEMO_15MIN.md) (15-min interview presentation script),
+[`docs/beauty_ops_copilot_architecture_dossier.pdf`](docs/beauty_ops_copilot_architecture_dossier.pdf) (5-page architecture dossier),
 [`docs/LAB_PLAN.md`](docs/LAB_PLAN.md), [`docs/PROJECT_HANDOVER.md`](docs/PROJECT_HANDOVER.md),
-[`docs/ADR-002.md`](docs/ADR-002.md), [`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
+[`docs/ADR-001-adk-vs-langgraph.md`](docs/ADR-001-adk-vs-langgraph.md), [`docs/ADR-002-callbacks-guardrails-hitl.md`](docs/ADR-002-callbacks-guardrails-hitl.md),
+[`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
 The original copilot notes below are retained.
 
 A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI**. One agent reaches
@@ -78,10 +81,13 @@ Required APIs: aiplatform, run, cloudbuild, artifactregistry, secretmanager, clo
 ## Run
 
 ```bash
-uv run pytest -q                                   # 106 offline tests, no LLM, no server
+uv run pytest -q                                   # 110 offline tests (<2s), no LLM, no server
 uv run python -m evals.adk.run_adk_eval --offline  # 7 deterministic ADK evaluations in <1s
-uv run python -m m365_mcp.server                   # terminal 2: http://127.0.0.1:8080/mcp
-uv run adk web                                     # http://127.0.0.1:8000 -> "copilot" or "beauty_advisor"
+
+# Dual Web UI (Léa B2C + Copilot B2B with HITL confirmation & Model Armor):
+uv run uvicorn mock_api.stock_api:app --port 8090  # terminal 1: retail stock API
+uv run uvicorn backend.app:app --port 8000         # terminal 2: backend & dual UI -> open http://localhost:8000
+```
 
 uv run --env-file copilot/.env python scripts/gov_demo.py              # 5 governance paths
 uv run --env-file copilot/.env python scripts/routing_trials.py --n 3

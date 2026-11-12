@@ -149,7 +149,7 @@ def test_sync_chat_reports_engine_errors_instead_of_passing_on_fallback_text(mon
     assert result["status"] == "error" and result["metrics"]["failed"]
     assert "problème technique" in result["text"]
     assert "provider unavailable" not in result["text"]
-    unavailable = client.post("/chat/sync", json={"message": "bonjour", "engine": "langgraph"}).json()
+    unavailable = client.post("/chat/sync", json={"message": "bonjour", "engine": "unknown_engine"}).json()
     assert unavailable["status"] == "error" and unavailable["events"][0]["event"] == "error"
 
 
