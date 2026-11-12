@@ -18,7 +18,10 @@ import re
 import statistics
 import time
 
-from harness import ROOT, is_external, run_turn
+try:
+    from scripts.harness import ROOT, is_external, run_turn
+except ImportError:
+    from harness import ROOT, is_external, run_turn  # type: ignore
 from google.adk.runners import InMemoryRunner
 
 from copilot.agent import build_app

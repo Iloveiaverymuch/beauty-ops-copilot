@@ -7,7 +7,10 @@ import asyncio
 import json
 import os
 
-from harness import ROOT, run_turn
+try:
+    from scripts.harness import ROOT, run_turn
+except ImportError:
+    from harness import ROOT, run_turn  # type: ignore
 from google.adk.runners import InMemoryRunner
 
 from copilot.agent import build_app

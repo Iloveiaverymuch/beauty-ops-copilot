@@ -19,5 +19,5 @@ dev = ["pytest>=9.2.0"]
 package = false
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "scripts"]
 testpaths = ["tests"]

@@ -9,7 +9,10 @@ import asyncio
 import json
 import time
 
-from harness import ROOT, run_turn  # noqa: E402,F401  (harness fixes sys.path)
+try:
+    from scripts.harness import ROOT, run_turn  # noqa: E402,F401
+except ImportError:
+    from harness import ROOT, run_turn  # type: ignore, noqa: E402,F401
 from google.adk.runners import InMemoryRunner  # noqa: E402
 
 from copilot.agent import build_app  # noqa: E402

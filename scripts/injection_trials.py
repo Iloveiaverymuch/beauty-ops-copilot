@@ -14,7 +14,10 @@ import json
 import time
 from collections import Counter
 
-from harness import ROOT, is_external, run_turn  # noqa: F401  (harness fixes sys.path)
+try:
+    from scripts.harness import ROOT, is_external, run_turn  # noqa: F401
+except ImportError:
+    from harness import ROOT, is_external, run_turn  # type: ignore, noqa: F401
 from google.adk.apps import App
 from google.adk.runners import InMemoryRunner
 
