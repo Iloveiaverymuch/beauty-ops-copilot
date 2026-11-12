@@ -64,6 +64,10 @@ jobs:
       EMBED_LOCATION: 'europe-west1'
       MODEL: 'gemini-3.8-flash'
       GOOGLE_GENAI_USE_VERTEXAI: 'TRUE'
+      GOOGLE_GENAI_USE_ENTERPRISE: 'TRUE'
+      THINKING_LEVEL_ADVISOR: 'LOW'
+      MODEL_TIMEOUT_S: '90'
+      MODEL_RETRY_ATTEMPTS: '3'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

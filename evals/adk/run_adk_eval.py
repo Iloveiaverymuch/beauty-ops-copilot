@@ -178,38 +178,54 @@ async def run_live_suite(eval_cases: list[dict[str, Any]]) -> list[EvalTurnResul
         case_name = case.get("name", "unnamed")
         data = case.get("data", [{}])[0]
         query = data.get("query", "")
-        t0 = time.perf_counter()
-
-        sid = f"eval-{uuid.uuid4().hex[:8]}"
-        await runner.session_service.create_session(app_name=runner.app_name, user_id="eval", session_id=sid)
-
+        last_error = None
         tool_calls: list[str] = []
         text = ""
         events: list[dict[str, Any]] = []
+        t0 = time.perf_counter()
 
-        try:
-            msg = types.Content(role="user", parts=[types.Part(text=query)])
-            async for ev in runner.run_async(user_id="eval", session_id=sid, new_message=msg):
-                for fc in ev.get_function_calls() or []:
-                    tool_calls.append(fc.name)
-                for fr in ev.get_function_responses() or []:
-                    if fr.name == "search_knowledge" and fr.response:
-                        passages = fr.response.get("passages", [])
-                        events.append({"event": "sources", "data": {"passages": passages}})
-                    elif fr.name == "search_products" and fr.response:
-                        products = fr.response.get("products", [])
-                        events.append({"event": "cards", "data": {"products": products}})
-                    elif fr.name == "estimate_quantity" and fr.response:
-                        events.append({"event": "estimate", "data": fr.response})
-                    elif fr.name == "get_claim_status" and fr.response:
-                        events.append({"event": "claim", "data": fr.response})
+        for attempt in range(2):
+            t0 = time.perf_counter()
+            sid = f"eval-{uuid.uuid4().hex[:8]}"
+            await runner.session_service.create_session(app_name=runner.app_name, user_id="eval", session_id=sid)
 
-                if ev.content and ev.content.parts and ev.author != "user":
-                    t = "".join(p.text or "" for p in ev.content.parts if not getattr(p, "thought", False))
-                    if t:
-                        text = t
-        except Exception as e:
-            errors = [f"Runner error: {type(e).__name__}: {str(e)}"]
+            tool_calls = []
+            text = ""
+            events = []
+
+            try:
+                msg = types.Content(role="user", parts=[types.Part(text=query)])
+                async for ev in runner.run_async(user_id="eval", session_id=sid, new_message=msg):
+                    for fc in ev.get_function_calls() or []:
+                        tool_calls.append(fc.name)
+                    for fr in ev.get_function_responses() or []:
+                        if fr.name == "search_knowledge" and fr.response:
+                            passages = fr.response.get("passages", [])
+                            events.append({"event": "sources", "data": {"passages": passages}})
+                        elif fr.name == "search_products" and fr.response:
+                            products = fr.response.get("products", [])
+                            events.append({"event": "cards", "data": {"products": products}})
+                        elif fr.name == "estimate_quantity" and fr.response:
+                            events.append({"event": "estimate", "data": fr.response})
+                        elif fr.name == "get_claim_status" and fr.response:
+                            events.append({"event": "claim", "data": fr.response})
+
+                    if ev.content and ev.content.parts and ev.author != "user":
+                        t = "".join(p.text or "" for p in ev.content.parts if not getattr(p, "thought", False))
+                        if t:
+                            text = t
+                last_error = None
+                break
+            except Exception as e:
+                last_error = e
+                err_str = str(e)
+                if attempt == 0 and any(code in err_str for code in ("504", "DEADLINE_EXCEEDED", "503", "429")):
+                    await asyncio.sleep(2.0)
+                    continue
+                break
+
+        if last_error is not None:
+            errors = [f"Runner error: {type(last_error).__name__}: {str(last_error)}"]
             latency_ms = round((time.perf_counter() - t0) * 1000)
             results.append(
                 EvalTurnResult(
