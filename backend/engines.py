@@ -28,22 +28,25 @@ class Engine(Protocol):
     def stream(self, thread_id: str, message: str) -> AsyncIterator[dict]: ...
 
 
-class AdkEngine:
-    """ADK Runner + session service. Sessions persist in SQLite locally (a backend restart keeps conversations);
-    in production: DatabaseSessionService on Cloud SQL, or VertexAiSessionService (Agent Platform Sessions)."""
-    name = "adk"
+CONFIRM = "adk_request_confirmation"
 
-    def __init__(self):
-        from beauty_advisor.agent import app   # imported here: telemetry must be configured before the agent loads
+
+class AdkEngine:
+    """ADK Runner + session service. Sessions persist in SQLite locally;
+    in production: DatabaseSessionService on Cloud SQL, or VertexAiSessionService (Agent Platform Sessions)."""
+
+    def __init__(self, app=None, name="adk"):
+        if app is None:
+            from beauty_advisor.agent import app
+        self.name = name
+        self.app = app
+        self.app_name = app.name
         if os.getenv("SESSIONS", "sqlite") == "sqlite":
             DATA_DIR.mkdir(exist_ok=True)
-            sessions = SqliteSessionService(str(DATA_DIR / "sessions.db"))
+            sessions = SqliteSessionService(str(DATA_DIR / f"sessions_{self.app_name}.db"))
         else:
             sessions = InMemorySessionService()
         self.runner = Runner(app=app, session_service=sessions)
-        self.app_name = app.name
-        # SSE streaming: the model's text arrives in partial events -> the customer sees words within ~1-2 s
-        # instead of waiting for the whole answer (time-to-first-token is the latency users perceive).
         self.run_config = RunConfig(streaming_mode=StreamingMode.SSE)
 
     async def _ensure_session(self, thread_id: str) -> None:
@@ -51,12 +54,9 @@ class AdkEngine:
         if await s.get_session(app_name=self.app_name, user_id="web", session_id=thread_id) is None:
             await s.create_session(app_name=self.app_name, user_id="web", session_id=thread_id)
 
-    async def stream(self, thread_id: str, message: str) -> AsyncIterator[dict]:
-        await self._ensure_session(thread_id)
+    async def _handle_events(self, event_stream) -> AsyncIterator[dict]:
         streamed_partial = False
-        msg = types.Content(role="user", parts=[types.Part(text=message)])
-        async for ev in self.runner.run_async(user_id="web", session_id=thread_id, new_message=msg,
-                                              run_config=self.run_config):
+        async for ev in event_stream:
             if ev.author == "user":
                 continue
             text = "".join(p.text or "" for p in (ev.content.parts if ev.content and ev.content.parts else [])
@@ -66,15 +66,43 @@ class AdkEngine:
                     streamed_partial = True
                     yield {"type": "text", "delta": text}
                 continue
-            # Non-partial event = the aggregated final version of what was just streamed: don't send it twice.
+            # Non-partial event = aggregated final version: don't duplicate
             if text and not streamed_partial:
                 yield {"type": "text", "delta": text}
             streamed_partial = False
-            if ev.usage_metadata:          # counted on final events only (partials repeat cumulative counts)
+            if ev.usage_metadata:
                 yield {"type": "usage", "tokens_in": ev.usage_metadata.prompt_token_count or 0,
                        "tokens_out": ev.usage_metadata.candidates_token_count or 0,
                        "tokens_thinking": ev.usage_metadata.thoughts_token_count or 0}
             for fc in ev.get_function_calls() or []:
-                yield {"type": "tool_call", "name": fc.name, "args": dict(fc.args or {})}
+                if fc.name == CONFIRM:
+                    orig = (fc.args or {}).get("originalFunctionCall", {}) or {}
+                    yield {
+                        "type": "confirmation_required",
+                        "call_id": fc.id,
+                        "tool": orig.get("name", "action"),
+                        "args": orig.get("args", {}),
+                    }
+                else:
+                    yield {"type": "tool_call", "name": fc.name, "args": dict(fc.args or {})}
             for fr in ev.get_function_responses() or []:
                 yield {"type": "tool_result", "name": fr.name, "response": fr.response or {}}
+
+    async def stream(self, thread_id: str, message: str) -> AsyncIterator[dict]:
+        await self._ensure_session(thread_id)
+        msg = types.Content(role="user", parts=[types.Part(text=message)])
+        stream = self.runner.run_async(user_id="web", session_id=thread_id, new_message=msg,
+                                       run_config=self.run_config)
+        async for event in self._handle_events(stream):
+            yield event
+
+    async def resume_confirmation(self, thread_id: str, call_id: str, confirmed: bool) -> AsyncIterator[dict]:
+        await self._ensure_session(thread_id)
+        parts = [types.Part(function_response=types.FunctionResponse(
+            id=call_id, name=CONFIRM, response={"confirmed": confirmed}
+        ))]
+        msg = types.Content(role="user", parts=parts)
+        stream = self.runner.run_async(user_id="web", session_id=thread_id, new_message=msg,
+                                       run_config=self.run_config)
+        async for event in self._handle_events(stream):
+            yield event

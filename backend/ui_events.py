@@ -11,11 +11,22 @@ TOOL_LABELS = {  # progress line shown while a tool runs ("Recherche dans le cat
     "check_availability": "Vérification du stock en magasin", "delivery_options": "Calcul des options de livraison",
     "request_human_advisor": "Transfert vers un conseiller",
     "open_return_claim": "Ouverture du dossier de retour", "get_claim_status": "Recherche du dossier",
+    # Internal Operations Copilot tools
+    "search_mail": "Recherche dans les emails (M365)",
+    "list_events": "Consultation de l'agenda (M365)",
+    "search_files": "Recherche documentaire (M365)",
+    "create_draft": "Préparation du brouillon email",
+    "catalog_lookup": "Consultation du catalogue officiel",
+    "list_pending_claims": "Récupération des réclamations en attente",
+    "review_claim": "Arbitrage et validation de la réclamation",
 }
 
 
 def ui_event_for_tool_result(name: str, resp: dict) -> dict | None:
     status = resp.get("status")
+    # Governance block event
+    if status == "blocked":
+        return {"event": "governance_blocked", "data": resp}
     if name == "search_products" and status == "ok" and resp.get("products"):
         return {"event": "cards", "data": {"products": resp["products"]}}
     if name == "compare_products" and status == "ok":
@@ -31,6 +42,12 @@ def ui_event_for_tool_result(name: str, resp: dict) -> dict | None:
         return {"event": "claim", "data": resp}
     if name == "request_human_advisor" and status == "ok":
         return {"event": "handoff", "data": {"ticket_id": resp["ticket_id"], "message": resp["message"]}}
+    if name == "create_draft" and status == "ok":
+        return {"event": "draft_created", "data": resp}
+    if name == "list_pending_claims" and status == "ok":
+        return {"event": "pending_claims", "data": resp}
+    if name == "review_claim":
+        return {"event": "claim_reviewed", "data": resp}
     return None
 
 

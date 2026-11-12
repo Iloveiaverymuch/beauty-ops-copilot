@@ -3,6 +3,7 @@
 Enables the operations team to inspect pending claims, validate refunds,
 and arbitrate customer disputes through the internal copilot.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -42,12 +43,14 @@ def review_claim(claim_id: str, decision: str, reason: str = "") -> dict[str, An
     if decision not in ("approve", "reject"):
         return {"status": "error", "message": "Decision must be 'approve' or 'reject'"}
 
-    outcome, st = claims.handle_decision({
-        "claim_id": claim_id,
-        "decision": decision,
-        "reviewer": "operations_copilot",
-        "reason": reason,
-    })
+    outcome, st = claims.handle_decision(
+        {
+            "claim_id": claim_id,
+            "decision": decision,
+            "reviewer": "operations_copilot",
+            "reason": reason,
+        }
+    )
     return {
         "status": st.get("status"),
         "claim_id": claim_id,

@@ -151,3 +151,51 @@ def test_sync_chat_reports_engine_errors_instead_of_passing_on_fallback_text(mon
     assert "provider unavailable" not in result["text"]
     unavailable = client.post("/chat/sync", json={"message": "bonjour", "engine": "langgraph"}).json()
     assert unavailable["status"] == "error" and unavailable["events"][0]["event"] == "error"
+
+
+def test_chat_confirmation_and_resume_stream(monkeypatch, tmp_path):
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+
+    class FakeCopilot:
+        name = "copilot"
+
+        async def stream(self, thread_id, message):
+            yield {
+                "type": "confirmation_required",
+                "call_id": "call_123",
+                "tool": "review_claim",
+                "args": {"claim_id": "CLM-TEST", "decision": "approve"},
+            }
+
+        async def resume_confirmation(self, thread_id, call_id, confirmed):
+            yield {"type": "tool_call", "name": "review_claim", "args": {"claim_id": "CLM-TEST"}}
+            yield {"type": "tool_result", "name": "review_claim", "response": {"status": "approved", "claim_id": "CLM-TEST"}}
+            yield {"type": "text", "delta": "Dossier validé avec succès."}
+            yield {"type": "usage", "tokens_in": 50, "tokens_out": 10}
+
+    monkeypatch.setitem(api.ENGINES, "copilot", FakeCopilot())
+    monkeypatch.setattr(api, "DATA_DIR", tmp_path)
+    client = TestClient(api.app)
+
+    # 1. Initiate chat turn that asks for confirmation
+    body1 = client.post("/chat", json={"message": "valide CLM-TEST", "engine": "copilot"}).text
+    events1 = [blk.split("\n")[0].removeprefix("event: ") for blk in body1.strip().split("\n\n")]
+    assert "confirmation_required" in events1
+
+    # Extract thread_id from meta
+    meta_line = [l for l in body1.splitlines() if l.startswith("data: ")][0]
+    import json
+    thread_id = json.loads(meta_line.removeprefix("data: "))["thread_id"]
+
+    # 2. Call /chat/confirm
+    body2 = client.post("/chat/confirm", json={
+        "thread_id": thread_id,
+        "call_id": "call_123",
+        "confirmed": True,
+        "engine": "copilot",
+    }).text
+    events2 = [blk.split("\n")[0].removeprefix("event: ") for blk in body2.strip().split("\n\n")]
+    assert events2 == ["meta", "progress", "claim_reviewed", "text", "done"]
+    assert "Dossier validé avec succès." in body2
+
