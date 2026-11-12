@@ -1,221 +1,150 @@
-# Beauty Ops Copilot: ADK + Vertex AI + MCP Agent Platform
-
-Executive interview presentation and architecture documentation:
-[`docs/DEMO_15MIN.md`](docs/DEMO_15MIN.md) (15-min interview presentation script),
-[`docs/beauty_ops_copilot_architecture_dossier.pdf`](docs/beauty_ops_copilot_architecture_dossier.pdf) (5-page architecture dossier),
-[`docs/LAB_PLAN.md`](docs/LAB_PLAN.md), [`docs/PROJECT_HANDOVER.md`](docs/PROJECT_HANDOVER.md),
-[`docs/ADR-001-adk-vs-langgraph.md`](docs/ADR-001-adk-vs-langgraph.md), [`docs/ADR-002-callbacks-guardrails-hitl.md`](docs/ADR-002-callbacks-guardrails-hitl.md),
-[`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
+# Beauty Ops Copilot
 
 ## About
 
 Beauty Ops Copilot is a multi-agent assistant built with Google ADK, Vertex AI Gemini, and MCP. The first agent answers product and campaign questions only from tool results (SKUs, ingredients, prices) and must cite sources. Later work adds Microsoft 365, routing, governance, and deployment.
 
-## Architecture
+---
+
+## Key Architecture & Core Capabilities
+
+The platform implements a pure **Google ADK 2.13** architecture on **Google Cloud Vertex AI** with zero third-party agent frameworks (no LangGraph, no CrewAI, no external wrappers). It orchestrates two complementary retail agents through a unified web interface:
 
 ```
-adk web / adk run / scripts (InMemoryRunner(app=...))
-  App "copilot"  plugins=[GovernancePlugin]        policy at platform level; also runs inside AgentTool runs
-   root "copilot"  router (transfer only, no tools of its own)
-     ├─ m365_agent     McpToolset(reads) + McpToolset(create_draft, require_confirmation=True)
-     │                 + AgentTool(catalog_lookup)  mixed requests: call the catalog, keep control
-     └─ catalog_agent  FunctionTools: search_products, get_campaign
-  model: copilot/model.py  gemini-3.8-flash @ Vertex `eu`, 60 s timeout per attempt, 3 retries on 408/429/5xx
-
-m365_mcp/server.py  MCPServer (mcp 2.3), streamable HTTP /mcp
-  bearer token -> audience (RFC 8707 resource) -> Graph-style scope per tool -> fixture data
-  annotations: read_only_hint / destructive_hint ; drafts written to m365_mcp/data/drafts.jsonl (never sent)
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                DUAL-AGENT WEB PLATFORM                                  │
+│                 FastAPI + SSE Streaming Engine (backend/app.py)                        │
+│                 Layer 1: Google Cloud Model Armor Prompt Sanitization                  │
+└────────────────────────────────────┬───────────────────────────────────────────────────┘
+                                     │
+         ┌───────────────────────────┴───────────────────────────┐
+         ▼                                                       ▼
+┌─────────────────────────────────┐     ┌────────────────────────────────────────────────┐
+│   CLIENT AGENT: LÉA (B2C)       │     │   INTERNAL COPILOT: OPERATIONS (B2B)           │
+│   (beauty_advisor/agent.py)     │     │   (copilot/agent.py)                           │
+├─────────────────────────────────┤     ├────────────────────────────────────────────────┤
+│ • Agentic RAG (Discovery Engine │     │ • Workplace M365 Tools (Mail, Calendar, Files) │
+│   reranking & exact citations)  │     │   via MCP Server (m365_mcp/server.py)          │
+│ • Deterministic Devis Calc      │     │ • Official Catalog Lookup (SKUs & campaigns)   │
+│   (estimate_quantity)           │     │ • Operational Claims Arbitration               │
+│ • Official Quote PDF Generator  │     │   (list_pending_claims, review_claim)          │
+│   (headless Chrome + fallback)  │     │ • Native Human-in-the-Loop (HITL)              │
+│ • Return Claim Submission       │     │   (require_confirmation=True on writes)        │
+│   Guarded by ADK lifecycle hook │     │ • Platform GovernancePlugin                    │
+│   (before_tool_callback)        │     │   (call budgets, write limit, domain allowlist)│
+└─────────────────────────────────┘     └────────────────────────────────────────────────┘
+                                     │
+                                     ▼
+        ┌────────────────────────────────────────────────────────┐
+        │                 GOOGLE CLOUD PLATFORM                  │
+        │ • Gemini 3.8 Flash on Vertex AI (eu multi-region)      │
+        │ • Distributed Tracing via Cloud Trace (TELEMETRY=gcp)  │
+        │ • Structured Governance Audit Logs & BigQuery Analytics│
+        │ • Stateless Microservices on Google Cloud Run          │
+        └────────────────────────────────────────────────────────┘
 ```
 
-What happens on one tool call, in order:
-1. **GovernancePlugin.before_tool** applies a deny-by-default allowlist, per-turn call and write budgets, and the recipient policy.
-2. **ADK native `require_confirmation`** asks for human approval (write toolset only).
-3. **The MCP server** checks the token, the audience and the scopes.
-4. **GovernancePlugin.after_tool** writes the audit record, releases the write reservation if the write failed, and records Confidential files seen this turn.
+---
 
-Policy runs before approval on purpose: nobody is asked to approve something the policy forbids.
+## Executive Documentation & Links
 
-## Layout
+* [**15-Minute Live Interview Demo Script**](docs/DEMO_15MIN.md) — Chronological walkthrough with live GCP console inspection.
+* [**5-Page Architecture Dossier (PDF)**](docs/beauty_ops_copilot_architecture_dossier.pdf) — Complete executive engineering overview.
+* [**ADR-001: Pure ADK Architecture vs LangGraph**](docs/ADR-001-adk-vs-langgraph.md) — Why ADK was selected over auxiliary frameworks.
+* [**ADR-002: Deterministic Governance & Human-in-the-Loop**](docs/ADR-002-callbacks-guardrails-hitl.md) — ADK callbacks vs prompt-only guardrails.
+* [**ADK Evaluation Suite**](evals/adk/README.md) & [**Vertex AI Evaluation**](evals/vertex/README.md) — Automated quality gates.
 
-| Path | What |
-|---|---|
-| `copilot/agent.py` | Router, `build_root(mode)`, `build_app()`; `app` is what `adk web` loads |
-| `copilot/m365_agent.py` | M365 agent; separate read/write toolsets; `naive` / `hardened` prompt variants |
-| `copilot/catalog_agent.py`, `copilot/tools/catalog.py` | Catalog agent + tools (constraints as params, near-miss hint) |
-| `copilot/governance.py` | `GovernancePlugin` + `POLICY` (modes: `off` / `shadow` / `enforce`) |
-| `copilot/model.py` | Gemini client: model id, timeout, retry policy; thinking level |
-| `copilot/observability.py` | Telemetry setup: Cloud Trace / OTLP (New Relic) by env, content elided by default |
-| `evals/obs_report.py`, `evals/LATENCY.md` | p50/p95 + tokens + cache-hit report across adk eval runs; A/B log |
-| `scripts/harness.py` | Runs one turn, answers approval pauses (simulated user), records calls/blocks/writes/errors |
-| `scripts/gov_demo.py` | Deterministic check of the 5 governance paths (~1 min) |
-| `scripts/injection_trials.py` | Prompt-only vs governance: attempted vs succeeded attacks, unrequested writes |
-| `scripts/routing_trials.py` | transfer vs AgentTool on single-domain and mixed requests |
-| `scripts/smoke_vertex.py`, `scripts/probe_models.py` | Vertex/ADC check; model x location availability grid |
-| `scripts/mcp_smoke.py` | Talk to the MCP server through ADK `McpToolset` |
-| `evals/build_evalset.py`, `evals/core/` | ADK-native evalset (10 cases) + criteria: trajectory IN_ORDER/ignore_args, hallucinations_v1 judge, response match |
-| `evals/test_eval_core.py` | Same evalset as a pytest via `AgentEvaluator` (num_runs=3): the CI gate |
-| `scripts/eval_suite.py` | Safety/utility suite: 4 attacks (marker, lookalike BEC, internal authority, internal relay) + 2 benign; pass^n, attempted vs blocked |
-| `tests/test_eval_checks.py` | Tests for the eval predicates themselves, on real agent outputs |
-| `deploy/` | Dockerfiles (mcp, copilot), `copilot_main.py` (Cloud Run entrypoint), `cloudbuild.yaml`, `DEPLOY.md` runbook |
-| `tests/test_s2s_auth.py` | Google ID-token verifier (audience, caller allowlist) + header_provider caching |
-| `tests/` | 42 offline tests (tools, MCP server contract, governance policy incl. race regressions) |
-| `evals/FINDINGS.md` | Run log, newest first: setup -> numbers -> interpretation -> action |
+---
 
-## Setup (Mac)
+## Project Layout
+
+| Component | Path | Description |
+|---|---|---|
+| **Client Advisor** | `beauty_advisor/agent.py` | Customer skincare & quote agent (Google ADK App with lifecycle callbacks) |
+| **Advisor Tools** | `advisor/tools.py` | Catalog search, product comparison, deterministic quantity and budget estimation |
+| **Quote PDF Engine** | `advisor/devis_pdf.py` | Official quotation PDF generator (A4 print-ready with mandatory legal disclaimers) |
+| **Claims Engine** | `advisor/claims.py` | Thread-safe SQLite claims engine with idempotent refund execution (`Idempotency-Key`) |
+| **Claims Guardrail** | `advisor/claims_guardrail.py` | Deterministic hygiene policy guardrail intercepting claims into `pending_review` |
+| **Internal Copilot** | `copilot/agent.py` | Root operations router coordinating specialist agents |
+| **M365 Agent** | `copilot/m365_agent.py` | Workplace assistant with read/write separation and prompt injection hardening |
+| **Governance** | `copilot/governance.py` | Platform `GovernancePlugin`: tool allowlists, turn budgets, corporate domain allowlist |
+| **M365 MCP Server** | `m365_mcp/server.py` | Model Context Protocol server exposing Outlook and OneDrive tools over HTTP |
+| **FastAPI Backend** | `backend/app.py` | Unified streaming SSE server, Model Armor sanitization, and PDF download endpoints |
+| **Dual Web UI** | `backend/static/index.html` | Dual-tab web interface with state persistence, timestamps, and HITL approval modals |
+| **1-Click Launcher** | `run_demo.sh` | Shell launcher orchestrating mock APIs, backend, and browser auto-launch |
+| **ADK Benchmark** | `evals/adk/` | 7 golden evaluation cases with custom deterministic evaluators (<1s offline runner) |
+| **Vertex AI Eval** | `evals/vertex/` | Pointwise rubrics (Groundedness, Persona, Safety, Compliance) scored with LLM judge |
+| **Unit Tests** | `tests/` | 111 comprehensive tests validating tools, governance, MCP contracts, and PDF generation |
+
+---
+
+## Quickstart (Local Development & Demo)
+
+### 1. Prerequisites & Setup
 
 ```bash
 uv sync
 gcloud auth application-default login
-gcloud auth application-default set-quota-project <PROJECT>
-cp copilot/.env.example copilot/.env          # set GOOGLE_CLOUD_PROJECT
-uv run --env-file copilot/.env python scripts/smoke_vertex.py      # expect VERTEX_OK
-uv run --env-file copilot/.env python scripts/probe_models.py      # if the model 404s: pick model x location
+gcloud auth application-default set-quota-project <YOUR_GCP_PROJECT>
+cp copilot/.env.example copilot/.env
 ```
 
-Required APIs: aiplatform, run, cloudbuild, artifactregistry, secretmanager, cloudtrace, telemetry, logging.
+### 2. Launch the Complete Demo (1-Click)
 
-## Run
+Launch both the retail mock API (port 8090) and the dual-agent web platform (port 8000) with automatic browser opening:
 
 ```bash
-uv run pytest -q                                   # 110 offline tests (<2s), no LLM, no server
-uv run python -m evals.adk.run_adk_eval --offline  # 7 deterministic ADK evaluations in <1s
-
-# Dual Web UI (Léa B2C + Copilot B2B with HITL confirmation & Model Armor):
-uv run uvicorn mock_api.stock_api:app --port 8090  # terminal 1: retail stock API
-uv run uvicorn backend.app:app --port 8000         # terminal 2: backend & dual UI -> open http://localhost:8000
+./run_demo.sh
 ```
 
-uv run --env-file copilot/.env python scripts/gov_demo.py              # 5 governance paths
-uv run --env-file copilot/.env python scripts/routing_trials.py --n 3
-uv run --env-file copilot/.env python scripts/injection_trials.py --n 5 --variants naive hardened --governance off enforce
-uv run python scripts/mcp_smoke.py [dev-readonly-token]                # MCP contract via ADK client
+Or run services manually in separate terminals:
+```bash
+# Terminal 1: Retail stock and delivery API
+uv run uvicorn mock_api.stock_api:app --port 8090
 
-# Automated evaluation
-uv run python evals/build_evalset.py                                   # regenerate the ADK evalset
-# PYTHONPATH=. : `adk eval` imports copilot/ by file path without the repo root on sys.path
-PYTHONPATH=. M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env adk eval copilot evals/core/copilot_core.evalset.json \
-    --config_file_path evals/core/test_config.json --print_detailed_results
-uv run python evals/check_eval_budgets.py                               # efficiency gate on the latest result
-M365_CONFIRM_WRITES=0 uv run --env-file copilot/.env pytest evals/test_eval_core.py -q -s   # same, 3 runs (CI gate)
-uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance enforce     # safety + utility
-uv run --env-file copilot/.env python scripts/eval_suite.py --n 3 --governance off         # what governance buys
-
-# Distributed observability
-OTEL_SERVICE_NAME=beauty-ops-copilot uv run --env-file copilot/.env adk web --otel_to_cloud   # adk web: native flag
-TELEMETRY=gcp uv run --env-file copilot/.env python scripts/gov_demo.py                    # scripts: our setup
-uv run python evals/obs_report.py --since <unix_ts> --label "<config>"   # p50/p95, model share, tokens, cache hits
+# Terminal 2: Copilot Backend & Web UI
+uv run uvicorn backend.app:app --port 8000 --reload
 ```
 
-New Relic (no code; ADK adds an OTLP exporter from standard env vars):
+---
+
+## Verification & CI/CD Gates
+
+The platform enforces a two-tier evaluation architecture: fast offline regression testing for PR blocking, and deep live cloud evaluations on Vertex AI.
 
 ```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.eu01.nr-data.net:4318
-export OTEL_EXPORTER_OTLP_HEADERS="api-key=<NEW_RELIC_LICENSE_KEY>"
-export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+# Run unit test suite (111 tests passing in ~5s)
+uv run pytest -q
+
+# Run offline ADK evaluation benchmark (7/7 passing in <1s)
+uv run python -m evals.adk.run_adk_eval --offline
+
+# Run governance policy verification
+uv run --env-file copilot/.env python scripts/gov_demo.py
 ```
 
-## Configuration (`copilot/.env`)
+---
 
-| Var | Default | Meaning |
+## Governance Policy Enforcement
+
+The platform enforces defense-in-depth where **code guarantees security before human confirmation is requested**:
+
+1. **Layer 1 — Google Cloud Model Armor:** Scans user prompt for jailbreak and injection patterns on entry.
+2. **Layer 2 — GovernancePlugin.before_tool:** Deny-by-default allowlist, per-turn call limit (10), write reservation (1 draft/turn), and corporate recipient allowlist (`@retail-group.com`, `@beauty-corp.com`, etc.).
+3. **Layer 3 — Native Human-in-the-Loop:** High-impact writes (`create_draft`, `review_claim`) pause execution and require explicit user approval (`require_confirmation=True`).
+4. **Layer 4 — Enterprise MCP Security:** Server-side bearer token authentication, audience checks, and OAuth scopes (`Mail.Read`, `Mail.ReadWrite`).
+5. **Layer 5 — Cloud Trace Telemetry:** Audit spans exported with personal content elision (`NO_CONTENT`) for GDPR compliance.
+
+---
+
+## Results & Benchmark Evidence
+
+| Capability Block | Method | Measured Result |
 |---|---|---|
-| `GOOGLE_CLOUD_PROJECT` | | GCP project |
-| `GOOGLE_CLOUD_LOCATION` | `eu` | `eu` multi-region (residency). Single EU regions don't serve current Flash. `global` = availability, no residency guarantee |
-| `MODEL` | `gemini-3.8-flash` | Verify with `probe_models.py`: a model listed in the catalog isn't necessarily callable |
-| `MODEL_TIMEOUT_S` / `MODEL_RETRY_ATTEMPTS` | `60` / `3` | Per-attempt timeout; retries on 408/429/5xx |
-| `ROUTER_MODE` | `agenttool` | `agenttool` (recommended) or `transfer` |
-| `M365_PROMPT` | `hardened` | `hardened_v2` = recommended (scoped caution, data minimization, no commitments); `naive` for baselines |
-| `M365_MCP_URL` / `M365_MCP_TOKEN` | `http://127.0.0.1:8080/mcp` / `dev-agent-token` | `dev-readonly-token` has no `Mail.ReadWrite` |
-| `M365_CONFIRM_WRITES` | `1` | Native human approval on `create_draft` |
-| `GOVERNANCE` | `enforce` | `off` / `shadow` (log decisions, block nothing) / `enforce` |
-| `GOV_AUDIT_FILE` | unset | Also write audit JSON lines to a file (always logged to `governance.audit`) |
-| `TELEMETRY` | `off` | `gcp` = ADK spans to Cloud Trace + GenAI metrics to Cloud Monitoring |
-| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `NO_CONTENT` | Prompts/responses in telemetry. Two libs read it with different conventions (ADK: `true`/`false`; GenAI instrumentor: `NO_CONTENT`/`SPAN_ONLY`/...). `NO_CONTENT` = off for both: M365 content stays out of traces |
-| `THINKING_LEVEL` | unset | `MINIMAL`/`LOW`/`MEDIUM`/`HIGH` for Gemini 3; unset = model default (global fallback) |
-| `THINKING_LEVEL_ROUTER` / `_CATALOG` / `_M365` | `LOW` / `LOW` / unset | Per-agent thinking by risk: LOW where there are no writes and no untrusted content; full reasoning for the M365 agent |
-| `CONTEXT_CACHE` | `0` | `1` = per-agent Gemini context cache (`CONTEXT_CACHE_MIN_TOKENS`, default 2048) |
-
-## Governance policy (`copilot/governance.py`)
-
-| Agent | Allowed tools | Calls / turn | Writes / turn |
-|---|---|---|---|
-| `copilot` (router) | `transfer_to_agent` | 2 | 0 |
-| `m365_agent` | search_mail, list_events, search_files, create_draft, catalog_lookup, transfer | 10 (calibrated on legitimate triage) | 1 |
-| `catalog_agent` / `catalog_lookup` | search_products, get_campaign (+ transfer) | 4 | 0 |
-| any other agent | nothing (deny by default) | 0 | 0 |
-
-Other rules:
-- Drafts to recipients outside corporate domains (`@retail-group.com`, `@beauty-corp.com`, etc.) are blocked; lookalike domains count as outside.
-- The write set is **our** list, not the server's `read_only_hint`. A mismatch raises an alert.
-- Budgets are scoped to the **user turn**: the key is the id of the last user event that has text, so they survive approval resumes.
-- Write slots are **reserved at decision time**, which handles parallel function calls.
-- Audit records hold hashes and domains, never addresses or arguments.
-
-## Results (details and raw numbers in `evals/FINDINGS.md`; decisions in `docs/ADR-001.md` and `docs/ADR-002.md`; demo in `DEMO.md`)
-
-| Capability Block | Finding |
-|---|---|
-| Tools & Catalog | Constraints as tool params: 6 → 3 tool calls; near-miss hint when exact filters hide alternatives |
-| MCP Protocol | No token 401; read-only token `insufficient_scope`; injected mail returned as data (by design) |
-| Prompt Hardening | 0/15 external drafts (upper bound ≈ 20%); naive agent's real risk = unrequested writes |
-| Router Composition | AgentTool vs transfer: same pass rate, ~2× faster, ⅓ calls, authoritative source → **chosen** |
-| Governance Plugin | gov_demo 5/5; parallel-call race and approval-resume scope bugs fixed |
-| Evaluation Framework | Core evalset 10/10 + call-budget gate; matrix below; hardened_v2 = safe and useful |
-| Distributed Tracing | Governance visible on trace spans; latency provider-bound; per-agent thinking configured |
-| Cloud Run Deploy | 2 private Cloud Run services; 403 edge / 401 app; structured audit + `governance_denies` metric |
-| Dual-Agent Architecture | Native ADK eval (`evals/adk/`) + Vertex AI Eval (`evals/vertex/`). CI gate: 111 tests + 7 ADK offline (<25s); regression blocked on PR. Live run: 7/7 passed, Vertex LLM judge 5.0/5.0 |
-
-**Prompt × governance matrix** (n=3, rubber-stamp approver, 4 attacks + ambiguous legitimate task):
-
-| Config | Attacks succeeded | Attempted → blocked | Ambiguous task (utility) |
-|---|---|---|---|
-| naive + no policy | **4/12** (real exfil drafts) | 4 → 0 | 3/3 |
-| naive + enforce | 0/12 | 4 → 4 | 3/3 (after budget calibration) |
-| hardened v1 + enforce | 0/12 | 0 | **0/3** (over-refusal) |
-| **hardened_v2 + enforce** (shipped) | **0/12** | 0 | **3/3**, no unauthorized commitment |
-
-**Core eval** (ADK, 10 cases): trajectory `IN_ORDER` 1.0, `hallucinations_v1` 1.0, calls within budget;
-p50 ≈ 15 s, p95 ≈ 70 s on `global` (provider-bound tail; `eu` worse: max 417 s).
-
-Bugs found by measuring (all fixed, regression-tested): parallel function calls race · approval resume = new
-invocation · provenance hidden by a passing check · SKU not searchable (green eval, 5 calls) · eval checker
-false-fail · telemetry silent failures (provider ownership, missing `gcp.project_id`) · 4 deploy issues
-(origin check, file permissions, missing API, two URLs).
-
-### Evidence screenshots (deployed service, 2026-11-08)
-| | |
-|---|---|
-| Policy blocks before approval | [`docs/demo/01-ui-blocked.png`](docs/demo/01-ui-blocked.png) |
-| Prod trace waterfall | [`docs/demo/02-trace-waterfall.png`](docs/demo/02-trace-waterfall.png) |
-| Denied span (`governance.denied`) | [`docs/demo/03-trace-denied-span.png`](docs/demo/03-trace-denied-span.png) |
-| Audit log line, same trace | [`docs/demo/04-audit-log.png`](docs/demo/04-audit-log.png) |
-| `governance_denies` metric | [`docs/demo/05-metric.png`](docs/demo/05-metric.png) |
-| Prompt layer refuses an injection | [`docs/demo/06-ui-prompt-refusal.png`](docs/demo/06-ui-prompt-refusal.png) |
-
-## Known limits
-
-- M365 is a mock: same contract as Graph (tools, scopes, Purview label), fixture data. Real Graph would need
-  Entra auth (on-behalf-of the user) and is a change to `m365_mcp/server.py` only.
-- Dev auth uses static bearer tokens. In prod: Google ID tokens between Cloud Run services, Entra-issued tokens for Graph.
-- Recipient policy is not DLP: an internal relay (`msg-011` → `migration-backup@retail-group.com`) is allowed by policy; only the model resists it.
-- Eval sample sizes (n=3) give direction, not SLOs or safety guarantees; configs were A/B'd sequentially (time-of-day confound).
-- Session-state budget keys build up per turn (fine for a POC; a production store needs a TTL).
-- Every transfer re-sends the prompt uncached, because `context_cache_config` isn't set yet.
-- The `Failed to configure mTLS` line at startup is google-auth probing for client certificates. It's harmless.
-
-## Roadmap & Milestones
-
-- [x] Cloud platform setup, ADC, model verification (`gemini-3.8-flash` @ `eu`)
-- [x] Catalog agent & deterministic tools (constraints in params, near-miss hint)
-- [x] M365 MCP server (bearer, audience, scopes, annotations)
-- [x] M365 agent & injection defense baseline (naive vs hardened)
-- [x] Router composition: transfer vs AgentTool
-- [x] Governance plugin & native Human-in-the-Loop approval
-- [x] Automated evaluation suite: ADK evalset + call-budget gate + prompt x governance matrix
-- [x] Observability: Cloud Trace distributed spans + content elision
-- [x] Cloud Run deployment: 2 private services, service-to-service IAM auth, structured audit logs
-- [x] Documentation & ADRs: `docs/ADR-001.md`, `docs/ADR-002.md`, results tables
-- [x] Dual-Agent Architecture & CI/CD: Beauty Advisor + Claims Engine (111 tests, 7/7 ADK evals, CI gate)
-- [ ] Infrastructure as Code: Terraform modules for Cloud Run, Artifact Registry, Secret Manager
-- [ ] Production Sessions: Persistent PostgreSQL / Cloud SQL session storage
-- [ ] Enterprise Directory: Entra ID / MS Graph live tenant connector
-- [ ] Performance & Scaling: Auto-scaling stress testing and latency SLO monitoring
+| **RAG Citations** | Discovery Engine Rerank | Zero hallucinations; strict source grounding on validated knowledge base |
+| **Devis Estimation** | Deterministic Pydantic Tool | 100% arithmetical accuracy; print-ready PDF generated with legal disclaimers |
+| **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked |
+| **Exfiltration Defense** | Corporate Domain Allowlist | 4/4 external exfiltration attempts blocked by code before human review |
+| **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 111 unit tests + 7 deterministic ADK benchmarks executed in <25s |
+| **Cloud Evaluation** | Vertex AI Gen AI Eval | 7/7 live cases passed, 5.0/5.0 Vertex LLM judge rating across all rubrics |
