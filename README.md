@@ -119,7 +119,10 @@ uv run uvicorn backend.app:app --port 8000 --reload
 The platform enforces a two-tier evaluation architecture: fast offline regression testing for PR blocking, and deep live cloud evaluations on Vertex AI.
 
 ```bash
-# Run unit test suite (128 tests passing in ~3s)
+# Run canonical offline verification suite (<10s, 0 network, 0 costs)
+uv run scripts/verify.py
+
+# Run unit test suite (131 tests passing in ~5s)
 uv run pytest -q
 
 # Run offline ADK evaluation benchmark (7/7 passing in <1s)
@@ -128,6 +131,8 @@ uv run python -m evals.adk.run_adk_eval --offline
 # Run governance policy verification
 uv run --env-file copilot/.env python scripts/gov_demo.py
 ```
+
+For the complete agent-assisted development lifecycle, copy-paste prompts, and skill usage instructions, see [docs/DEVELOPER_WORKFLOW.md](docs/DEVELOPER_WORKFLOW.md).
 
 ---
 

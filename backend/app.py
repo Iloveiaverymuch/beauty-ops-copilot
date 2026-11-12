@@ -82,7 +82,7 @@ class ChatRequest(BaseModel):
 class ConfirmRequest(BaseModel):
     """Human-in-the-loop review confirmation."""
     thread_id: str = Field(pattern=r"^[a-f0-9]{32}$")
-    call_id: str
+    call_id: str = Field(min_length=1, max_length=128)
     confirmed: bool
     engine: str = "copilot"
 
@@ -272,6 +272,7 @@ async def chat_confirm(req: ConfirmRequest):
                 except Exception as e:
                     error = f"{type(e).__name__}: {str(e)[:200]}"
                     log.exception("confirm turn failed")
+                    yield sse("error", {"message": "Erreur lors de la confirmation de l'action."})
                     yield sse("text", {"delta": "Erreur lors de la confirmation de l'action."})
                 chips = suggestions(results, first_turn=False, reply_text="".join(reply))
                 if chips:

@@ -1,17 +1,14 @@
 # Project handover
 
-Verified on 2026-11-11. Initial assessment inspected code/tests/stored
-results without cloud calls. Continuation implemented ADK's native
-evaluation framework (`evals/adk/`) and Vertex AI Gen AI Evaluation Service (`evals/vertex/`), eliminating external
-Node.js dependencies. GitHub Actions CI/CD gate is active and verified on branch protection: PR gate runs 106 Python tests
-and 7 deterministic ADK evaluations in ~21s. A regression PR was proven to block merging. The live cloud evaluation suite
-ran in GitHub Actions against Vertex AI and Discovery Engine, passing 7/7 cases + 5.0/5.0 Vertex LLM judge.
+Verified on 2026-11-12. SDD and lightweight SDLC foundation established:
+- **Canonical Developer Instructions**: [AGENTS.md](../AGENTS.md) at repository root.
+- **Specification-Driven Development (SDD)**: Spec template at [docs/specs/TEMPLATE.md](specs/TEMPLATE.md) and active milestone specification at [docs/specs/SPEC-001-claims-hitl-lock-and-state-safety.md](specs/SPEC-001-claims-hitl-lock-and-state-safety.md).
+- **Automated Verification**: Fast offline entry point at `scripts/verify.py` executing **131 pytest tests and 7/7 ADK offline evals in <10s** (zero network, zero cloud costs).
+- **Antigravity Skills**: 5 focused skills in `.agents/skills/` (`implement-spec`, `debug-failure`, `verify-change`, `review-adk-tool`, `handover`).
+- **Reliability Backlog**: Prioritized production-hardening roadmap across 11 operational dimensions in [docs/RELIABILITY_BACKLOG.md](RELIABILITY_BACKLOG.md).
+- **Reliability Milestone Implemented**: Enforced strict bounded validation on HITL `ConfirmRequest.call_id`, resilient error eventing on `/chat/confirm`, and added regression coverage in `tests/test_backend.py`.
 
-Planning authority is now **[LAB_PLAN.md](LAB_PLAN.md)**, based on the user's supplied agreed schedule and previous
-assistant's handoff. This is interview preparation for Friday 2026-11-13, with one preparation day remaining, not
-a production project. Continue that sequence; the engineering backlog below is discussion material rather than
-the immediate build plan. The older external plan referenced by README was not found locally. Branding
-neutralization is authorized; GCP tracing is chosen instead of adding Langfuse. Keep the opportunity confidential.
+Planning authority remains **[LAB_PLAN.md](LAB_PLAN.md)** for interview preparation. The engineering backlog below and in [RELIABILITY_BACKLOG.md](RELIABILITY_BACKLOG.md) serves as discussion material and architecture hardening guidelines.
 
 ## What exists
 

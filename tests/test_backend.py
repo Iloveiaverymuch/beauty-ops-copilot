@@ -200,6 +200,58 @@ def test_chat_confirmation_and_resume_stream(monkeypatch, tmp_path):
     assert "Dossier validé avec succès." in body2
 
 
+def test_confirm_request_validation():
+    from backend.app import ConfirmRequest
+    # Valid
+    valid = ConfirmRequest(thread_id="a" * 32, call_id="call_999", confirmed=True)
+    assert valid.call_id == "call_999"
+    # Empty call_id must raise
+    with pytest.raises(ValidationError):
+        ConfirmRequest(thread_id="a" * 32, call_id="", confirmed=True)
+    # Invalid thread_id must raise
+    with pytest.raises(ValidationError):
+        ConfirmRequest(thread_id="invalid_thread", call_id="call_1", confirmed=True)
+
+
+def test_chat_confirm_empty_call_id_rejected_with_422(monkeypatch, tmp_path):
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+    client = TestClient(api.app)
+    res = client.post("/chat/confirm", json={
+        "thread_id": "a" * 32,
+        "call_id": "",
+        "confirmed": True,
+    })
+    assert res.status_code == 422
+
+
+def test_chat_confirm_handles_engine_failure(monkeypatch, tmp_path):
+    monkeypatch.setenv("SESSIONS", "memory")
+    import backend.app as api
+
+    class CrashingEngine:
+        name = "copilot"
+        async def resume_confirmation(self, thread_id, call_id, confirmed):
+            raise RuntimeError("Engine crashed during resume")
+            yield  # async generator
+
+    monkeypatch.setitem(api.ENGINES, "copilot", CrashingEngine())
+    monkeypatch.setattr(api, "DATA_DIR", tmp_path)
+    client = TestClient(api.app)
+
+    body = client.post("/chat/confirm", json={
+        "thread_id": "b" * 32,
+        "call_id": "call_fail",
+        "confirmed": True,
+        "engine": "copilot",
+    }).text
+    events = [blk.split("\n")[0].removeprefix("event: ") for blk in body.strip().split("\n\n")]
+    assert "error" in events
+    assert "done" in events
+    assert '"failed": true' in body
+
+
+
 def test_model_armor_blocks_prompt_injection(monkeypatch, tmp_path):
     monkeypatch.setenv("SESSIONS", "memory")
     import backend.app as api
