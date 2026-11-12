@@ -77,7 +77,10 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **1-Click Launcher** | `run_demo.sh` | Shell launcher orchestrating mock APIs, backend, and browser auto-launch |
 | **ADK Benchmark** | `evals/adk/` | 7 golden evaluation cases with custom deterministic evaluators (<1s offline runner) |
 | **Vertex AI Eval** | `evals/vertex/` | Pointwise rubrics (Groundedness, Persona, Safety, Compliance) scored with LLM judge |
-| **Unit Tests** | `tests/` | 120 comprehensive tests validating tools, governance, MCP contracts, and PDF generation |
+| **Sequential Quote Pipeline** | `advisor/structured_quote.py` | Expert ADK `SequentialAgent`: decoupled collector with tools and strict Pydantic `output_schema` formatter |
+| **Enterprise Connectors** | `advisor/enterprise_connectors.py` | Production mapping: `VertexAiSearchTool`, `ToolboxToolset` (MCP DB), `LongRunningFunctionTool` |
+| **Agent2Agent Protocol** | `advisor/a2a.py` | Google A2A protocol `AgentCard` for multi-system interoperability and capability discovery |
+| **Unit Tests** | `tests/` | 128 comprehensive tests validating tools, governance, MCP contracts, PDF generation, and ADK patterns |
 
 ---
 
@@ -116,7 +119,7 @@ uv run uvicorn backend.app:app --port 8000 --reload
 The platform enforces a two-tier evaluation architecture: fast offline regression testing for PR blocking, and deep live cloud evaluations on Vertex AI.
 
 ```bash
-# Run unit test suite (111 tests passing in ~5s)
+# Run unit test suite (128 tests passing in ~3s)
 uv run pytest -q
 
 # Run offline ADK evaluation benchmark (7/7 passing in <1s)
@@ -149,5 +152,5 @@ The platform enforces defense-in-depth where **code guarantees security before h
 | **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked |
 | **Exfiltration Defense** | Corporate Domain Allowlist | 4/4 external exfiltration attempts blocked by code before human review |
 | **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal |
-| **CI/CD Quality Gate** | GitHub Actions Pipeline | 120 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 128 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
 | **Cloud Evaluation** | Vertex AI Gen AI Eval | 7/7 live cases passed, 5.0/5.0 Vertex LLM judge rating across all rubrics |

@@ -113,3 +113,4 @@ def extract_event_actions_state_deltas(events: list[Any]) -> dict[str, Any]:
             if delta and isinstance(delta, dict):
                 accumulated_deltas.update(delta)
     return accumulated_deltas
+

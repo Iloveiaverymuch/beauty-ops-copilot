@@ -77,3 +77,4 @@ def get_enterprise_architecture_manifest() -> Dict[str, Any]:
             for k, v in ENTERPRISE_ARCHITECTURE_MAP.items()
         },
     }
+
