@@ -1,7 +1,7 @@
 [project]
 name = "beauty-ops-copilot"
 version = "0.1.0"
-description = "ADK + Vertex AI + MCP agent POC (L'Oréal mission prep)"
+description = "Beauty Ops Copilot is a multi-agent assistant built with Google ADK, Vertex AI Gemini, and MCP."
 requires-python = ">=3.12"
 dependencies = [
     "google-adk[eval,otel]==2.13.0",

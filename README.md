@@ -7,11 +7,9 @@ Executive interview presentation and architecture documentation:
 [`docs/ADR-001-adk-vs-langgraph.md`](docs/ADR-001-adk-vs-langgraph.md), [`docs/ADR-002-callbacks-guardrails-hitl.md`](docs/ADR-002-callbacks-guardrails-hitl.md),
 [`evals/adk/README.md`](evals/adk/README.md), and [`evals/vertex/README.md`](evals/vertex/README.md).
 
-A multi-agent business backend on **Google ADK 2.13** and **Gemini on Vertex AI**. One agent reaches
-Microsoft 365 through an **MCP server**. A **governance plugin** enforces tool policy in code, and every claim
-is backed by a measured trial in [`evals/FINDINGS.md`](evals/FINDINGS.md).
+## About
 
-An enterprise-grade retail AI agent platform (Python 3.12, Google ADK 2.13, Gemini 3.8 Flash on Vertex AI, Model Armor defense, MCP connectors for M365, deterministic governance, and distributed Cloud Trace observability).
+Beauty Ops Copilot is a multi-agent assistant built with Google ADK, Vertex AI Gemini, and MCP. The first agent answers product and campaign questions only from tool results (SKUs, ingredients, prices) and must cite sources. Later work adds Microsoft 365, routing, governance, and deployment.
 
 ## Architecture
 
