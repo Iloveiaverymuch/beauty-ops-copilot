@@ -286,3 +286,4 @@ def generate_devis_pdf(data: dict[str, Any]) -> Path:
         raise RuntimeError(f"Chrome PDF generation failed (code {res.returncode}): {res.stderr}")
 
     return Path(pdf_path)
+

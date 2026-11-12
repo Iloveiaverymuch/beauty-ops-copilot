@@ -381,3 +381,28 @@ async def devis_pdf(req: DevisPdfRequest):
         media_type="application/pdf",
         filename=f"Devis_Provisoire_{req.days}j.pdf",
     )
+
+
+@app.get("/devis/pdf")
+async def devis_pdf_get(
+    sku: str = "SKU-PROV",
+    name: str = "Produit sélectionné",
+    days: int = 30,
+    units: int = 1,
+    size_ml: float = 50.0,
+    total_eur: float = 0.0,
+    savings_eur: float = 0.0,
+    usage_ml_per_day: float = 1.0,
+):
+    """Direct link / GET download for provisional quote PDF."""
+    from advisor.devis_pdf import generate_devis_pdf
+    pdf_path = generate_devis_pdf({
+        "sku": sku, "name": name, "days": days, "units": units,
+        "size_ml": size_ml, "total_eur": total_eur, "savings_eur": savings_eur,
+        "usage_ml_per_day": usage_ml_per_day,
+    })
+    return FileResponse(
+        path=str(pdf_path),
+        media_type="application/pdf",
+        filename=f"Devis_Provisoire_{days}j.pdf",
+    )
