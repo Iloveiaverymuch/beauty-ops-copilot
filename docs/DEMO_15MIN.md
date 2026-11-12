@@ -12,7 +12,7 @@ Ce guide est votre fil conducteur minute par minute pour l'entretien technique. 
 | **00:00 - 02:00** | **Pitch d'Architecture & Posture Tech Lead** | Cadrage du besoin retail, choix stratégique Google ADK 2.13, fin de l'improvisation de prompts, architecture à deux agents. |
 | **02:00 - 06:00** | **Démo 1 : Léa (B2C — Advisor & Devis)** | RAG Agentique avec citations, calcul déterministe de devis/quantité, ouverture de réclamation avec garde-fous ADK (`before_tool_callback`). |
 | **06:00 - 10:00** | **Démo 2 : Copilot (B2B — Opérations & HITL)** | Triage Google Workspace (Gmail, Calendar, Drive), découverte du litige client, arbitrage avec **Human-In-The-Loop natif ADK** (`require_confirmation=True`), et interception gouvernance. |
-| **10:00 - 12:30** | **Rigueur CI/CD, Évaluations & Observabilité** | Gate offline (<3s, 123 tests), suite d'éval ADK (7/7 pass), traces Cloud Trace / OpenTelemetry sans fuite de PII. |
+| **10:00 - 12:30** | **Rigueur CI/CD, Évaluations & Observabilité** | Gate offline (<3s, 128 tests), suite d'éval ADK (7/7 pass), traces Cloud Trace / OpenTelemetry sans fuite de PII. |
 | **12:30 - 15:00** | **Vision Cible & Montée en Compétence (3 ans)** | Plan de transition Clean Architecture (`domain/`, `agents/`, `gateway/`), accompagnement des équipes pour devenir référents ADK. Q&A. |
 
 ---
@@ -156,9 +156,9 @@ Basculez sur votre terminal / éditeur de code.
   ```bash
   uv run pytest -q
   ```
-- **Résultat :** `123 passed in ~2.5s`.
+- **Résultat :** `128 passed in ~3s`.
 - **Message clé :**
-  > *"Pour garantir qu'un développeur ne casse rien en production, nous avons une suite complète de 123 tests unitaires et d'intégration qui s'exécute en moins de 3 secondes, sans dépendance réseau ni coût d'API."*
+  > *"Pour garantir qu'un développeur ne casse rien en production, nous avons une suite complète de 128 tests unitaires et d'intégration qui s'exécute en 3 secondes, sans dépendance réseau ni coût d'API."*
 
 #### 2. L'évaluation ADK Native (7/7 Pass)
 - **Commande à exécuter :**
@@ -225,5 +225,6 @@ Ouvrez le dossier d'architecture PDF (`docs/beauty_ops_copilot_architecture_doss
 | **Comment assurez-vous l'interopérabilité multi-systèmes / multi-agents ?** | *"Nous implémentons le protocole officiel **Google Agent2Agent (A2A)** (`advisor/a2a.py`). L'agent Léa publie une `AgentCard` typée déclarant ses capacités (recherche RAG, calcul de devis, gestion des réclamations), ses schémas d'outils et ses méthodes d'authentification (Google OAuth2). Cela permet à d'autres agents de l'écosystème Adeo/Leroy Merlin d'orchestrer Léa de façon standardisée sans couplage fort."* |
 | **Comment gérez-vous les états et la mémoire dans ADK sans bloater le contexte ?** | *"Nous appliquons l'architecture d'états scopés ADK : `app:` pour les configurations globales, `user:` pour les préférences et identifiants persistants (anti-IDOR), sans préfixe pour le scratchpad de session, et `temp:` pour les métadonnées éphémères du tour (ex: `temp:last_claim_id`). Pour les payloads volumineux (PDF de devis), nous utilisons l'ArtifactService (stockage Cloud Storage / local) plutôt que d'injecter des octets bruts dans le prompt LLM."* |
 | **Comment éviter les surcoûts lors des transferts multi-agents ?** | *"Lorsqu'un routeur transfère vers un sous-agent, le system prompt change. Dans notre configuration ADK, nous activons `ContextCacheConfig` avec un TTL de 30 minutes, ce qui permet à Vertex AI de réutiliser les préfixes mis en cache et de réduire significativement la consommation de tokens sur les sessions longues récurrentes."* |
-| **Comment stockez-vous l'état en production ?** | *"En local pour la démo, nous utilisons `SqliteSessionService`. Pour la production Cloud Run, nous basculons simplement sur `DatabaseSessionService` branché sur Google Cloud SQL (PostgreSQL), ou sur `VertexAiSessionService` pour une gestion entièrement managée."* |
+| **Comment garantissez-vous un devis JSON 100% strict sans hallucination de prix ?** | *"En ADK/Gemini, imposer un `output_schema` Pydantic contraint le mode de sortie et désactive le function calling sur le même tour. Nous appliquons le pattern expert `SequentialAgent` (`advisor/structured_quote.py`) en 2 étapes : un premier agent collecteur avec outils (`estimate_quantity`) calcule les montants exacts, puis un second agent formateur (`include_contents='none'`, `output_schema=DevisConfiguratorSchema`) produit la structure JSON certifiée sans aucun outil, éliminant tout risque d'erreur arithmétique."* |
+| **Comment passez-vous de ce POC aux outils managés Google Cloud en production ?** | *"L'architecture cible (`advisor/enterprise_connectors.py`) remplace nos mocks par les composants natifs Google ADK : `VertexAiSearchTool` pour le RAG managé sur Datastore GCP, `ToolboxToolset` (MCP Databases officiel Google) pour sécuriser les requêtes SQL paramétrées sans injection, et `LongRunningFunctionTool` pour l'asynchronisme distribué (rendez-vous conseiller en magasin validé après coup via webhook)."* |
 

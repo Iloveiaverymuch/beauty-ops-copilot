@@ -22,6 +22,7 @@ if "GOOGLE_GENAI_USE_VERTEXAI" not in os.environ and "GEMINI_API_KEY" not in os.
     os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
 
 from google.adk.agents import Agent
+from google.adk.agents.context_cache_config import ContextCacheConfig
 from google.adk.apps import App
 from google.adk.models import Gemini, LlmResponse
 from google.adk.tools import ToolContext
@@ -245,4 +246,10 @@ root_agent = Agent(
     before_tool_callback=guardrail_before_tool,
 )
 
-app = App(name="beauty_advisor", root_agent=root_agent)
+_cache_config = (
+    ContextCacheConfig(ttl_seconds=int(os.getenv("CONTEXT_CACHE_TTL_S", "1800")))
+    if os.getenv("CONTEXT_CACHE", "0") == "1"
+    else None
+)
+
+app = App(name="beauty_advisor", root_agent=root_agent, context_cache_config=_cache_config)
