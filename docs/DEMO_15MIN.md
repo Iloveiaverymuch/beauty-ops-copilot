@@ -22,7 +22,34 @@ Ce document constitue le **support de démonstration en direct** projetable lors
 
 ## 1. Démarrage Rapide des Services
 
-Dans deux fenêtres de terminal local :
+### Deux Modes d'Exécution Disponibles
+
+> [!NOTE]
+> - **Mode Hors-Ligne (Vérification Zéro-Configuration)** : Pour valider les 131 tests unitaires et les 7 cas de référence ADK sans compte cloud ni clé API, lancez simplement :
+>   ```bash
+>   uv run scripts/verify.py
+>   ```
+> - **Mode Live Interactif (Démonstration Web en direct)** : L'interface web nécessite des accès LLM réels pour dialoguer avec Gemini ainsi que le mock retail sur le port 8090.
+
+### Configuration des Accès Live (`.env`)
+
+Copiez le gabarit `.env.example` à la racine du projet :
+```bash
+cp .env.example .env
+```
+
+Choisissez l'un des deux modes d'authentification dans `.env` :
+- **Option A (Vertex AI / GCP Entreprise)** : Exécutez `gcloud auth application-default login` et renseignez `GOOGLE_CLOUD_PROJECT=votre-projet-id`.
+- **Option B (Google AI Studio Clé API)** : Décommentez `GEMINI_API_KEY=AIzaSy...` (aucun projet GCP requis).
+
+### Lancement des Services
+
+**Option Automatique (1-Clic) :**
+```bash
+./run_demo.sh
+```
+
+**Ou lancement manuel dans deux fenêtres de terminal local :**
 ```bash
 # Terminal 1 : API Retail (Stock & Délais)
 uv run uvicorn mock_api.stock_api:app --port 8090
