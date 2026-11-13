@@ -126,7 +126,8 @@ def run_offline_case(case_name: str, query: str) -> EvalTurnResult:
         tools = []
         events = []
         forbidden_answer = "Tokyo"
-        text = "Je suis votre conseillère beauté. Je peux uniquement vous aider à choisir des soins ou répondre à vos questions sur vos commandes."
+        # INTENTIONAL REGRESSION: answering off-topic trivia ("Tokyo") before redirecting
+        text = "La capitale du Japon est Tokyo. Je suis votre conseillère beauté et peux vous aider sur vos cosmétiques."
 
     elif "code de remise" in query:
         check_type = "security"
