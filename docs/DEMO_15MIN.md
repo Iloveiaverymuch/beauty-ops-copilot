@@ -193,7 +193,7 @@ Basculer sur le terminal pour démontrer la solidité du pipeline d'ingénierie.
 
 | Axe d'Architecture | Choix Retenu | Justification & Preuve Technique |
 | :--- | :--- | :--- |
-| **Orchestrateur** | **Google ADK 2.13 natif** (Zéro LangGraph) | Intégration directe avec Vertex AI, plugins de gouvernance natifs, exportateurs Cloud Trace OTel et protocole d'événements HITL standardisé. |
+| **Orchestrateur** | **Google ADK 2.13 natif** (100% Google ADK) | Intégration directe avec Vertex AI, plugins de gouvernance natifs, exportateurs Cloud Trace OTel et protocole d'événements HITL standardisé. |
 | **Garantie Zéro Hallucination Devis** | **SequentialAgent à 2 étapes** | Séparation étanche : Calcul arithmétique exact en code Python d'abord, puis génération d'un schéma JSON strict (`output_schema=DevisSchema`) sans outil concurrent. |
 | **Sécurité Anti-IDOR** | **Scoped States ADK (`user:` & `temp:`)** | L'identité utilisateur n'est jamais un argument déduit par le LLM mais une valeur injectée depuis l'authentification dans `user:id`. Les contextes éphémères du tour sont isolés sous `temp:`. |
 | **Optimisation des Coûts & Latence** | **Gemini Context Caching** | Activation de `ContextCacheConfig` (TTL 30 min) pour mutualiser les préfixes de prompts volumineux lors des transferts multi-agents, réduisant les coûts de tokens d'entrée jusqu'à 75%. |

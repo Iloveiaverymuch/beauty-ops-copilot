@@ -11,7 +11,7 @@
 
 ## Key Architecture & Core Capabilities
 
-The platform implements a pure **Google ADK 2.13** architecture on **Google Cloud Vertex AI** with zero third-party agent frameworks (no LangGraph, no CrewAI, no external wrappers). It orchestrates two complementary retail agents through a unified web interface:
+The platform implements a pure **Google ADK 2.13** architecture on **Google Cloud Vertex AI** with zero third-party agent frameworks (no external wrappers, 100% native ADK). It orchestrates two complementary retail agents through a unified web interface:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -80,7 +80,7 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **Sequential Quote Pipeline** | `advisor/structured_quote.py` | Expert ADK `SequentialAgent`: decoupled collector with tools and strict Pydantic `output_schema` formatter |
 | **Enterprise Connectors** | `advisor/enterprise_connectors.py` | Production mapping: `VertexAiSearchTool`, `ToolboxToolset` (MCP DB), `LongRunningFunctionTool` |
 | **Agent2Agent Protocol** | `advisor/a2a.py` | Google A2A protocol `AgentCard` for multi-system interoperability and capability discovery |
-| **Unit Tests** | `tests/` | 128 comprehensive tests validating tools, governance, MCP contracts, PDF generation, and ADK patterns |
+| **Unit Tests** | `tests/` | 131 comprehensive tests validating tools, governance, MCP contracts, PDF generation, and ADK patterns |
 
 ---
 
@@ -157,5 +157,5 @@ The platform enforces defense-in-depth where **code guarantees security before h
 | **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked |
 | **Exfiltration Defense** | Corporate Domain Allowlist | 4/4 external exfiltration attempts blocked by code before human review |
 | **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal |
-| **CI/CD Quality Gate** | GitHub Actions Pipeline | 128 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 131 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
 | **Cloud Evaluation** | Vertex AI Gen AI Eval | 7/7 live cases passed, 5.0/5.0 Vertex LLM judge rating across all rubrics |

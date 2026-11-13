@@ -1,9 +1,9 @@
 # Project handover
 
-Verified on 2026-11-12. SDD and lightweight SDLC foundation established:
+Verified on 2026-11-13 (Commit: `c5ca26d`). SDD and lightweight SDLC foundation established:
 - **Canonical Developer Instructions**: [AGENTS.md](../AGENTS.md) at repository root.
 - **Specification-Driven Development (SDD)**: Spec template at [docs/specs/TEMPLATE.md](specs/TEMPLATE.md) and active milestone specification at [docs/specs/SPEC-001-claims-hitl-lock-and-state-safety.md](specs/SPEC-001-claims-hitl-lock-and-state-safety.md).
-- **Automated Verification**: Fast offline entry point at `scripts/verify.py` executing **131 pytest tests and 7/7 ADK offline evals in <10s** (zero network, zero cloud costs).
+- **Automated Verification**: Fast offline entry point at `scripts/verify.py` executing **131 pytest tests and 7/7 ADK offline evals in 9.82s** (zero network, zero cloud costs).
 - **Antigravity Skills**: 5 focused skills in `.agents/skills/` (`implement-spec`, `debug-failure`, `verify-change`, `review-adk-tool`, `handover`).
 - **Reliability Backlog**: Prioritized production-hardening roadmap across 11 operational dimensions in [docs/RELIABILITY_BACKLOG.md](RELIABILITY_BACKLOG.md).
 - **Reliability Milestone Implemented**: Enforced strict bounded validation on HITL `ConfirmRequest.call_id`, resilient error eventing on `/chat/confirm`, and added regression coverage in `tests/test_backend.py`.
@@ -20,7 +20,7 @@ Planning authority remains **[LAB_PLAN.md](LAB_PLAN.md)** for interview preparat
   - **Dual Web UI (`backend/static/index.html`)**: Sleek dual-tab interface toggling between Léa (B2C) and Copilot (B2B) with live SSE streaming, Human-In-The-Loop interactive approval cards, and governance block alerts.
   - **Defense-in-Depth Guardrails**: Google Cloud Model Armor prompt sanitization (`guardrails/model_armor.py`), zero-token short-circuiting in `before_model_callback`, ADK scoped state anti-IDOR (`user:id`, `temp:last_claim_id`), and ADK platform governance plugin.
   - **Advanced ADK 2.13 Patterns**: Decoupled `SequentialAgent` quote pipeline with strict Pydantic `output_schema` (`advisor/structured_quote.py`), native `ContextCacheConfig`, Google Agent2Agent (A2A) `AgentCard` (`advisor/a2a.py`), and enterprise connector mappings (`advisor/enterprise_connectors.py`).
-  - **Test Suite**: **128 tests passing in ~3s**, 7/7 ADK offline evals passing, 5.0/5.0 Vertex AI judge.
+  - **Test Suite**: **131 tests passing in ~7.4s**, 7/7 ADK offline evals passing in 0.76s, 5.0/5.0 Vertex AI judge.
   - **Architecture Dossier & Demo**: 15-minute live demo script (`docs/DEMO_15MIN.md`), 5-page PDF architecture dossier (`docs/beauty_ops_copilot_architecture_dossier.pdf`), and live Google Workspace OAuth roadmap (`docs/GOOGLE_WORKSPACE_LIVE_OAUTH.md`).
 - **Partial/demo:** Google Workspace and retail data are fixtures; human handoff creates a ticket-shaped response only
   (`advisor/tools.py:313`), with no queue, persistence or actual human notification. Claims photo input is a boolean,
@@ -30,10 +30,10 @@ Planning authority remains **[LAB_PLAN.md](LAB_PLAN.md)** for interview preparat
   1. **ADK native eval (`evals/adk/`)**: 7 golden cases in `beauty_advisor.evalset.json`, custom deterministic evaluators
      in `custom_evaluators.py` (canaries, prompt leaks, citations, refund guard, product filter check), offline runner
      using `InMemoryRunner` with zero cloud calls in <1s. Integrated into pytest (`tests/test_adk_eval.py`, 14 regression tests).
-     Full test suite: **128 passed** in ~3s.
+     Full test suite: **131 passed** in ~7.4s.
   2. **Vertex AI Gen AI Evaluation (`evals/vertex/`)**: 4 Pointwise rubrics (Groundedness, Persona Quality, Safety Refusal,
      Claim Compliance) scoring 1-5 via Vertex AI `EvalTask` with Gemini 3.8 Flash, plus BigQuery continuous trace monitoring.
-  3. **CI/CD (`.github/workflows/ci.yml`)**: GitHub Actions CI gate runs `pytest` (106 tests) and offline ADK eval (7/7) in ~21s.
+  3. **CI/CD (`.github/workflows/ci.yml`)**: GitHub Actions CI gate runs `pytest` and offline ADK eval (7/7) in ~21s.
      No Node.js or npm dependencies. Branch protection rule requires CI gate; regression blocking was proven with a test PR.
      Manual `live-evaluation` workflow authenticates with GCP SA (`secrets.GCP_SA_KEY`), passes 7/7 live cases against
      Gemini 3.8 Flash and Discovery Engine ranking, followed by Vertex AI LLM-as-a-judge scoring 5.0/5.0.
@@ -129,8 +129,8 @@ and scores → assembled tool response → model answer. Good retrieval does not
 ## Setup and run commands
 
 Requires Python >=3.12; existing `.venv` was used without dependency installation. Installed versions verified:
-ADK 2.13.0, BigQuery 3.47.0, MCP 2.3.0, google-genai 2.34.0, FastAPI 0.162.0, LangGraph 1.2.20, pytest 9.2.0.
-`pyproject.toml`/`uv.lock` include the user's pending claims dependencies. Do not overwrite them or the existing env.
+ADK 2.13.0, BigQuery 3.47.0, MCP 2.3.0, google-genai 2.34.0, FastAPI 0.162.0, pytest 9.2.0.
+`pyproject.toml`/`uv.lock` enforce pure Google ADK 2.13 dependencies with zero external agent frameworks. Do not overwrite them or the existing env.
 
 ```bash
 # Actually tested, no cloud services/credentials needed:
@@ -203,7 +203,7 @@ Continuation live evidence:
 2. **Vertex AI LLM-as-a-Judge**: Evaluated all traces using Vertex AI Gen AI Evaluation Service with 4 Pointwise rubrics (Groundedness, Persona Quality, Safety Refusal, Claim Compliance): **5.0 / 5.0 across all metrics**.
 3. **CI/CD Regression Gate Verified**: Branch `test/eval-gate-regression` deliberately leaked Tokyo facts on the off-topic case. GitHub Actions CI gate failed in 21s and branch protection blocked PR merging.
 
-Fresh local checks: **106 tests passed in 2.57s** (`tests/test_adk_eval.py` adds 14 regression tests for deterministic evaluators, canary scanning, citation matching, and filter checks). Offline ADK eval passes 7/7 in <1s with zero cloud calls. All Node.js/npm dependencies have been eliminated.
+Fresh local checks: **131 tests passed in 7.40s** (`tests/test_adk_eval.py` adds 14 regression tests for deterministic evaluators, canary scanning, citation matching, and filter checks; `tests/test_enterprise_adk_patterns.py` and `tests/test_backend.py` add full coverage for HITL bounded validation and pure ADK 2.13 patterns). Offline ADK eval passes 7/7 in 0.76s with zero cloud calls. All Node.js/npm dependencies have been eliminated.
 
 Fresh offline retrieval: BM25 over the 59 advice chunks, using `GOLDEN`, hit@5 **20/25 = 0.80**, MRR **0.6547**.
 Hit@5 here means any labelled section is found, or all when `require_all`; it is not fractional per-document
