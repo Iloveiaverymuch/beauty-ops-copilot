@@ -39,7 +39,7 @@ gcloud run services proxy copilot-api --port=8000          # Chrome: http://loca
 | 2:45 | Logs Explorer: the WARNING audit line → click trace link; metric `governance_denies` | "Same decision as a structured log, linked to the trace, counted by a metric I can alert on." |
 | 3:10 | `evals/FINDINGS.md`, prompt × governance matrix | "Why code and not just prompts: with a naive prompt and a human who approves everything, the agent drafted campaign budgets to a fake external auditor 3 times out of 3. With policy on: 4 attempts, 4 blocked. And a hardened prompt that stopped attacks refused all legitimate work: safety 12/12, utility 0/3. I measure both axes on every change." |
 | 3:50 | Terminal: block 7 curls (403 / 401) | "Two locks on the connector: Cloud Run IAM stops anonymous calls, 403. I'm project Owner and still get 401, because the MCP server maps the *caller's identity* to scopes, and only the copilot's service account has them." |
-| 4:20 | ADR §3-4 + "what's next" | "For enterprise production: the last hop becomes Entra on-behalf-of so Microsoft enforces the user's own permissions; governance lives in the platform, rolled out in shadow mode first; the eval suite gates every prompt and policy change in CI." |
+| 4:20 | ADR §3-4 + "what's next" | "For enterprise production: the last hop uses Google Workspace OAuth2 user delegation so Google Workspace enforces the user's own permissions; governance lives in the platform, rolled out in shadow mode first; the eval suite gates every prompt and policy change in CI." |
 | 4:50 | Stop | Invite questions. |
 
 ## Questions they will likely ask (and where the answer is)

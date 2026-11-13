@@ -60,4 +60,3 @@ Benchmark runs and production monitor runs are logged directly to **Vertex AI Ex
 - Navigate to **Google Cloud Console → Vertex AI → Experiments**.
 - Select the `beauty-advisor-benchmark` or `beauty-advisor-prod-monitoring` experiment.
 - Inspect radar charts, mean score distributions, and individual response rationale.
-
