@@ -84,33 +84,77 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 
 ---
 
-## Quickstart (Local Development & Demo)
+## Quickstart & Execution Modes
 
-### 1. Prerequisites & Setup
+The platform supports two distinct execution modes: **Zero-Config Offline Mode** (test and verify without any cloud accounts or API keys) and **Live Interactive Mode** (browser UI with real-time Gemini inference).
+
+### Mode 1: Instant Offline Verification (Zero-Config, No API Keys)
+
+Anyone can clone the repository and verify 100% of the architecture, contracts, and evaluation benchmarks immediately with **zero configuration, zero external network calls, and zero cost**:
 
 ```bash
-uv sync
-gcloud auth application-default login
-gcloud auth application-default set-quota-project <YOUR_GCP_PROJECT>
-cp copilot/.env.example copilot/.env
+# 1. Install locked dependencies
+uv sync --frozen
+
+# 2. Run the canonical offline verification suite (<10s)
+uv run scripts/verify.py
 ```
 
-### 2. Launch the Complete Demo (1-Click)
+This runs:
+- **131 Unit & Integration Tests** (`tests/`) validating tools, governance, MCP contracts, PDF generation, and ADK callbacks.
+- **7 ADK Golden Benchmark Evals** (`evals/adk/`) checking deterministic behavior, tool execution, and guardrails.
 
-Launch both the retail mock API (port 8090) and the dual-agent web platform (port 8000) with automatic browser opening:
+---
+
+### Mode 2: Live Interactive Chatbot (Browser UI)
+
+To converse with **Léa** (B2C) or **Operations Copilot** (B2B) in real time through the web interface, live LLM credentials and the retail mock service are required:
+
+#### 1. Configure Credentials (`.env`)
+
+Copy `.env.example` to `.env` at the project root:
+
+```bash
+cp .env.example .env
+```
+
+Configure **one** of the two supported authentication providers:
+
+- **Option A — Google Cloud Vertex AI (Default Enterprise Sovereign Mode):**
+  ```bash
+  gcloud auth application-default login
+  gcloud auth application-default set-quota-project <YOUR_GCP_PROJECT>
+  ```
+  Set `GOOGLE_CLOUD_PROJECT=<YOUR_GCP_PROJECT>` in `.env`.
+
+- **Option B — Google AI Studio (Standalone API Key):**
+  If you do not have a GCP project, comment out Option A in `.env` and set:
+  ```env
+  GEMINI_API_KEY=AIzaSy...
+  MODEL=gemini-2.0-flash
+  ```
+
+#### 2. Launch Services
+
+You can launch the entire stack with the 1-Click launcher:
 
 ```bash
 ./run_demo.sh
 ```
 
-Or run services manually in separate terminals:
+Or start the required services manually in separate terminals:
+
 ```bash
-# Terminal 1: Retail stock and delivery API
+# Terminal 1: Retail stock and delivery mock API (Port 8090)
 uv run uvicorn mock_api.stock_api:app --port 8090
 
-# Terminal 2: Copilot Backend & Web UI
+# Terminal 2: Copilot Backend & Dual Web UI (Port 8000)
 uv run uvicorn backend.app:app --port 8000 --reload
 ```
+
+#### 3. Access Web Interface
+
+Open **`http://localhost:8000`** in your browser. Switch between **🌸 Conseillère Léa (Client)** and **💼 Copilot Opérations (Interne)** tabs.
 
 ---
 
