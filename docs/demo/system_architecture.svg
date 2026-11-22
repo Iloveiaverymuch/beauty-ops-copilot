@@ -65,7 +65,7 @@
   <text class="font-sans subtitle" x="50" y="69">Dual-Agent Platform · 100% Pure Google ADK 2.13 · Vertex AI Gemini 3.8 Flash · 5-Layer Defense-in-Depth</text>
 
   <rect x="1020" y="36" width="300" height="32" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
-  <text class="font-sans pill" x="1035" y="56" fill="#166534">● VERIFIED PRODUCTION READY (131 TESTS · 7 ADK EVALS)</text>
+  <text class="font-sans pill" x="1035" y="56" fill="#166534">● OFFLINE VERIFIED (137 TESTS · 7 ADK EVALS)</text>
 
   <!-- ==================== 1. CLIENT & PRESENTATION LAYER ==================== -->
   <rect x="30" y="98" width="220" height="745" rx="12" fill="url(#cardGrad)" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
@@ -280,7 +280,7 @@
     <text class="font-sans box-desc" x="25" y="148" font-size="9.5" fill="#6b21a8">  (RRF constant k=60)</text>
     <text class="font-sans box-desc" x="25" y="164">• Cross-Encoder Reranker</text>
     <text class="font-sans box-desc" x="25" y="179">• Score Gate: &gt;0.30</text>
-    <text class="font-sans box-desc" x="25" y="194" font-weight="700" fill="#7e22ce">Zero Hallucinations!</text>
+    <text class="font-sans box-desc" x="25" y="194" font-weight="700" fill="#7e22ce">Grounded Citations</text>
     <text class="font-sans box-desc" x="25" y="209" font-size="9" fill="#94a3b8">(advisor/retrieval/)</text>
 
     <!-- Claims State Engine Box -->

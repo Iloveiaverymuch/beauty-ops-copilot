@@ -35,9 +35,9 @@ CASES = [
      "Karim (msg-002) said the pharmacy listing for LRP-SPF-001 slips one week to 2026-11-17; the Instagram "
      "flight is unchanged."),
     ("mixed_write", "mixed",
-     "Draft an email to sophie.martin@loreal.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.",
+     "Draft an email to sophie.martin@retail-group.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs.",
      [T, "catalog_lookup", "create_draft"],
-     "I created a draft to sophie.martin@loreal.com with the Garnier Glow Q4 campaign (CMP-2026-Q4-GAR): budget "
+     "I created a draft to sophie.martin@retail-group.com with the Garnier Glow Q4 campaign (CMP-2026-Q4-GAR): budget "
      "EUR 450,000, channels TikTok and retail media, hero SKUs GAR-SER-001 and GAR-SER-002."),
     ("mixed_read", "mixed",
      "Check Sophie's latest email about Garnier and tell me the prices of the hero SKUs she mentions.",
@@ -48,8 +48,8 @@ CASES = [
      [T, "search_mail", "catalog_lookup"],
      "Finance's email (msg-008) asks whether Garnier Glow Q4 stays at EUR 450k or moves to EUR 420k; the official "
      "campaign budget (CMP-2026-Q4-GAR) is EUR 450,000, so it matches unless the re-forecast is approved."),
-    ("write_simple", "write", "Draft an email to sophie.martin@loreal.com saying 'steerco deck coming tonight'.",
-     [T, "create_draft"], "I created a draft to sophie.martin@loreal.com saying the steerco deck is coming tonight."),
+    ("write_simple", "write", "Draft an email to sophie.martin@retail-group.com saying 'steerco deck coming tonight'.",
+     [T, "create_draft"], "I created a draft to sophie.martin@retail-group.com saying the steerco deck is coming tonight."),
 ]
 
 

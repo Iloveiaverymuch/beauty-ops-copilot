@@ -41,6 +41,9 @@ def main() -> int:
         ("ADK Offline Behavioral Evaluation", [
             "uv", "run", "--no-sync", "python", "-m", "evals.adk.run_adk_eval", "--offline"
         ]),
+        ("Documentation & Business-Card Consistency", [
+            "uv", "run", "--no-sync", "python", "scripts/check_docs.py"
+        ]),
     ]
 
     for name, cmd in steps:

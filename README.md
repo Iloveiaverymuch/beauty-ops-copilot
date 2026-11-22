@@ -2,7 +2,9 @@
 
 ## About
 
-**Beauty Ops Copilot** is an enterprise-grade multi-agent retail platform built with **Google ADK 2.13**, **Vertex AI Gemini 3.8 Flash**, and **Model Context Protocol (MCP)**. It unifies customer engagement and back-office operations into a single coherent system:
+**Beauty Ops Copilot** is a multi-agent retail reference architecture (engineering lab) built with **Google ADK 2.13**, **Vertex AI Gemini 3.8 Flash**, and **Model Context Protocol (MCP)**. It unifies customer engagement and back-office operations into a single coherent system:
+
+> **Lab Scope & Demo-Only Components:** Local retail stock/delivery API (`mock_api/`), Workspace fixtures (`workspace_mcp/data/`), SQLite sessions (`backend/engines.py`), and `handoff_to_human` (ticket-shaped response without external queue) are demo-only unless wired to external services. See [docs/PROJECT_HANDOVER.md](docs/PROJECT_HANDOVER.md) for current gaps and hardening roadmap.
 
 - **🌸 Léa (Customer Skincare & Quote Advisor — B2C):** An Agentic RAG chatbot that answers skincare, ingredient, and policy questions grounded strictly in validated catalog data with verifiable citations (groundedness verified by automated evaluation gates). It calculates deterministic routine budgets (`estimate_quantity`), generates official print-ready PDF quotes on the fly, and initiates customer return claims guarded by native ADK lifecycle callbacks (`before_tool_callback`).
 - **💼 Operations Copilot (Internal Back-Office Assistant — B2B):** A workplace copilot connected to Google Workspace (Gmail, Calendar, Drive) via MCP, performing authoritative catalog lookups and arbitrating customer claims under deterministic code-enforced governance (call/write budgets, corporate recipient allowlist) with native Human-in-the-Loop approval (`require_confirmation=True`).
@@ -80,7 +82,7 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **Sequential Quote Pipeline** | `advisor/structured_quote.py` | Expert ADK `SequentialAgent`: decoupled collector with tools and strict Pydantic `output_schema` formatter |
 | **Enterprise Connectors** | `advisor/enterprise_connectors.py` | Production mapping: `VertexAiSearchTool`, `ToolboxToolset` (MCP DB), `LongRunningFunctionTool` |
 | **Agent2Agent Protocol** | `advisor/a2a.py` | Google A2A protocol `AgentCard` for multi-system interoperability and capability discovery |
-| **Unit Tests** | `tests/` | 131 comprehensive tests validating tools, governance, MCP contracts, PDF generation, and ADK patterns |
+| **Unit Tests** | `tests/` | 137 comprehensive tests validating tools, governance, MCP contracts, PDF generation, docs consistency, and ADK patterns |
 
 ---
 
@@ -101,8 +103,9 @@ uv run scripts/verify.py
 ```
 
 This runs:
-- **131 Unit & Integration Tests** (`tests/`) validating tools, governance, MCP contracts, PDF generation, and ADK callbacks.
+- **137 Unit & Integration Tests** (`tests/`) validating tools, governance, MCP contracts, PDF generation, docs consistency, and ADK callbacks.
 - **7 ADK Golden Benchmark Evals** (`evals/adk/`) checking deterministic behavior, tool execution, and guardrails.
+- **Docs Consistency Gate** (`scripts/check_docs.py`) verifying test counts, relative links, and forbidden terms.
 
 ---
 
@@ -166,7 +169,7 @@ The platform enforces a two-tier evaluation architecture: fast offline regressio
 # Run canonical offline verification suite (<10s, 0 network, 0 costs)
 uv run scripts/verify.py
 
-# Run unit test suite (131 tests passing in ~5s)
+# Run unit test suite (137 tests)
 uv run pytest -q
 
 # Run offline ADK evaluation benchmark (7/7 passing in <1s)
@@ -194,12 +197,15 @@ The platform enforces defense-in-depth where **code guarantees security before h
 
 ## Results & Benchmark Evidence
 
-| Capability Block | Method | Measured Result |
+Every measured number below links directly to its recorded run and sample size in [evals/FINDINGS.md](evals/FINDINGS.md).
+
+| Capability Block | Method | Measured Result & Source |
 |---|---|---|
-| **RAG Citations** | Discovery Engine Rerank | Groundedness verified by automated evaluation gates (5.0/5.0 Vertex Judge); strict citations |
-| **Devis Estimation** | Deterministic Pydantic Tool | 100% arithmetical accuracy; print-ready PDF generated with legal disclaimers |
-| **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked |
-| **Exfiltration Defense** | Corporate Domain Allowlist | 4/4 external exfiltration attempts blocked by code before human review |
-| **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal |
-| **CI/CD Quality Gate** | GitHub Actions Pipeline | 131 unit tests + 7 deterministic ADK benchmarks executed in CI gate |
-| **Cloud Evaluation** | Vertex AI Gen AI Eval | 7/7 live cases passed, 5.0/5.0 Vertex LLM judge rating across all rubrics |
+| **RAG Retrieval** | Discovery Engine Rerank | Hit@5 `1.00`, MRR `0.98`, top-1 `0.96` (`n = 25` answerable / `30` total; poisoned review `0/30` after moving reviews to `reviews_public`) — [evals/FINDINGS.md](evals/FINDINGS.md#L97-L118) |
+| **Token Compaction** | `before_model_callback` | `-40%` input tokens (`28.3K → 16.9K` on turn 7 of a multi-turn flow); `ContextCacheConfig` measured `0` cached tokens on single-turn evals — [evals/FINDINGS.md](evals/FINDINGS.md#L54-L57) & [L219](evals/FINDINGS.md#L219-L226) |
+| **Devis Estimation** | Deterministic Pydantic Tool | Exact arithmetic verified in unit tests (`tests/test_advisor_tools.py`); print-ready PDF generated with legal disclaimers |
+| **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked (`tests/test_claims.py`) |
+| **Exfiltration Defense** | Corporate Domain Allowlist | `4/4` attempted exfiltration drafts blocked by code under `naive + enforce` (`n = 3` runs × 4 attacks) — [evals/FINDINGS.md](evals/FINDINGS.md#L275-L299) |
+| **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal (`tests/test_backend.py`) |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 137 unit tests + 7 deterministic ADK benchmarks + docs consistency gate (`scripts/verify.py`) |
+| **Cloud Evaluation** | Vertex AI Gen AI Eval | `7/7` live cases passed, `5.0/5.0` Vertex LLM judge across 4 rubrics (`n = 7` cases) — [evals/FINDINGS.md](evals/FINDINGS.md#L4-L25) |

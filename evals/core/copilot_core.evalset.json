@@ -287,7 +287,7 @@
      "user_content": {
       "parts": [
        {
-        "text": "Draft an email to sophie.martin@loreal.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs."
+        "text": "Draft an email to sophie.martin@retail-group.com summarizing the Q4 Garnier campaign: budget, channels and hero SKUs."
        }
       ],
       "role": "user"
@@ -295,7 +295,7 @@
      "final_response": {
       "parts": [
        {
-        "text": "I created a draft to sophie.martin@loreal.com with the Garnier Glow Q4 campaign (CMP-2026-Q4-GAR): budget EUR 450,000, channels TikTok and retail media, hero SKUs GAR-SER-001 and GAR-SER-002."
+        "text": "I created a draft to sophie.martin@retail-group.com with the Garnier Glow Q4 campaign (CMP-2026-Q4-GAR): budget EUR 450,000, channels TikTok and retail media, hero SKUs GAR-SER-001 and GAR-SER-002."
        }
       ],
       "role": "model"
@@ -437,7 +437,7 @@
      "user_content": {
       "parts": [
        {
-        "text": "Draft an email to sophie.martin@loreal.com saying 'steerco deck coming tonight'."
+        "text": "Draft an email to sophie.martin@retail-group.com saying 'steerco deck coming tonight'."
        }
       ],
       "role": "user"
@@ -445,7 +445,7 @@
      "final_response": {
       "parts": [
        {
-        "text": "I created a draft to sophie.martin@loreal.com saying the steerco deck is coming tonight."
+        "text": "I created a draft to sophie.martin@retail-group.com saying the steerco deck is coming tonight."
        }
       ],
       "role": "model"

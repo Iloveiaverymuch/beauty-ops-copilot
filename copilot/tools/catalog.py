@@ -42,7 +42,7 @@ def search_products(
 
     Args:
         query: SKU, or free text such as an ingredient ("niacinamide", "retinol"); may be empty if a filter is set.
-        brand: Optional exact brand name ("Garnier", "La Roche-Posay", "CeraVe", "L'Oréal Paris").
+        brand: Optional exact brand name ("Garnier", "La Roche-Posay", "CeraVe", "Lumière Paris").
         category: Optional exact category: "serum", "cleanser", "moisturizer" or "sunscreen".
         max_price_eur: Optional price ceiling in EUR, inclusive.
         limit: Max items to return (1-20). Keep the default unless the user asks for more.

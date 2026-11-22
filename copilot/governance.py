@@ -28,7 +28,7 @@ from opentelemetry import trace
 from google.adk.tools import BaseTool, ToolContext
 
 POLICY_VERSION = "gov/v1"
-DEFAULT_INTERNAL_DOMAINS = "retail-group.com,retail-ops.com,beauty-corp.com,loreal.com,loreal-groupe.com"
+DEFAULT_INTERNAL_DOMAINS = "retail-group.com,retail-ops.com,beauty-corp.com"
 INTERNAL_DOMAINS = tuple(
     d.strip().lower()
     for d in os.getenv("GOV_INTERNAL_DOMAINS", DEFAULT_INTERNAL_DOMAINS).split(",")

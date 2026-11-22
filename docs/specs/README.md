@@ -20,6 +20,7 @@ Ce répertoire regroupe les spécifications canoniques de l'ensemble des sous-sy
 | **SPEC-006** | [Sécurité en Profondeur & Model Armor](SPEC-006-defense-in-depth-guardrails-and-model-armor.md) | Scan périmètre, short-circuiting <10ms, scoped states | `guardrails/model_armor.py`, `beauty_advisor/agent.py` | `test_model_armor_blocks_prompt_injection`, évals canaris |
 | **SPEC-007** | [Suite d'Évaluation & Pipeline CI/CD](SPEC-007-evaluation-suite-and-verification-pipeline.md) | Two-tier eval, script canonique `scripts/verify.py` | `evals/adk/`, `evals/vertex/`, `scripts/verify.py` | `uv run scripts/verify.py` (<10s, 131 tests, 7/7 évals) |
 | **SPEC-008** | [API FastAPI, Streaming SSE & Concurrence](SPEC-008-backend-api-sse-streaming-and-concurrency.md) | Passerelle SSE, verrous de thread, mode `/chat/sync` | `backend/app.py`, `backend/engines.py` | `test_chat_stream_contract_with_a_fake_engine`, `test_sync_chat_buffers_one_turn` |
+| **SPEC-009** | [Business-Card Cleanup & Docs Consistency (W0)](SPEC-009-business-card-cleanup-and-docs-consistency.md) | Neutralisation, honnêteté des métriques, gate `check_docs.py` | `scripts/check_docs.py`, `scripts/verify.py`, `README.md` | `tests/test_docs_consistency.py`, `uv run scripts/verify.py` |
 
 ---
 

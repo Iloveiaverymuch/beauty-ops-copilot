@@ -80,7 +80,7 @@ Sélectionner l'onglet **🌸 Conseillère Léa (Client)**.
   - Deux fiches produits pertinentes apparaissent automatiquement dans l'interface.
 - **Ce que ce résultat démontre :**
   - **RAG Agentique Déterministe** : La recherche documentaire n'est pas injectée de force à chaque message, mais déclenchée comme un outil décisionnel par l'agent uniquement quand le contexte l'exige.
-  - **Groundedness & Zéro Hallucination** : Chaque conseil commercial est strictement ancré dans la base de connaissances officielle, éliminant les inventions de principes actifs.
+  - **Groundedness & Citations Vérifiables** : Chaque conseil commercial est ancré dans les passages récupérés de la base de connaissances (évalué par le juge Vertex AI sur les cas de référence).
 
 ---
 
@@ -208,7 +208,7 @@ Basculer sur le terminal pour démontrer la solidité du pipeline d'ingénierie.
 ---
 
 #### 3. Déploiement Stateless sur Google Cloud Run
-- **Architecture d'infrastructure ([`Dockerfile`](../Dockerfile)) :**
+- **Architecture d'infrastructure ([`deploy/Dockerfile.copilot`](../deploy/Dockerfile.copilot)) :**
   - Conteneurs stateless avec scaling-to-zero (coût nul en l'absence de trafic).
   - Découplage de l'état : persistance des sessions déléguée à Cloud SQL (`DatabaseSessionService`) ou Vertex AI Agent Engine (`VertexAiSessionService`).
 - **Ce que ce résultat démontre :**
@@ -221,8 +221,8 @@ Basculer sur le terminal pour démontrer la solidité du pipeline d'ingénierie.
 | Axe d'Architecture | Choix Retenu | Justification & Preuve Technique |
 | :--- | :--- | :--- |
 | **Orchestrateur** | **Google ADK 2.13 natif** (100% Google ADK) | Intégration directe avec Vertex AI, plugins de gouvernance natifs, exportateurs Cloud Trace OTel et protocole d'événements HITL standardisé. |
-| **Garantie Zéro Hallucination Devis** | **SequentialAgent à 2 étapes** | Séparation étanche : Calcul arithmétique exact en code Python d'abord, puis génération d'un schéma JSON strict (`output_schema=DevisSchema`) sans outil concurrent. |
+| **Devis Déterministe (Calcul Exact)** | **SequentialAgent à 2 étapes** | Séparation étanche : Calcul arithmétique exact en code Python d'abord, puis génération d'un schéma JSON strict (`output_schema=DevisSchema`) sans outil concurrent. |
 | **Sécurité Anti-IDOR** | **Scoped States ADK (`user:` & `temp:`)** | L'identité utilisateur n'est jamais un argument déduit par le LLM mais une valeur injectée depuis l'authentification dans `user:id`. Les contextes éphémères du tour sont isolés sous `temp:`. |
-| **Optimisation des Coûts & Latence** | **Gemini Context Caching** | Activation de `ContextCacheConfig` (TTL 30 min) pour mutualiser les préfixes de prompts volumineux lors des transferts multi-agents, réduisant les coûts de tokens d'entrée jusqu'à 75%. |
+| **Optimisation des Coûts & Latence** | **Compaction des résultats d'outils (`before_model_callback`)** | Compaction des résultats d'outils des tours précédents : `-40 %` de tokens d'entrée mesurés sur une session de 7 tours (`evals/FINDINGS.md`). `ContextCacheConfig` est activé mais a mesuré `0` token en cache sur les évals mono-tour. |
 | **Gouvernance & Sécurité** | **Défense en profondeur à 5 couches** | Model Armor en entrée, short-circuiting ADK à coût zéro, `GovernancePlugin` pour les budgets d'appels, HITL sur les écritures et jetons d'audience sur les serveurs MCP. |
-| **Industrialisation & Évaluation** | **Stratégie d'Éval à Deux Niveaux** | Gate déterministe offline sub-10s (bloquant en PR) couplé à une suite d'évaluation live sur Vertex AI Gen AI Evaluation Service (scores 5.0/5.0). |
+| **Industrialisation & Évaluation** | **Stratégie d'Éval à Deux Niveaux** | Gate déterministe offline (bloquant en PR) couplé à une suite d'évaluation live sur Vertex AI Gen AI Evaluation Service (`5.0/5.0` sur `n = 7` cas, `evals/FINDINGS.md`). |
