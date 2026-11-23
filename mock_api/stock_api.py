@@ -87,13 +87,13 @@ async def delivery(sku: str, postcode: str = Query(pattern=r"^\d{5}$")):
 
 # ------------------------------------------------------------------------------------------------- orders + refunds
 # Orders: fixed demo orders, dated relative to today so the return windows always behave the same way.
-_ORDERS = {  # order_id: (days_ago, [(sku, qty, unit_price_paid)])
-    "CMD-1001": (5, [("LUM-SER-001", 1, 9.90)]),
-    "CMD-1002": (10, [("DER-SER-008", 2, 19.90)]),
-    "CMD-1003": (40, [("AQU-CRE-002", 1, 15.90)]),
-    "CMD-1004": (3, [("SOL-SPF-002", 1, 14.90)]),
-    "CMD-1005": (12, [("AQU-CRE-007", 1, 29.90), ("DER-SER-008", 1, 19.90)]),
-    "CMD-12345": (5, [("DER-SER-008", 2, 19.90)]),
+_ORDERS = {  # order_id: (days_ago, customer_id, [(sku, qty, unit_price_paid)])
+    "CMD-1001": (5, "cust-alice", [("LUM-SER-001", 1, 9.90)]),
+    "CMD-1002": (10, "cust-alice", [("DER-SER-008", 2, 19.90)]),
+    "CMD-1003": (40, "cust-alice", [("AQU-CRE-002", 1, 15.90)]),
+    "CMD-1004": (3, "cust-bob", [("SOL-SPF-002", 1, 14.90)]),
+    "CMD-1005": (12, "cust-bob", [("AQU-CRE-007", 1, 29.90), ("DER-SER-008", 1, 19.90)]),
+    "CMD-12345": (5, "cust-alice", [("DER-SER-008", 2, 19.90)]),
 }
 REFUNDS: dict[str, dict] = {}   # idempotency_key -> refund (in memory: the demo's "payment system")
 
@@ -103,8 +103,9 @@ async def order(order_id: str):
     await _fault()
     if order_id not in _ORDERS:
         raise HTTPException(404, "unknown order")
-    days, lines = _ORDERS[order_id]
-    return {"order_id": order_id, "purchase_date": (date.today() - timedelta(days=days)).isoformat(),
+    days, customer_id, lines = _ORDERS[order_id]
+    return {"order_id": order_id, "customer_id": customer_id,
+            "purchase_date": (date.today() - timedelta(days=days)).isoformat(),
             "days_since_purchase": days,
             "lines": [{"sku": s, "qty": q, "unit_price_eur": u, "amount_eur": round(q * u, 2)} for s, q, u in lines]}
 

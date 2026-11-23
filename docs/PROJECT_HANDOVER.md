@@ -1,12 +1,12 @@
 # Project handover
 
-Verified on 2026-11-22 (W0 completed on top of `c5ca26d`). SDD and operational-readiness foundation active:
+Verified on 2026-11-23 (W1 completed on top of `613a80f`). SDD and operational-readiness foundation active:
 - **Canonical Developer Instructions**: [AGENTS.md](../AGENTS.md) at repository root.
-- **Specification-Driven Development (SDD)**: Spec template at [docs/specs/TEMPLATE.md](specs/TEMPLATE.md); completed specs `SPEC-001` through [SPEC-009 (W0 Business-Card Cleanup & Docs Consistency)](specs/SPEC-009-business-card-cleanup-and-docs-consistency.md).
-- **Automated Verification**: Fast offline entry point at `scripts/verify.py` executing **137 pytest tests, 7/7 ADK offline evals, and `scripts/check_docs.py`** (zero network, zero cloud costs).
+- **Specification-Driven Development (SDD)**: Spec template at [docs/specs/TEMPLATE.md](specs/TEMPLATE.md); completed specs `SPEC-001` through [SPEC-010 (W1 Persistent Sessions, Multi-Instance & Ownership)](specs/SPEC-010-persistent-sessions-multi-instance-and-ownership.md).
+- **Automated Verification**: Fast offline entry point at `scripts/verify.py` executing **144 pytest tests, 7/7 ADK offline evals, and `scripts/check_docs.py`** (zero network, zero cloud costs).
 - **Antigravity Skills**: 5 focused skills in `.agents/skills/` (`implement-spec`, `debug-failure`, `verify-change`, `review-adk-tool`, `handover`).
 - **Reliability Backlog**: Prioritized production-hardening roadmap across 11 operational dimensions in [docs/RELIABILITY_BACKLOG.md](RELIABILITY_BACKLOG.md).
-- **Latest Milestone (W0 — SPEC-009)**: Removed remaining corporate brand domains/residue, aligned `README.md`/`DEMO_15MIN.md`/`ADR-002.md`/`system_architecture.svg` metrics with `evals/FINDINGS.md` (with explicit `n` and demo-only labels), added `scripts/check_docs.py` + `tests/test_docs_consistency.py` to `scripts/verify.py`, and updated `docs/LAB_PLAN.md` for W0–W10.
+- **Latest Milestone (W1 — SPEC-010)**: Wired ADK 2.13.0 `DatabaseSessionService` (`google-adk[db]` + `asyncpg` + `docker-compose.yml` Postgres), proved multi-instance session continuity across two independent `AdkEngine` / `Runner` instances, enforced HMAC-SHA256 bearer auth (`backend/auth.py`), session-owner binding (`403` on cross-customer reuse), reviewer RBAC on `/claims/*`, order/claim `owner_id` anti-IDOR checks, and authored [ADR-003](ADR-003-sessions-and-ownership.md).
 
 Planning authority is **[LAB_PLAN.md](LAB_PLAN.md)** (Workstreams W0–W10). The engineering backlog below and in [RELIABILITY_BACKLOG.md](RELIABILITY_BACKLOG.md) feeds W1–W10.
 
@@ -20,7 +20,7 @@ Planning authority is **[LAB_PLAN.md](LAB_PLAN.md)** (Workstreams W0–W10). The
   - **Dual Web UI (`backend/static/index.html`)**: Sleek dual-tab interface toggling between Léa (B2C) and Copilot (B2B) with live SSE streaming, Human-In-The-Loop interactive approval cards, and governance block alerts.
   - **Defense-in-Depth Guardrails**: Google Cloud Model Armor prompt sanitization (`guardrails/model_armor.py`), zero-token short-circuiting in `before_model_callback`, ADK scoped state anti-IDOR (`user:id`, `temp:last_claim_id`), and ADK platform governance plugin.
   - **Advanced ADK 2.13 Patterns**: Decoupled `SequentialAgent` quote pipeline with strict Pydantic `output_schema` (`advisor/structured_quote.py`), native `ContextCacheConfig`, Google Agent2Agent (A2A) `AgentCard` (`advisor/a2a.py`), and enterprise connector mappings (`advisor/enterprise_connectors.py`).
-  - **Test Suite**: **137 tests passing**, 7/7 ADK offline evals passing in <1s, `scripts/check_docs.py` green, 5.0/5.0 Vertex AI judge (`n = 7` cases).
+  - **Test Suite**: **144 tests passing**, 7/7 ADK offline evals passing in <1s, `scripts/check_docs.py` green, 5.0/5.0 Vertex AI judge (`n = 7` cases).
   - **Architecture Dossier & Demo**: 15-minute live demo script (`docs/DEMO_15MIN.md`), 5-page PDF architecture dossier (`docs/beauty_ops_copilot_architecture_dossier.pdf`), and live Google Workspace OAuth roadmap (`docs/GOOGLE_WORKSPACE_LIVE_OAUTH.md`).
 - **Partial/demo:** Google Workspace and retail data are fixtures; human handoff creates a ticket-shaped response only
   (`advisor/tools.py:313`), with no queue, persistence or actual human notification. Claims photo input is a boolean,

@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Enterprise dual-agent retail platform with Google ADK 2.13, Vertex AI Gemini, and MCP."
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk[eval,otel]==2.13.0",
+    "google-adk[db,eval,otel]==2.13.0",
+    "asyncpg>=0.30.0",
     "google-cloud-bigquery>=3.47.0",
     "google-cloud-pubsub>=2.43.0",
     "mcp[cli]==2.3.0",
