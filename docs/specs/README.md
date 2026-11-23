@@ -22,6 +22,7 @@ Ce répertoire regroupe les spécifications canoniques de l'ensemble des sous-sy
 | **SPEC-008** | [API FastAPI, Streaming SSE & Concurrence](SPEC-008-backend-api-sse-streaming-and-concurrency.md) | Passerelle SSE, verrous de thread, mode `/chat/sync` | `backend/app.py`, `backend/engines.py` | `test_chat_stream_contract_with_a_fake_engine`, `test_sync_chat_buffers_one_turn` |
 | **SPEC-009** | [Business-Card Cleanup & Docs Consistency (W0)](SPEC-009-business-card-cleanup-and-docs-consistency.md) | Neutralisation, honnêteté des métriques, gate `check_docs.py` | `scripts/check_docs.py`, `scripts/verify.py`, `README.md` | `tests/test_docs_consistency.py`, `uv run scripts/verify.py` |
 | **SPEC-010** | [Persistent Sessions, Multi-Instance & Ownership (W1)](SPEC-010-persistent-sessions-multi-instance-and-ownership.md) | `DatabaseSessionService`, multi-instance, auth & RBAC, anti-IDOR | `backend/engines.py`, `backend/auth.py`, `backend/app.py`, `advisor/claims.py` | `tests/test_sessions_and_auth.py` |
+| **SPEC-011** | [Advisor Appointment Booking & Retry Policy (W2)](SPEC-011-advisor-appointment-booking.md) | Hold/confirm, HITL `require_confirmation`, `Idempotency-Key`, retries, events | `advisor/appointments.py`, `mock_api/stock_api.py`, `beauty_advisor/agent.py` | `tests/test_appointments.py` |
 
 ---
 

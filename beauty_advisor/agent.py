@@ -25,10 +25,11 @@ from google.adk.agents import Agent
 from google.adk.agents.context_cache_config import ContextCacheConfig
 from google.adk.apps import App
 from google.adk.models import Gemini, LlmResponse
-from google.adk.tools import ToolContext
+from google.adk.tools import FunctionTool, ToolContext
 from google.genai import types
 
 from advisor import tools as core
+from advisor.appointments import book_advisor_appointment, list_appointment_slots
 from claims.tools import get_claim_status, open_return_claim
 from advisor.tools import (check_availability, compare_products, delivery_options, estimate_quantity,
                            request_human_advisor, search_products)
@@ -240,8 +241,19 @@ root_agent = Agent(
     model=_model(),
     description="Customer-facing skincare advisor: product search, comparison, quantities, grounded advice.",
     instruction=INSTRUCTION,
-    tools=[search_products, compare_products, estimate_quantity, search_knowledge, check_availability,
-           delivery_options, request_human_advisor, open_return_claim, get_claim_status],
+    tools=[
+        search_products,
+        compare_products,
+        estimate_quantity,
+        search_knowledge,
+        check_availability,
+        delivery_options,
+        request_human_advisor,
+        open_return_claim,
+        get_claim_status,
+        list_appointment_slots,
+        FunctionTool(func=book_advisor_appointment, require_confirmation=True),
+    ],
     before_model_callback=prepare_request,
     before_tool_callback=guardrail_before_tool,
 )
