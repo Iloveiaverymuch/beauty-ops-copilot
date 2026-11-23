@@ -57,6 +57,7 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 * [**5-Page Architecture Dossier (PDF)**](docs/beauty_ops_copilot_architecture_dossier.pdf) — Complete executive engineering overview.
 * [**ADR-001: Pure ADK Architecture & Router Patterns**](docs/ADR-001.md) — Why ADK was selected and how agent composition is structured.
 * [**ADR-002: Deterministic Governance & Two-Tier Evaluation**](docs/ADR-002.md) — ADK callbacks, offline behavioral gate, and Vertex AI Gen AI Evaluation.
+* [**ADR-003: Session Persistence & Caller Ownership**](docs/ADR-003-sessions-and-ownership.md) — `DatabaseSessionService` (Cloud SQL) vs `VertexAiSessionService` vs SQLite, plus signed-token RBAC.
 * [**ADK Evaluation Suite**](evals/adk/README.md) & [**Vertex AI Evaluation**](evals/vertex/README.md) — Automated quality gates.
 
 ---
@@ -82,7 +83,7 @@ The platform implements a pure **Google ADK 2.13** architecture on **Google Clou
 | **Sequential Quote Pipeline** | `advisor/structured_quote.py` | Expert ADK `SequentialAgent`: decoupled collector with tools and strict Pydantic `output_schema` formatter |
 | **Enterprise Connectors** | `advisor/enterprise_connectors.py` | Production mapping: `VertexAiSearchTool`, `ToolboxToolset` (MCP DB), `LongRunningFunctionTool` |
 | **Agent2Agent Protocol** | `advisor/a2a.py` | Google A2A protocol `AgentCard` for multi-system interoperability and capability discovery |
-| **Unit Tests** | `tests/` | 137 comprehensive tests validating tools, governance, MCP contracts, PDF generation, docs consistency, and ADK patterns |
+| **Unit Tests** | `tests/` | 144 comprehensive tests validating tools, governance, MCP contracts, PDF generation, docs consistency, sessions/auth, and ADK patterns |
 
 ---
 
@@ -103,7 +104,7 @@ uv run scripts/verify.py
 ```
 
 This runs:
-- **137 Unit & Integration Tests** (`tests/`) validating tools, governance, MCP contracts, PDF generation, docs consistency, and ADK callbacks.
+- **144 Unit & Integration Tests** (`tests/`) validating tools, governance, MCP contracts, PDF generation, docs consistency, sessions/auth, and ADK callbacks.
 - **7 ADK Golden Benchmark Evals** (`evals/adk/`) checking deterministic behavior, tool execution, and guardrails.
 - **Docs Consistency Gate** (`scripts/check_docs.py`) verifying test counts, relative links, and forbidden terms.
 
@@ -169,7 +170,7 @@ The platform enforces a two-tier evaluation architecture: fast offline regressio
 # Run canonical offline verification suite (<10s, 0 network, 0 costs)
 uv run scripts/verify.py
 
-# Run unit test suite (137 tests)
+# Run unit test suite (144 tests)
 uv run pytest -q
 
 # Run offline ADK evaluation benchmark (7/7 passing in <1s)
@@ -207,5 +208,5 @@ Every measured number below links directly to its recorded run and sample size i
 | **Claims Guardrail** | ADK `before_tool_callback` | Out-of-policy claims quarantined to `pending_review`; unauthorized refunds blocked (`tests/test_claims.py`) |
 | **Exfiltration Defense** | Corporate Domain Allowlist | `4/4` attempted exfiltration drafts blocked by code under `naive + enforce` (`n = 3` runs × 4 attacks) — [evals/FINDINGS.md](evals/FINDINGS.md#L275-L299) |
 | **Human-in-the-Loop** | Native `require_confirmation` | Arbitrations and drafts gated behind explicit confirmation modal (`tests/test_backend.py`) |
-| **CI/CD Quality Gate** | GitHub Actions Pipeline | 137 unit tests + 7 deterministic ADK benchmarks + docs consistency gate (`scripts/verify.py`) |
+| **CI/CD Quality Gate** | GitHub Actions Pipeline | 144 unit tests + 7 deterministic ADK benchmarks + docs consistency gate (`scripts/verify.py`) |
 | **Cloud Evaluation** | Vertex AI Gen AI Eval | `7/7` live cases passed, `5.0/5.0` Vertex LLM judge across 4 rubrics (`n = 7` cases) — [evals/FINDINGS.md](evals/FINDINGS.md#L4-L25) |

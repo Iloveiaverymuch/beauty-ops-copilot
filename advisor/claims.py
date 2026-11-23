@@ -56,6 +56,7 @@ def _get_db() -> sqlite3.Connection:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS claims (
                 claim_id TEXT PRIMARY KEY,
+                owner_id TEXT DEFAULT '',
                 order_id TEXT,
                 sku TEXT,
                 customer_message TEXT,
@@ -75,6 +76,9 @@ def _get_db() -> sqlite3.Connection:
                 updated_at TEXT
             )
         """)
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(claims)").fetchall()}
+        if "owner_id" not in cols:
+            conn.execute("ALTER TABLE claims ADD COLUMN owner_id TEXT DEFAULT ''")
     return conn
 
 
@@ -89,6 +93,7 @@ def _fetch_order(order_id: str, sku: str = "") -> dict[str, Any]:
     return {
         "found": True,
         "order": order,
+        "customer_id": order.get("customer_id", ""),
         "sku": line.get("sku", sku),
         "amount_eur": float(line.get("amount_eur", 0.0)),
         "days_since_purchase": int(order.get("days_since_purchase", 0)),
@@ -125,12 +130,20 @@ def _rule_triage(skin_reaction: bool, amount_eur: float) -> dict[str, Any]:
     }
 
 
-def status(claim_id: str) -> dict[str, Any]:
+def status(claim_id: str, requester_id: str | None = None) -> dict[str, Any]:
     with _db_lock, _get_db() as conn:
         row = conn.execute("SELECT * FROM claims WHERE claim_id = ?", (claim_id,)).fetchone()
         if not row:
             return {"status": "unknown_claim", "claim_id": claim_id}
-        
+
+        owner_id = row["owner_id"] or ""
+        if requester_id and owner_id and owner_id != requester_id:
+            return {
+                "claim_id": claim_id,
+                "status": "forbidden",
+                "message": "Accès refusé : cette réclamation appartient à un autre client.",
+            }
+
         st = row["status"]
         history = json.loads(row["history_json"] or "[]")
         next_steps = json.loads(row["next_json"] or "[]")
@@ -138,6 +151,7 @@ def status(claim_id: str) -> dict[str, Any]:
 
         return {
             "claim_id": claim_id,
+            "owner_id": owner_id,
             "status": st,
             "message": STATUS_TEXT.get(st, st),
             "rule": row["rule"],
@@ -155,6 +169,7 @@ def open_claim(
     skin_reaction: bool,
     photo_provided: bool = False,
     sku: str = "",
+    owner_id: str | None = None,
 ) -> dict[str, Any]:
     claim_id = "CLM-" + hashlib.sha256(f"{order_id}|{sku}|{time.time_ns()}".encode()).hexdigest()[:6].upper()
     now = _now()
@@ -166,6 +181,7 @@ def open_claim(
         history.append({"ts": _now(), "step": "close", "status": "rejected"})
         _save_claim(
             claim_id=claim_id,
+            owner_id=owner_id or "",
             order_id=order_id,
             sku=sku,
             customer_message=customer_message,
@@ -183,6 +199,16 @@ def open_claim(
             next_steps=[],
         )
         return status(claim_id)
+
+    order_owner = order_info.get("customer_id", "")
+    if owner_id and order_owner and order_owner != owner_id:
+        return {
+            "claim_id": None,
+            "status": "forbidden",
+            "rule": "order_ownership_mismatch",
+            "message": "Accès refusé : cette commande appartient à un autre client.",
+        }
+    effective_owner = owner_id or order_owner
 
     amount_eur = order_info["amount_eur"]
     days_since_purchase = order_info["days_since_purchase"]
@@ -224,6 +250,7 @@ def open_claim(
 
     _save_claim(
         claim_id=claim_id,
+        owner_id=effective_owner,
         order_id=order_id,
         sku=sku,
         customer_message=customer_message,
@@ -260,15 +287,16 @@ def _save_claim(
     refund: dict,
     history: list,
     next_steps: list,
+    owner_id: str = "",
 ) -> None:
     now = _now()
     with _db_lock, _get_db() as conn:
         conn.execute("""
             INSERT INTO claims (
-                claim_id, order_id, sku, customer_message, opened, skin_reaction, photo_provided,
+                claim_id, owner_id, order_id, sku, customer_message, opened, skin_reaction, photo_provided,
                 amount_eur, days_since_purchase, status, rule, triage_json, decision_json,
                 refund_json, history_json, next_json, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(claim_id) DO UPDATE SET
                 status = excluded.status,
                 rule = excluded.rule,
@@ -279,7 +307,7 @@ def _save_claim(
                 next_json = excluded.next_json,
                 updated_at = excluded.updated_at
         """, (
-            claim_id, order_id, sku, customer_message, int(opened), int(skin_reaction), int(photo_provided),
+            claim_id, owner_id, order_id, sku, customer_message, int(opened), int(skin_reaction), int(photo_provided),
             amount_eur, days_since_purchase, status, rule,
             json.dumps(triage, ensure_ascii=False),
             json.dumps(decision, ensure_ascii=False),

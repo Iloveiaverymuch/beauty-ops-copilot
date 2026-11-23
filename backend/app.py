@@ -34,12 +34,13 @@ _ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(_ROOT / ".env")
 load_dotenv(_ROOT / "copilot" / ".env")
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from opentelemetry import trace
 from pydantic import BaseModel, Field
 
+from backend.auth import Principal, require_authenticated, require_reviewer, session_owners
 from backend.telemetry import setup_tracing
 
 setup_tracing()   # BEFORE the agent is imported (engines import it lazily)
@@ -119,11 +120,12 @@ def health():
 
 
 @app.post("/chat")
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, principal: Principal = Depends(require_authenticated)):
     if req.engine not in ENGINES:
         return StreamingResponse(iter([sse("error", {"message": f"engine {req.engine} not available"})]),
                                  media_type="text/event-stream")
     thread_id = req.thread_id or uuid.uuid4().hex
+    session_owners.bind_or_verify(thread_id, principal.user_id)
     turn_id = uuid.uuid4().hex[:12]
     engine = ENGINES[req.engine]
 
@@ -160,7 +162,7 @@ async def chat(req: ChatRequest):
                                                               "tokens_thinking", "model_ms", "tools_ms", "tools", "failed")})
                     return
                 try:
-                    async for ev in engine.stream(thread_id, req.message):
+                    async for ev in engine.stream(thread_id, req.message, user_id=principal.user_id):
                         if ev["type"] == "text":
                             ttft = ttft or time.perf_counter() - t0
                             chunks += 1
@@ -217,11 +219,12 @@ async def chat(req: ChatRequest):
 
 
 @app.post("/chat/confirm")
-async def chat_confirm(req: ConfirmRequest):
+async def chat_confirm(req: ConfirmRequest, principal: Principal = Depends(require_authenticated)):
     if req.engine not in ENGINES:
         return StreamingResponse(iter([sse("error", {"message": f"engine {req.engine} not available"})]),
                                  media_type="text/event-stream")
     thread_id = req.thread_id
+    session_owners.bind_or_verify(thread_id, principal.user_id)
     turn_id = uuid.uuid4().hex[:12]
     engine = ENGINES[req.engine]
 
@@ -241,7 +244,9 @@ async def chat_confirm(req: ConfirmRequest):
             with tracer.start_as_current_span("chat.confirm") as span:
                 span.set_attributes({"chat.turn_id": turn_id, "chat.engine": engine.name, "chat.confirmed": req.confirmed})
                 try:
-                    async for ev in engine.resume_confirmation(thread_id, req.call_id, req.confirmed):
+                    async for ev in engine.resume_confirmation(
+                        thread_id, req.call_id, req.confirmed, user_id=principal.user_id
+                    ):
                         if ev["type"] == "text":
                             ttft = ttft or time.perf_counter() - t0
                             chunks += 1
@@ -295,14 +300,14 @@ async def chat_confirm(req: ConfirmRequest):
 
 
 @app.post("/chat/sync")
-async def chat_sync(req: ChatRequest):
+async def chat_sync(req: ChatRequest, principal: Principal = Depends(require_authenticated)):
     """Buffer the existing chat stream for HTTP evaluation clients. One turn, one session update, one KPI record.
 
     These are complete frames yielded by our own generator, not arbitrary network chunks. Retaining structured
     events lets evaluations check actual cards/prices/tools rather than guessing them from generated prose.
     `status=error` distinguishes a technical fallback from a successful answer (HTTP 200 alone is insufficient).
     """
-    response = await chat(req)
+    response = await chat(req, principal=principal)
     out = {"status": "error", "thread_id": req.thread_id, "turn_id": None,
            "text": "", "events": [], "metrics": {}}
     async for frame in response.body_iterator:
@@ -324,20 +329,21 @@ async def chat_sync(req: ChatRequest):
 
 class DecisionRequest(BaseModel):
     decision: Literal["approve", "reject"]
-    reviewer: str = Field(min_length=2, max_length=40, pattern=r"^[A-Za-z0-9._-]+$")
+    reviewer: str | None = Field(default=None, min_length=2, max_length=40, pattern=r"^[A-Za-z0-9._-]+$")
 
 
 @app.get("/claims/pending")
-def claims_pending():
-    """Back office: claims waiting for a human or for a refund retry (no auth here: in production behind IAP/SSO)."""
+def claims_pending(principal: Principal = Depends(require_reviewer)):
+    """Back office: claims waiting for a human or for a refund retry (reviewer role required)."""
     from claims.service import pending
     return [{k: c[k] for k in ("claim_id", "status", "amount_eur", "rule")} for c in pending()]
 
 
 @app.post("/claims/{claim_id}/decision")
-def claims_decide(claim_id: str, req: DecisionRequest):
+def claims_decide(claim_id: str, req: DecisionRequest, principal: Principal = Depends(require_reviewer)):
     """Reviewer decision -> published as an event (Pub/Sub with CLAIMS_BUS=pubsub; the worker resumes the graph).
-    With the local bus there is no worker, so the event is handled in-process (same idempotent handler)."""
+    With the local bus there is no worker, so the event is handled in-process (same idempotent handler).
+    Reviewer identity is always taken from the verified bearer token, never trusted from the request body."""
     from fastapi import HTTPException
 
     from claims.bus import LocalBus, bus
@@ -347,12 +353,13 @@ def claims_decide(claim_id: str, req: DecisionRequest):
         raise HTTPException(404, f"unknown claim {claim_id}")
     if current not in ("pending_review", "refund_failed"):
         raise HTTPException(409, f"claim {claim_id} is '{current}', not waiting for a decision")
-    msg_id = submit_decision(claim_id, req.decision, req.reviewer)
-    kpi({"kind": "claim_decision", "claim_id": claim_id, "decision": req.decision, "reviewer": req.reviewer})
+    reviewer = principal.user_id
+    msg_id = submit_decision(claim_id, req.decision, reviewer)
+    kpi({"kind": "claim_decision", "claim_id": claim_id, "decision": req.decision, "reviewer": reviewer})
     if isinstance(bus(), LocalBus):
-        outcome, st = handle_decision({"claim_id": claim_id, "decision": req.decision, "reviewer": req.reviewer})
-        return {"message_id": msg_id, "outcome": outcome, "status": st["status"]}
-    return {"message_id": msg_id, "outcome": "published"}
+        outcome, st = handle_decision({"claim_id": claim_id, "decision": req.decision, "reviewer": reviewer})
+        return {"message_id": msg_id, "outcome": outcome, "status": st["status"], "reviewer": reviewer}
+    return {"message_id": msg_id, "outcome": "published", "reviewer": reviewer}
 
 
 @app.post("/feedback")

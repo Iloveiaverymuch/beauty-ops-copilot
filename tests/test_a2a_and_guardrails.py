@@ -46,7 +46,7 @@ def test_scoped_state_prefixes_in_claims_tool(monkeypatch, tmp_path):
 
     class DummyToolContext:
         def __init__(self):
-            self.state = {"user:id": "customer-usr-999"}
+            self.state = {"user:id": "cust-alice"}
 
     ctx = DummyToolContext()
     res = open_return_claim(

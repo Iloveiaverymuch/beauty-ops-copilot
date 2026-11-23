@@ -7,7 +7,7 @@ Engineering repositories used as technical references or onboarding kits silentl
 Treat documentation claims as testable invariants: every metric needs a source file and sample size `n`, and CI must enforce doc hygiene automatically.
 
 ## How It Fails
-- **Credibility erosion**: A Tech Lead reading `5.0/5.0` without `n = 7` or seeing `"Zero Hallucinations!"` immediately distrusts the rest of the engineering.
+- **Credibility erosion**: A Tech Lead reading `5.0/5.0` without `n = 7` or seeing unqualified perfection claims immediately distrusts the rest of the engineering.
 - **Silent drift**: Test counts and relative links rot the moment tests are added or files are renamed, unless checked in `verify.py`.
 - **Confidentiality / brand leakage**: Hardcoded corporate domains in allowlists or eval fixtures survive refactors unless guarded by a static scan.
 

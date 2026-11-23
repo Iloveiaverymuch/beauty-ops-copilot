@@ -29,22 +29,26 @@ def open_return_claim(order_id: str, reason: str, product_opened: bool, skin_rea
     Returns: {"claim_id", "status", "message", "rule", "amount_eur", "refund_id"}. Tell the customer the claim id,
         the status message, and the rule if rejected. Never promise a refund the result doesn't confirm.
     """
-    # ADK Scoped State: Resolve authenticated user from 'user:id' prefix to prevent IDOR vulnerability
+    owner_id: str | None = None
     if tool_context and hasattr(tool_context, "state") and tool_context.state is not None:
-        _ = tool_context.state.get("user:id")
+        owner_id = tool_context.state.get("user:id")
         tool_context.state["temp:active_order_id"] = order_id
 
-    st = service.open_claim(order_id, reason, product_opened, skin_reaction, photo_provided, sku)
+    st = service.open_claim(
+        order_id, reason, product_opened, skin_reaction, photo_provided, sku, owner_id=owner_id
+    )
 
-    # Scoped State: Store ephemeral turn-level reference in 'temp:' prefix
     if tool_context and hasattr(tool_context, "state") and tool_context.state is not None and st.get("claim_id"):
         tool_context.state["temp:last_claim_id"] = st["claim_id"]
 
     return {k: st.get(k) for k in _SAFE}
 
 
-def get_claim_status(claim_id: str) -> dict:
+def get_claim_status(claim_id: str, tool_context: ToolContext | None = None) -> dict:
     """Get the current status of a claim the customer opened (claim id format CLM-XXXXXX).
     Returns: {"claim_id", "status", "message", "amount_eur", "refund_id"}"""
-    st = service.status(claim_id)
+    requester_id: str | None = None
+    if tool_context and hasattr(tool_context, "state") and tool_context.state is not None:
+        requester_id = tool_context.state.get("user:id")
+    st = service.status(claim_id, requester_id=requester_id)
     return {k: st.get(k) for k in _SAFE}
