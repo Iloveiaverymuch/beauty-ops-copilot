@@ -24,3 +24,6 @@ advisor/.cache/
 evals/adk/results/adk_eval_*.json
 evals/vertex/results/vertex_eval_*.json
 evals/vertex/results/prod_monitor_*.json
+
+# Generated build/export artifacts
+output/
