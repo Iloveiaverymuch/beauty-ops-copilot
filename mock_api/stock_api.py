@@ -127,3 +127,103 @@ async def refund(req: RefundRequest, idempotency_key: str = Header(...)):
          "order_id": req.order_id, "amount_eur": req.amount_eur, "status": "issued", "duplicate": False}
     REFUNDS[idempotency_key] = r
     return r
+
+
+# ------------------------------------------------------------------------------------------------- appointments (W2)
+# Two-phase booking: hold_slot -> confirm_slot (with Idempotency-Key). Prevents double booking on retries.
+APPOINTMENT_HOLDS: dict[str, dict] = {}        # hold_id -> {hold_id, store, slot_id, customer_id, topic}
+APPOINTMENTS: dict[str, dict] = {}             # idempotency_key -> confirmed appointment
+_SLOT_HOURS = ("10:00", "11:00", "14:00", "15:30", "17:00")
+
+
+def _slot_taken(store: str, slot_id: str, exclude_customer: str | None = None) -> bool:
+    for appt in APPOINTMENTS.values():
+        if appt["store"] == store and appt["slot_id"] == slot_id:
+            return True
+    for hold in APPOINTMENT_HOLDS.values():
+        if hold["store"] == store and hold["slot_id"] == slot_id:
+            if exclude_customer is None or hold["customer_id"] != exclude_customer:
+                return True
+    return False
+
+
+@app.get("/appointments/slots")
+async def appointment_slots(store: str = Query(...), date_str: str = Query(..., alias="date", pattern=r"^\d{4}-\d{2}-\d{2}$")):
+    await _fault()
+    if store not in STORES:
+        raise HTTPException(404, "unknown store")
+    slots = []
+    for hour in _SLOT_HOURS:
+        slot_id = f"{date_str}T{hour}"
+        if not _slot_taken(store, slot_id):
+            slots.append({"slot_id": slot_id, "store": store, "store_name": STORES[store], "duration_min": 30})
+    return {"store": store, "date": date_str, "slots": slots}
+
+
+class HoldSlotRequest(BaseModel):
+    store: str
+    slot_id: str
+    customer_id: str
+    topic: str = "consultation beauté"
+
+
+@app.post("/appointments/hold")
+async def hold_slot(req: HoldSlotRequest):
+    await _fault()
+    if req.store not in STORES:
+        raise HTTPException(404, "unknown store")
+    # If already confirmed for this store+slot, reject unless same customer is retrying via confirm
+    for appt in APPOINTMENTS.values():
+        if appt["store"] == req.store and appt["slot_id"] == req.slot_id:
+            if appt["customer_id"] == req.customer_id:
+                return {"hold_id": appt["hold_id"], "store": req.store, "slot_id": req.slot_id,
+                        "status": "already_confirmed"}
+            raise HTTPException(409, "slot already booked")
+    # Re-use existing hold for the same customer+store+slot (idempotent hold)
+    for hold in APPOINTMENT_HOLDS.values():
+        if hold["store"] == req.store and hold["slot_id"] == req.slot_id:
+            if hold["customer_id"] == req.customer_id:
+                return {**hold, "status": "held"}
+            raise HTTPException(409, "slot currently held by another customer")
+    hold_id = "HLD-" + hashlib.sha256(f"{req.store}|{req.slot_id}|{req.customer_id}".encode()).hexdigest()[:8].upper()
+    hold = {"hold_id": hold_id, "store": req.store, "slot_id": req.slot_id,
+            "customer_id": req.customer_id, "topic": req.topic}
+    APPOINTMENT_HOLDS[hold_id] = hold
+    return {**hold, "status": "held"}
+
+
+class ConfirmSlotRequest(BaseModel):
+    hold_id: str
+    store: str
+    slot_id: str
+    customer_id: str
+    contact: str
+    topic: str = "consultation beauté"
+
+
+@app.post("/appointments/confirm")
+async def confirm_slot(req: ConfirmSlotRequest, idempotency_key: str = Header(...)):
+    """Idempotent appointment confirmation: repeating the same Idempotency-Key returns the original booking."""
+    await _fault()
+    if idempotency_key in APPOINTMENTS:
+        return {**APPOINTMENTS[idempotency_key], "duplicate": True}
+    hold = APPOINTMENT_HOLDS.get(req.hold_id)
+    if hold is None:
+        raise HTTPException(404, "unknown or expired hold")
+    if hold["customer_id"] != req.customer_id or hold["store"] != req.store or hold["slot_id"] != req.slot_id:
+        raise HTTPException(403, "hold ownership or slot mismatch")
+    appt_id = "APT-" + hashlib.sha256(idempotency_key.encode()).hexdigest()[:8].upper()
+    booking = {
+        "appointment_id": appt_id,
+        "hold_id": req.hold_id,
+        "store": req.store,
+        "store_name": STORES.get(req.store, req.store),
+        "slot_id": req.slot_id,
+        "customer_id": req.customer_id,
+        "topic": req.topic,
+        "status": "confirmed",
+        "duplicate": False,
+    }
+    APPOINTMENTS[idempotency_key] = booking
+    APPOINTMENT_HOLDS.pop(req.hold_id, None)
+    return booking
